@@ -1,2 +1,2 @@
-# focg-adventure
-The FOCG adventure for DevConnect Argentina
+# activations
+Activations for game jams, hackathons, and anything else

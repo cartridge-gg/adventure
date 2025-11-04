@@ -1,0 +1,24 @@
+[world]
+name = "Ronin Quest"
+description = "A serverless quest system with dynamic NFT for the Dojo ecosystem"
+seed = "ronin_quest-v1"
+
+[namespace]
+default = "ronin_quest"
+
+[env]
+rpc_url = "https://api.cartridge.gg/x/starknet/mainnet"
+account_address = "0x079b01c7fe90414b153f0457471c33e166ff5eee381e8dcd90f3214a56a3770b"
+keystore_path = "~/.starkli-wallets/deployer-mainnet.json"
+world_address = "0x138b3e977161e0aadf97398524d4d6ab144cb1e36d0b00db71c60d90ab8b3de"
+
+[writers]
+"ronin_quest" = ["ronin_quest-actions"]
+
+[[external_contracts]]
+contract_name = "RoninPact"
+instance_name = "ronin_pact"
+salt = "v1"
+constructor_data = [
+    "0x079b01c7fe90414b153f0457471c33e166ff5eee381e8dcd90f3214a56a3770b"
+]

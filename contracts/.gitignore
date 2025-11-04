@@ -1,0 +1,10 @@
+target
+.snfoundry_cache
+
+# Environment variables
+.env
+.env.*
+!.env.*.example
+
+# Deployment artifacts
+deployments/

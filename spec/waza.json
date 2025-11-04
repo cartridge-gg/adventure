@@ -1,0 +1,47 @@
+{
+  "description": "Waza trial configuration - allowlisted game collections",
+  "collections": [
+    {
+      "name": "ls-adventurer",
+      "displayName": "Adventurers (Loot Survivor 2)",
+      "address": "0x036017e69d21d6d8c13e266eabb73ef1f1d02722d86bdcabe5f168f8e549d3cd",
+      "environments": ["mainnet"],
+      "note": "Loot Survivor 2 Adventurer NFTs"
+    },
+    {
+      "name": "ls-beast",
+      "displayName": "Beasts (Loot Survivor 2)",
+      "address": "0x046da8955829adf2bda310099a0063451923f02e648cf25a1203aac6335cf0e4",
+      "environments": ["mainnet"],
+      "note": "Loot Survivor 2 Beast NFTs"
+    },
+    {
+      "name": "pistols-duel",
+      "displayName": "Duels (Pistols at Dawn)",
+      "address": "0x02e9c711b1a7e2784570b1bda5082a92606044e836ba392d2b977d280fb74b3c",
+      "environments": ["mainnet"],
+      "note": "TODO: Replace with actual Pistols at Dawn Duel collection address"
+    },
+    {
+      "name": "pistols-duelists",
+      "displayName": "Duelists (Pistols at Dawn)",
+      "address": "0x07aaa9866750a0db82a54ba8674c38620fa2f967d2fbb31133def48e0527c87f",
+      "environments": ["mainnet"],
+      "note": "TODO: Replace with actual Pistols at Dawn Duelist collection address"
+    },
+    {
+      "name": "blobert",
+      "displayName": "Blobert",
+      "address": "0x00539f522b29ae9251dbf7443c7a950cf260372e69efab3710a11bf17a9599f1",
+      "environments": ["mainnet"],
+      "note": "Blobert NFT collection"
+    },
+    {
+      "name": "ronin-pact",
+      "displayName": "Ronin Pact",
+      "address": "self",
+      "environments": ["dev", "sepolia"],
+      "note": "Special value 'self' uses the deployed Pact NFT address for testing"
+    }
+  ]
+}

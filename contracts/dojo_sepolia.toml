@@ -1,0 +1,24 @@
+[world]
+name = "Ronin Quest"
+description = "A serverless quest system with dynamic NFT for the Dojo ecosystem"
+seed = "ronin_quest-v5"
+
+[namespace]
+default = "ronin_quest"
+
+[env]
+rpc_url = "https://api.cartridge.gg/x/starknet/sepolia"
+account_address = "0x05cb4ea8cc45dd51505a7e585b4a73d87d2f9448ed6a380155006229170e4819"
+keystore_path = "~/.starkli-wallets/deployer-sepolia.json"
+world_address = "0x20544cbfc50d1b4679eee11c50a73872e01a3a2f09636d8e165c7aa46e3b042"
+
+[writers]
+"ronin_quest" = ["ronin_quest-actions"]
+
+[[external_contracts]]
+contract_name = "RoninPact"
+instance_name = "ronin_pact"
+salt = "v5"
+constructor_data = [
+    "0x05cb4ea8cc45dd51505a7e585b4a73d87d2f9448ed6a380155006229170e4819"
+]

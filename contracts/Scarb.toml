@@ -1,0 +1,37 @@
+[package]
+cairo-version = "2.12.2"
+name = "ronin_quest"
+version = "0.1.0"
+edition = "2024_07"
+
+[cairo]
+sierra-replace-ids = true
+
+[scripts]
+test = "snforge test"
+deploy_katana = "./scripts/deploy_katana.sh"
+deploy_sepolia = "./scripts/deploy_network.sh sepolia"
+deploy_mainnet = "./scripts/deploy_network.sh mainnet"
+
+[dependencies]
+dojo = "1.7.1"
+starknet = "2.12.2"
+openzeppelin = "1.0.0"
+
+[[target.starknet-contract]]
+build-external-contracts = [
+    "dojo::world::world_contract::world",
+    "ronin_quest::token::pact::RoninPact"
+]
+
+[tool.scarb]
+allow-prebuilt-plugins = ["dojo_cairo_macros"]
+
+[dev-dependencies]
+cairo_test = "2.12.2"
+dojo_snf_test = "1.7.1"
+snforge_std = "0.48.1"
+
+[profile.sepolia]
+
+[profile.mainnet]
