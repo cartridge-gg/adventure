@@ -1,0 +1,6 @@
+[submodule "refs/thc"]
+	path = refs/thc
+	url = https://github.com/social-dist0rtion-protocol/thc
+[submodule "refs/DIPs"]
+	path = refs/DIPs
+	url = https://github.com/efdevcon/DIPs
