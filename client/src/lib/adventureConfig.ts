@@ -30,7 +30,6 @@ export const ADVENTURE_LEVELS: Level[] = [
     gameUrl: 'https://example.com/game1',
     gameInstructions: 'Score at least 100 points in the challenge game. Once you succeed, return here to claim completion.',
     verificationStrategy: 'score_threshold',
-    successCriteria: 'Score ≥ 100 points',
   } as OnchainGameLevel,
 
   // Level 2: IRL Quest (from quests.json)
@@ -39,7 +38,7 @@ export const ADVENTURE_LEVELS: Level[] = [
     name: questsMap.get(2)!.name,
     description: questsMap.get(2)!.description,
     type: 'quest',
-    locationHint: questsMap.get(2)!.location,
+    location: questsMap.get(2)!.location,
     puzzleDescription: questsMap.get(2)!.puzzle,
     expectedCodeword: questsMap.get(2)!.codeword,
   } as IRLQuestLevel,
@@ -53,7 +52,6 @@ export const ADVENTURE_LEVELS: Level[] = [
     gameUrl: 'https://example.com/game2',
     gameInstructions: 'Complete all 5 levels of the strategy game. Each level builds on the previous.',
     verificationStrategy: 'completion_check',
-    successCriteria: 'Complete all levels',
   } as OnchainGameLevel,
 
   // Level 4: IRL Quest (from quests.json)
@@ -62,7 +60,7 @@ export const ADVENTURE_LEVELS: Level[] = [
     name: questsMap.get(4)!.name,
     description: questsMap.get(4)!.description,
     type: 'quest',
-    locationHint: questsMap.get(4)!.location,
+    location: questsMap.get(4)!.location,
     puzzleDescription: questsMap.get(4)!.puzzle,
     expectedCodeword: questsMap.get(4)!.codeword,
   } as IRLQuestLevel,
@@ -76,7 +74,6 @@ export const ADVENTURE_LEVELS: Level[] = [
     gameUrl: 'https://example.com/game3',
     gameInstructions: 'Complete the advanced challenge. This is the hardest level yet!',
     verificationStrategy: 'achievement_unlock',
-    successCriteria: 'Unlock "Master" achievement',
   } as OnchainGameLevel,
 
   // Level 6: IRL Quest (from quests.json)
@@ -85,7 +82,7 @@ export const ADVENTURE_LEVELS: Level[] = [
     name: questsMap.get(6)!.name,
     description: questsMap.get(6)!.description,
     type: 'quest',
-    locationHint: questsMap.get(6)!.location,
+    location: questsMap.get(6)!.location,
     puzzleDescription: questsMap.get(6)!.puzzle,
     expectedCodeword: questsMap.get(6)!.codeword,
   } as IRLQuestLevel,
@@ -122,17 +119,8 @@ export const ADVENTURE_TEXT = {
     title: 'Begin Your Adventure',
     buttonText: 'Mint Adventure Map',
   },
-  dashboard: {
-    progressLabel: (completed: number, total: number) =>
-      `${completed} of ${total} levels complete`,
-    journeyComplete: '🎉 Journey Complete!',
-    journeyCompleteSubtitle: 'You have completed all levels',
-  },
   levelCard: {
     locked: '🔒 Complete previous level to unlock',
-    available: 'Available',
-    completed: '✓ Complete',
-    completedAt: (date: Date) => `Completed ${date.toLocaleDateString()}`,
   },
   gameLevel: {
     playButton: 'Play Game',
@@ -149,14 +137,7 @@ export const ADVENTURE_TEXT = {
     success: 'Quest complete!',
     error: 'Incorrect codeword. Try again.',
   },
-  share: {
-    buttonText: 'Share Progress',
-    message: (level: number, name: string) =>
-      `Just completed Level ${level}: ${name} of the FOCG Adventure! 🎮⛓️`,
-  },
   errors: {
     generic: 'Something went wrong. Please try again.',
-    walletNotConnected: 'Please connect your wallet',
-    noNFT: 'You need to mint an Adventure Map NFT first',
   },
 };

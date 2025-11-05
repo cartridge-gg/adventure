@@ -33,7 +33,6 @@ export function IRLQuestLevel({ level, status, tokenId, onComplete }: IRLQuestLe
         <div className="text-center text-green-700">
           <div className="text-4xl mb-2">✅</div>
           <p className="font-semibold text-lg">{level.name}</p>
-          <p className="text-sm mt-2">{ADVENTURE_TEXT.levelCard.completed}</p>
         </div>
       </div>
     );
@@ -96,18 +95,13 @@ export function IRLQuestLevel({ level, status, tokenId, onComplete }: IRLQuestLe
         <p className="text-gray-600">{level.description}</p>
       </div>
 
-      {/* Location Hint */}
+      {/* Location */}
       <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-4">
         <h4 className="font-semibold text-purple-900 mb-2 flex items-center gap-2">
           <span>📍</span>
-          <span>Location Hint:</span>
+          <span>Location:</span>
         </h4>
-        <p className="text-purple-800 text-sm mb-3">{level.locationHint}</p>
-
-        <div className="bg-white border border-purple-200 rounded px-3 py-2">
-          <p className="text-xs text-gray-600 mb-1">Puzzle:</p>
-          <p className="text-sm text-purple-900">{level.puzzleDescription}</p>
-        </div>
+        <p className="text-purple-800 text-sm">{level.location}</p>
 
         {/* Mock Mode: Show Codeword */}
         {USE_MOCK_MODE && (
@@ -151,23 +145,6 @@ export function IRLQuestLevel({ level, status, tokenId, onComplete }: IRLQuestLe
           <p className="text-red-800 text-sm">{error}</p>
         </div>
       )}
-
-      {/* Info Box */}
-      <div className="mt-4 pt-4 border-t border-gray-200">
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-          <p className="text-xs text-blue-800">
-            <strong>💡 Tip:</strong> Visit the community hub to find the codeword.
-            You can try as many times as you need!
-          </p>
-        </div>
-      </div>
-
-      {/* Security Note */}
-      <div className="mt-3">
-        <p className="text-xs text-gray-500">
-          🔐 Your codeword is verified cryptographically and never stored on-chain
-        </p>
-      </div>
     </div>
   );
 }

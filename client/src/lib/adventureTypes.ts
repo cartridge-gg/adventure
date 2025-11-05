@@ -27,7 +27,6 @@ export interface OnchainGameLevel extends BaseLevel {
   gameUrl?: string;
   gameInstructions: string;
   verificationStrategy: string;
-  successCriteria: string;
 }
 
 /**
@@ -35,7 +34,7 @@ export interface OnchainGameLevel extends BaseLevel {
  */
 export interface IRLQuestLevel extends BaseLevel {
   type: 'quest';
-  locationHint: string;
+  location: string;
   puzzleDescription: string;
   expectedCodeword: string; // For mock verification only
 }

@@ -32,7 +32,6 @@ export function OnchainGameLevel({ level, status, tokenId, onComplete }: Onchain
         <div className="text-center text-green-700">
           <div className="text-4xl mb-2">✅</div>
           <p className="font-semibold text-lg">{level.name}</p>
-          <p className="text-sm mt-2">{ADVENTURE_TEXT.levelCard.completed}</p>
         </div>
       </div>
     );
@@ -95,11 +94,7 @@ export function OnchainGameLevel({ level, status, tokenId, onComplete }: Onchain
       {/* Game Instructions */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
         <h4 className="font-semibold text-blue-900 mb-2">Instructions:</h4>
-        <p className="text-blue-800 text-sm mb-3">{level.gameInstructions}</p>
-        <div className="bg-white border border-blue-200 rounded px-3 py-2">
-          <p className="text-xs text-gray-600 mb-1">Success Criteria:</p>
-          <p className="text-sm font-semibold text-blue-900">{level.successCriteria}</p>
-        </div>
+        <p className="text-blue-800 text-sm">{level.gameInstructions}</p>
       </div>
 
       {/* Action Buttons */}
@@ -129,13 +124,6 @@ export function OnchainGameLevel({ level, status, tokenId, onComplete }: Onchain
           <p className="text-red-800 text-sm">{error}</p>
         </div>
       )}
-
-      {/* Verification Info */}
-      <div className="mt-4 pt-4 border-t border-gray-200">
-        <p className="text-xs text-gray-500">
-          Verification: {level.verificationStrategy}
-        </p>
-      </div>
     </div>
   );
 }

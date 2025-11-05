@@ -132,7 +132,6 @@ export function AdventureMapNFT({ progress }: AdventureMapNFTProps) {
           <div className="text-center">
             <div className="text-5xl mb-3">🏆</div>
             <h3 className="text-xl font-bold text-amber-900 mb-2">Journey Complete!</h3>
-            <p className="text-sm text-amber-800 mb-4">You have completed all levels</p>
             <ShareButton progress={progress} />
           </div>
         </div>
