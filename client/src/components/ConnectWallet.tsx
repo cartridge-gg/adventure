@@ -3,7 +3,15 @@ import { useState, useEffect, useRef } from 'react';
 import { useAccount, useConnect, useDisconnect } from '@starknet-react/core';
 
 import { ControllerConnector } from '@cartridge/connector';
-import { WALLET_TEXT } from '@/lib/uiText';
+
+const WALLET_TEXT = {
+  connect: "Connect with Controller",
+  dropdown: {
+    profile: "Profile",
+    settings: "Settings",
+    disconnect: "Disconnect",
+  },
+} as const;
 
 export function ConnectWallet() {
   const { connect, connectors } = useConnect();

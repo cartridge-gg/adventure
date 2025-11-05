@@ -5,8 +5,6 @@ import { constants } from "starknet";
 import manifestDev from "../../../contracts/manifest_dev.json";
 import manifestSepolia from "../../../contracts/manifest_sepolia.json";
 import manifestMainnet from "../../../contracts/manifest_mainnet.json";
-import wazaConfig from "../../../spec/waza.json";
-import { AllowlistedCollection } from "./types";
 
 // ============================================================================
 // ENVIRONMENT-BASED CHAIN SELECTION
@@ -91,19 +89,6 @@ export const RONIN_PACT_ADDRESS = roninPactContract?.address || '0x0';
 export const RONIN_PACT_ABI = roninPactContract?.abi;
 
 // ============================================================================
-// ALLOWLISTED COLLECTIONS
-// ============================================================================
-// Filter collections based on environment
-
-export const ALLOWLISTED_COLLECTIONS: AllowlistedCollection[] = wazaConfig.collections
-  .filter((collection: any) => collection.environments.includes(CHAIN_ENV))
-  .map((collection: any) => ({
-    name: collection.name,
-    displayName: collection.displayName,
-    address: collection.address === 'self' ? RONIN_PACT_ADDRESS : collection.address,
-  }));
-
-// ============================================================================
 // LOGGING
 // ============================================================================
 
@@ -113,8 +98,3 @@ console.log('  Chain ID:', DEFAULT_CHAIN_ID);
 console.log('  World:', WORLD_ADDRESS);
 console.log('  Quest Manager:', QUEST_MANAGER_ADDRESS);
 console.log('  Ronin Pact:', RONIN_PACT_ADDRESS);
-console.log('  Allowlisted Collections:', ALLOWLISTED_COLLECTIONS.length);
-
-// Trial metadata - imported from centralized UI text configuration
-export { TRIAL_METADATA as TRIALS } from './uiText';
-export type TrialName = keyof typeof import('./uiText').TRIAL_METADATA;
