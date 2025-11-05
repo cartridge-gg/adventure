@@ -6,12 +6,19 @@
  */
 
 import { Level, OnchainGameLevel, IRLQuestLevel } from './adventureTypes';
+import questsData from '../../../spec/quests.json';
 
 // ============================================================================
 // SAMPLE LEVEL CONFIGURATION
 // ============================================================================
 // This is a 6-level adventure with alternating game and quest levels
 // for demonstration purposes. Can be easily modified.
+// IRL Quest levels are loaded from spec/quests.json
+
+// Map quests data to a lookup by level number
+const questsMap = new Map(
+  questsData.quests.map(q => [q.level, q])
+);
 
 export const ADVENTURE_LEVELS: Level[] = [
   // Level 1: Onchain Game
@@ -26,15 +33,15 @@ export const ADVENTURE_LEVELS: Level[] = [
     successCriteria: 'Score ≥ 100 points',
   } as OnchainGameLevel,
 
-  // Level 2: IRL Quest
+  // Level 2: IRL Quest (from quests.json)
   {
     levelNumber: 2,
-    name: 'Discover the Hub',
-    description: 'Find the first community hub and solve the puzzle.',
+    name: questsMap.get(2)!.name,
+    description: questsMap.get(2)!.description,
     type: 'quest',
-    locationHint: 'Located in the downtown district near the main conference center.',
-    puzzleDescription: 'Find the QR code at the community hub and solve the riddle to get the codeword.',
-    expectedCodeword: 'DEVCONNECT',
+    locationHint: questsMap.get(2)!.location,
+    puzzleDescription: questsMap.get(2)!.puzzle,
+    expectedCodeword: questsMap.get(2)!.codeword,
   } as IRLQuestLevel,
 
   // Level 3: Onchain Game
@@ -49,15 +56,15 @@ export const ADVENTURE_LEVELS: Level[] = [
     successCriteria: 'Complete all levels',
   } as OnchainGameLevel,
 
-  // Level 4: IRL Quest
+  // Level 4: IRL Quest (from quests.json)
   {
     levelNumber: 4,
-    name: 'The Hidden Message',
-    description: 'Decode the message at the second community hub.',
+    name: questsMap.get(4)!.name,
+    description: questsMap.get(4)!.description,
     type: 'quest',
-    locationHint: 'Look for the building with the distinctive architecture in the tech quarter.',
-    puzzleDescription: 'Use the cipher wheel at the hub to decode the hidden message.',
-    expectedCodeword: 'STARKNET',
+    locationHint: questsMap.get(4)!.location,
+    puzzleDescription: questsMap.get(4)!.puzzle,
+    expectedCodeword: questsMap.get(4)!.codeword,
   } as IRLQuestLevel,
 
   // Level 5: Onchain Game
@@ -72,15 +79,15 @@ export const ADVENTURE_LEVELS: Level[] = [
     successCriteria: 'Unlock "Master" achievement',
   } as OnchainGameLevel,
 
-  // Level 6: IRL Quest
+  // Level 6: IRL Quest (from quests.json)
   {
     levelNumber: 6,
-    name: 'Journey\'s End',
-    description: 'Complete the final quest and claim your treasure.',
+    name: questsMap.get(6)!.name,
+    description: questsMap.get(6)!.description,
     type: 'quest',
-    locationHint: 'Return to where your journey began, but look closer this time.',
-    puzzleDescription: 'Combine all the clues from previous quests to solve the final puzzle.',
-    expectedCodeword: 'CARTRIDGE',
+    locationHint: questsMap.get(6)!.location,
+    puzzleDescription: questsMap.get(6)!.puzzle,
+    expectedCodeword: questsMap.get(6)!.codeword,
   } as IRLQuestLevel,
 ];
 
