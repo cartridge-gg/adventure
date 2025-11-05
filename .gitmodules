@@ -4,3 +4,12 @@
 [submodule "refs/DIPs"]
 	path = refs/DIPs
 	url = https://github.com/efdevcon/DIPs
+[submodule "refs/nums"]
+	path = refs/nums
+	url = https://github.com/cartridge-gg/nums
+[submodule "refs/glitchbomb"]
+	path = refs/glitchbomb
+	url = https://github.com/l10labsxwinwin/glitchbomb
+[submodule "refs/death-mountain"]
+	path = refs/death-mountain
+	url = https://github.com/Provable-Games/death-mountain
