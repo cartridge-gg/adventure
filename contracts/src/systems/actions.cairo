@@ -1,46 +1,65 @@
-// Dojo contract for The Ronin's Pact quest game logic
-// This contract stores game configuration and validates trial completion
-// Player progress is stored in the NFT contract (pact.cairo)
+// ============================================================================
+// FOCG Adventure Actions Contract (Dojo)
+// ============================================================================
+//
+// Main game logic contract for FOCG Adventure.
+// Handles minting, level verification (both challenge and puzzle types),
+// and sequential progression enforcement.
 
 use starknet::ContractAddress;
 
-// Quest actions interface
 #[starknet::interface]
-pub trait IActions<T> {
-    // Player actions
+pub trait IAdventureActions<T> {
+    // ========================================================================
+    // Player Actions
+    // ========================================================================
     fn mint(ref self: T, username: felt252);
-    fn complete_waza(ref self: T, token_id: u256, game_address: ContractAddress);
-    fn complete_chi(ref self: T, token_id: u256, questions: Array<u32>, answers: Array<felt252>);
-    fn complete_shin(ref self: T, token_id: u256, vow: ByteArray);
+    fn complete_level(ref self: T, token_id: u256, level_number: u8, proof_data: Span<felt252>);
 
-    // View functions (for querying models without Torii)
+    // ========================================================================
+    // View Functions
+    // ========================================================================
     fn get_player_token_id(self: @T, player: ContractAddress) -> u256;
-    fn get_time_lock(self: @T) -> u64;
+    fn get_level_status(self: @T, token_id: u256, level_number: u8) -> bool;
+    fn get_progress(self: @T, token_id: u256) -> u256;
+    fn get_level_config(self: @T, level_number: u8) -> (felt252, bool, ContractAddress, ContractAddress); // (type, active, verifier, solution_address)
 
-    // Admin functions
-    fn set_pact(ref self: T, pact: ContractAddress, time_lock: u64);
-    fn set_game(ref self: T, contract_address: ContractAddress, active: bool);
-    fn set_quiz(ref self: T, answers: Array<felt252>);
+    // ========================================================================
+    // Admin Functions
+    // ========================================================================
+    fn set_nft_contract(ref self: T, nft_contract: ContractAddress, total_levels: u8);
+    fn set_level_config(
+        ref self: T,
+        level_number: u8,
+        level_type: felt252,
+        verifier: ContractAddress,
+        solution_address: ContractAddress,
+        active: bool
+    );
 }
 
 #[dojo::contract]
 pub mod actions {
-    use core::keccak::compute_keccak_byte_array;
     use starknet::{ContractAddress, get_caller_address};
     use openzeppelin::token::erc721::interface::{IERC721Dispatcher, IERC721DispatcherTrait};
     use dojo::world::WorldStorage;
     use dojo::model::ModelStorage;
     use dojo::event::EventStorage;
 
-    use super::IActions;
-    use ronin_quest::models::{RoninPact, RoninGame, RoninAnswers, PlayerToken};
-    use ronin_quest::token::pact::{IRoninPactDispatcher, IRoninPactDispatcherTrait};
+    use super::IAdventureActions;
+    use focg_adventure::models::{AdventureConfig, PlayerToken, LevelConfig};
+    use focg_adventure::token::map::{IAdventureMapDispatcher, IAdventureMapDispatcherTrait};
+    use focg_adventure::verifiers::interface::{ILevelVerifierDispatcher, ILevelVerifierDispatcherTrait};
 
     const CONFIG_KEY: u32 = 0;
 
+    // ========================================================================
+    // Events
+    // ========================================================================
+
     #[derive(Copy, Drop, Serde)]
     #[dojo::event]
-    pub struct PactMinted {
+    pub struct MapMinted {
         #[key]
         pub player: ContractAddress,
         pub token_id: u256,
@@ -48,184 +67,232 @@ pub mod actions {
 
     #[derive(Copy, Drop, Serde)]
     #[dojo::event]
-    pub struct WazaCompleted {
+    pub struct LevelCompleted {
         #[key]
         pub token_id: u256,
         pub player: ContractAddress,
+        pub level_number: u8,
+        pub level_type: felt252,
     }
 
-    #[derive(Copy, Drop, Serde)]
-    #[dojo::event]
-    pub struct ChiCompleted {
-        #[key]
-        pub token_id: u256,
-        pub player: ContractAddress,
-    }
-
-    #[derive(Drop, Serde)]
-    #[dojo::event]
-    pub struct ShinCompleted {
-        #[key]
-        pub token_id: u256,
-        pub player: ContractAddress,
-        pub vow: ByteArray,
-    }
+    // ========================================================================
+    // Implementation
+    // ========================================================================
 
     #[abi(embed_v0)]
-    impl ActionsImpl of IActions<ContractState> {
+    impl ActionsImpl of IAdventureActions<ContractState> {
         fn mint(ref self: ContractState, username: felt252) {
             let caller = get_caller_address();
             let mut world = self.world_default();
 
-            let pact_config: RoninPact = world.read_model(CONFIG_KEY);
-            let pact_erc721 = IERC721Dispatcher { contract_address: pact_config.pact };
+            let config: AdventureConfig = world.read_model(CONFIG_KEY);
+            let nft_erc721 = IERC721Dispatcher { contract_address: config.nft_contract };
 
-            // Check if caller already has a pact NFT
-            let balance = pact_erc721.balance_of(caller);
-            assert(balance == 0, 'Already owns a pact NFT');
+            // Check if caller already has an Adventure Map NFT
+            let balance = nft_erc721.balance_of(caller);
+            assert(balance == 0, 'Already owns an Adventure Map');
 
-            // Mint the pact NFT to the caller and get token_id
-            let pact_nft = IRoninPactDispatcher { contract_address: pact_config.pact };
-            let token_id = pact_nft.mint(caller, username);
+            // Mint the Adventure Map NFT to the caller and get token_id
+            let nft = IAdventureMapDispatcher { contract_address: config.nft_contract };
+            let token_id = nft.mint(caller, username);
 
             // Store player token mapping in Dojo model
             let player_token = PlayerToken { player: caller, token_id };
             world.write_model(@player_token);
 
             // Emit Dojo event
-            world.emit_event(@PactMinted { player: caller, token_id });
+            world.emit_event(@MapMinted { player: caller, token_id });
         }
 
-        fn complete_waza(ref self: ContractState, token_id: u256, game_address: ContractAddress) {
+        fn complete_level(ref self: ContractState, token_id: u256, level_number: u8, proof_data: Span<felt252>) {
             let caller = get_caller_address();
             let mut world = self.world_default();
 
-            let pact_config: RoninPact = world.read_model(CONFIG_KEY);
-            let game_config: RoninGame = world.read_model(game_address);
-            assert(game_config.active, 'Game not whitelisted');
-
-            let pact_erc721 = IERC721Dispatcher { contract_address: pact_config.pact };
-            let owner = pact_erc721.owner_of(token_id);
+            // 1. Get NFT contract and verify ownership
+            let config: AdventureConfig = world.read_model(CONFIG_KEY);
+            let nft_erc721 = IERC721Dispatcher { contract_address: config.nft_contract };
+            let owner = nft_erc721.owner_of(token_id);
             assert(owner == caller, 'Not token owner');
 
-            // Check if caller owns an NFT from the specified game
-            let game_erc721 = IERC721Dispatcher { contract_address: game_address };
-            let balance = game_erc721.balance_of(caller);
-            assert(balance >= 1, 'No game tokens owned!');
+            // 2. Get level configuration
+            let level_config: LevelConfig = world.read_model(level_number);
+            assert(level_config.active, 'Level not active');
+            assert(level_number >= 1 && level_number <= config.total_levels, 'Invalid level');
 
-            let nft = IRoninPactDispatcher { contract_address: pact_config.pact };
-            nft.complete_waza(token_id);
+            // 3. Check sequential progression (must complete level N-1 first)
+            let nft = IAdventureMapDispatcher { contract_address: config.nft_contract };
+            let progress = nft.get_progress(token_id);
 
-            world.emit_event(@WazaCompleted { token_id, player: caller });
+            if level_number > 1 {
+                // Check if previous level is complete
+                let prev_level_mask: u256 = self.compute_level_mask(level_number - 1);
+                assert((progress & prev_level_mask) != 0, 'Must complete previous level');
+            }
+
+            // 4. Check if already complete (idempotency)
+            let level_mask: u256 = self.compute_level_mask(level_number);
+            if (progress & level_mask) != 0 {
+                return; // Already complete, no-op
+            }
+
+            // 5. Verify based on level type
+            if level_config.level_type == 'challenge' {
+                self.verify_challenge_level(caller, level_config.verifier, proof_data);
+            } else if level_config.level_type == 'puzzle' {
+                self.verify_puzzle_level(caller, level_config.solution_address, proof_data);
+            } else {
+                core::panic_with_felt252('Invalid level type');
+            }
+
+            // 6. Mark level complete in NFT contract
+            nft.complete_level(token_id, level_number);
+
+            // 7. Emit event
+            world.emit_event(@LevelCompleted {
+                token_id,
+                player: caller,
+                level_number,
+                level_type: level_config.level_type
+            });
         }
 
-        fn complete_chi(ref self: ContractState, token_id: u256, questions: Array<u32>, answers: Array<felt252>) {
-            let caller = get_caller_address();
-            let mut world = self.world_default();
+        // ====================================================================
+        // View Functions
+        // ====================================================================
 
-            // Verify answer count matches question count
-            assert(questions.len() == answers.len(), 'Question/answer mismatch');
-
-            let pact_config: RoninPact = world.read_model(CONFIG_KEY);
-            let answers_config: RoninAnswers = world.read_model(CONFIG_KEY);
-
-            let pact_erc721 = IERC721Dispatcher { contract_address: pact_config.pact };
-            let owner = pact_erc721.owner_of(token_id);
-            assert(owner == caller, 'Not token owner');
-
-            let mut correct: u256 = 0;
-            for i in 0..questions.len() {
-                let question_idx = *questions.at(i);
-                let answer_hash = *answers.at(i);
-                let expected_hash = *answers_config.answers.at(question_idx);
-
-                if answer_hash == expected_hash {
-                    correct += 1;
-                }
-            };
-
-            assert(correct >= 3, 'Incorrect answers!');
-
-            let nft = IRoninPactDispatcher { contract_address: pact_config.pact };
-            nft.complete_chi(token_id);
-
-            world.emit_event(@ChiCompleted { token_id, player: caller });
-        }
-
-        fn complete_shin(ref self: ContractState, token_id: u256, vow: ByteArray) {
-            let caller = get_caller_address();
-            let mut world = self.world_default();
-
-            // Verify vow is not empty
-            assert(vow.len() > 0, 'Vow cannot be empty');
-
-            let pact_config: RoninPact = world.read_model(CONFIG_KEY);
-
-            // Verify caller owns the token
-            let pact_erc721 = IERC721Dispatcher { contract_address: pact_config.pact };
-            let owner = pact_erc721.owner_of(token_id);
-            assert(owner == caller, 'Not token owner');
-
-            // Get mint timestamp from NFT contract and time lock from config model
-            let nft = IRoninPactDispatcher { contract_address: pact_config.pact };
-            let mint_timestamp = nft.get_timestamp(token_id);
-            let current_time = starknet::get_block_timestamp();
-
-            assert(current_time - mint_timestamp >= pact_config.time_lock, 'Time lock not elapsed!');
-
-            // Complete the trial and store the hash
-            let mut vow_hash: u256 = compute_keccak_byte_array(@vow);
-            nft.complete_shin(token_id, vow_hash);
-
-            // Emit completion event
-            world.emit_event(@ShinCompleted { token_id, player: caller, vow });
-        }
-
-        // View functions
         fn get_player_token_id(self: @ContractState, player: ContractAddress) -> u256 {
             let world = self.world_default();
             let player_token: PlayerToken = world.read_model(player);
             player_token.token_id
         }
 
-        fn get_time_lock(self: @ContractState) -> u64 {
+        fn get_level_status(self: @ContractState, token_id: u256, level_number: u8) -> bool {
             let world = self.world_default();
-            let pact_config: RoninPact = world.read_model(CONFIG_KEY);
-            pact_config.time_lock
+            let config: AdventureConfig = world.read_model(CONFIG_KEY);
+            let nft = IAdventureMapDispatcher { contract_address: config.nft_contract };
+            let progress = nft.get_progress(token_id);
+
+            let level_mask: u256 = self.compute_level_mask(level_number);
+            (progress & level_mask) != 0
         }
 
-        // Admin functions
-        // Note: Authorization is handled by Dojo's permission system (owners in dojo_<profile>.toml)
-        fn set_pact(ref self: ContractState, pact: ContractAddress, time_lock: u64) {
+        fn get_progress(self: @ContractState, token_id: u256) -> u256 {
+            let world = self.world_default();
+            let config: AdventureConfig = world.read_model(CONFIG_KEY);
+            let nft = IAdventureMapDispatcher { contract_address: config.nft_contract };
+            nft.get_progress(token_id)
+        }
+
+        fn get_level_config(self: @ContractState, level_number: u8) -> (felt252, bool, ContractAddress, ContractAddress) {
+            let world = self.world_default();
+            let level_config: LevelConfig = world.read_model(level_number);
+            (level_config.level_type, level_config.active, level_config.verifier, level_config.solution_address)
+        }
+
+        // ====================================================================
+        // Admin Functions
+        // ====================================================================
+
+        fn set_nft_contract(ref self: ContractState, nft_contract: ContractAddress, total_levels: u8) {
             let mut world = self.world_default();
-            let config = RoninPact { game_id: 0, pact, time_lock };
+            let config = AdventureConfig { game_id: CONFIG_KEY, nft_contract, total_levels };
             world.write_model(@config);
         }
 
-        fn set_game(ref self: ContractState, contract_address: ContractAddress, active: bool) {
+        fn set_level_config(
+            ref self: ContractState,
+            level_number: u8,
+            level_type: felt252,
+            verifier: ContractAddress,
+            solution_address: ContractAddress,
+            active: bool
+        ) {
             let mut world = self.world_default();
-            let config = RoninGame { contract_address, active };
-            world.write_model(@config);
-        }
-
-        fn set_quiz(ref self: ContractState, answers: Array<felt252>) {
-            let mut world = self.world_default();
-            let config = RoninAnswers { game_id: 0, answers };
+            let config = LevelConfig {
+                level_number,
+                level_type,
+                active,
+                verifier,
+                solution_address
+            };
             world.write_model(@config);
         }
     }
+
+    // ========================================================================
+    // Internal Functions
+    // ========================================================================
 
     #[generate_trait]
     impl InternalImpl of InternalTrait {
         fn world_default(self: @ContractState) -> WorldStorage {
-            self.world(@"ronin_quest")
+            self.world(@"focg_adventure")
+        }
+
+        // Compute the bitmap mask for a given level number
+        fn compute_level_mask(self: @ContractState, level_number: u8) -> u256 {
+            let mask: u256 = 1_u256;
+            let level_u256: u256 = level_number.into();
+            mask * Self::pow2(level_u256)
+        }
+
+        // Helper function to compute 2^n
+        fn pow2(n: u256) -> u256 {
+            if n == 0 {
+                return 1_u256;
+            }
+            let mut result: u256 = 1_u256;
+            let mut i: u256 = 0;
+            loop {
+                if i >= n {
+                    break;
+                }
+                result = result * 2_u256;
+                i += 1;
+            };
+            result
+        }
+
+        // ====================================================================
+        // Verification Logic
+        // ====================================================================
+
+        fn verify_challenge_level(
+            self: @ContractState,
+            player: ContractAddress,
+            verifier: ContractAddress,
+            proof_data: Span<felt252>
+        ) {
+            // Call the verifier contract
+            let verifier_dispatcher = ILevelVerifierDispatcher { contract_address: verifier };
+            let result = verifier_dispatcher.verify(player, proof_data);
+            assert(result, 'Challenge verification failed');
+        }
+
+        fn verify_puzzle_level(
+            self: @ContractState,
+            player: ContractAddress,
+            solution_address: ContractAddress,
+            proof_data: Span<felt252>
+        ) {
+            // TODO: Implement secp256k1 signature verification
+            // For now, stub with basic check
+            //
+            // Expected proof_data format: [r_low, r_high, s_low, s_high]
+            // 1. Reconstruct message hash (hash of player address)
+            // 2. Recover signer from signature
+            // 3. Verify recovered address matches solution_address
+
+            assert(proof_data.len() >= 4, 'Invalid signature format');
+
+            // STUB: Always pass for now
+            // TODO: Implement actual signature verification in next phase
+            // See IMPL.md section 4.2 for full implementation details
         }
     }
 
     // Empty initialization function - required by Dojo framework
-    // Authorization is handled by Dojo's permission system, not custom ownership
     fn dojo_init(ref self: ContractState) {
         // No initialization needed - configuration is done via admin functions
-        // with permissions managed by Dojo's auth system
     }
 }

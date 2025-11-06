@@ -1,6 +1,6 @@
 [package]
 cairo-version = "2.12.2"
-name = "ronin_quest"
+name = "focg_adventure"
 version = "0.1.0"
 edition = "2024_07"
 
@@ -14,14 +14,14 @@ deploy_sepolia = "./scripts/deploy_network.sh sepolia"
 deploy_mainnet = "./scripts/deploy_network.sh mainnet"
 
 [dependencies]
-dojo = "1.7.1"
+dojo = "1.8.0"
 starknet = "2.12.2"
 openzeppelin = "1.0.0"
 
 [[target.starknet-contract]]
 build-external-contracts = [
     "dojo::world::world_contract::world",
-    "ronin_quest::token::pact::RoninPact"
+    "focg_adventure::token::map::AdventureMap"
 ]
 
 [tool.scarb]
@@ -29,8 +29,8 @@ allow-prebuilt-plugins = ["dojo_cairo_macros"]
 
 [dev-dependencies]
 cairo_test = "2.12.2"
-dojo_snf_test = "1.7.1"
-snforge_std = "0.48.1"
+dojo_snf_test = "1.8.0"
+snforge_std = "0.51.2"
 
 [profile.sepolia]
 

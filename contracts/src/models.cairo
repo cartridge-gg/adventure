@@ -1,16 +1,16 @@
 use starknet::ContractAddress;
 
-// Pact NFT contract address and configuration
+// Adventure Map NFT contract address and configuration
 #[derive(Drop, Serde)]
 #[dojo::model]
-pub struct RoninPact {
+pub struct AdventureConfig {
     #[key]
     pub game_id: u32, // Always 0 for singleton
-    pub pact: ContractAddress,
-    pub time_lock: u64,
+    pub nft_contract: ContractAddress,
+    pub total_levels: u8,
 }
 
-// Player's last minted token_id
+// Player's minted token_id
 #[derive(Drop, Serde)]
 #[dojo::model]
 pub struct PlayerToken {
@@ -19,20 +19,14 @@ pub struct PlayerToken {
     pub token_id: u256,
 }
 
-// Whitelisted game collection
+// Level configuration (for each level 1-N)
 #[derive(Drop, Serde)]
 #[dojo::model]
-pub struct RoninGame {
+pub struct LevelConfig {
     #[key]
-    pub contract_address: ContractAddress,
+    pub level_number: u8,
+    pub level_type: felt252, // 'challenge' or 'puzzle'
     pub active: bool,
-}
-
-// Quiz answer hashes
-#[derive(Drop, Serde)]
-#[dojo::model]
-pub struct RoninAnswers {
-    #[key]
-    pub game_id: u32, // Always 0 for singleton
-    pub answers: Array<felt252>,
+    pub verifier: ContractAddress, // Used for challenge levels
+    pub solution_address: ContractAddress, // Used for puzzle levels
 }

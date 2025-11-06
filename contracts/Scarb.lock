@@ -3,26 +3,36 @@ version = 1
 
 [[package]]
 name = "dojo"
-version = "1.7.1"
+version = "1.8.0"
 source = "registry+https://scarbs.xyz/"
-checksum = "sha256:b792d9c526269f5265dd89f063da5db8daebb461f2dec2cdb712f420187b39a8"
+checksum = "sha256:a9c35305a81e68a49de85b8f07c1f8a93e27492c6b16c304d1f7961dcd5d350f"
 dependencies = [
  "dojo_cairo_macros",
 ]
 
 [[package]]
 name = "dojo_cairo_macros"
-version = "1.7.1"
+version = "1.8.0"
 source = "registry+https://scarbs.xyz/"
-checksum = "sha256:18059a9ac9ec2c0c708baad382728a99970b621b1eaab780fd9a8ec2dc975c98"
+checksum = "sha256:c4aa04037a0c5029b05b78229dae22bf02269b9912e8a8c12f8af34aa6b72051"
 
 [[package]]
 name = "dojo_snf_test"
-version = "1.7.1"
+version = "1.8.0"
 source = "registry+https://scarbs.xyz/"
-checksum = "sha256:ce2f31c7e45769aa8786eb8daf69295a3c90b96a82a7a1d13fa2c9d639d2038a"
+checksum = "sha256:7b6c91a5198e733ae5038c76dd7097497e7a03bd0a46270e091852faa1d59170"
 dependencies = [
  "dojo",
+ "snforge_std",
+]
+
+[[package]]
+name = "focg_adventure"
+version = "0.1.0"
+dependencies = [
+ "dojo",
+ "dojo_snf_test",
+ "openzeppelin",
  "snforge_std",
 ]
 
@@ -146,26 +156,16 @@ source = "registry+https://scarbs.xyz/"
 checksum = "sha256:fd348b31c4a4407add33adc3c2b8f26dca71dbd7431faaf726168f37a91db0c1"
 
 [[package]]
-name = "ronin_quest"
-version = "0.1.0"
-dependencies = [
- "dojo",
- "dojo_snf_test",
- "openzeppelin",
- "snforge_std",
-]
-
-[[package]]
 name = "snforge_scarb_plugin"
-version = "0.48.1"
+version = "0.51.2"
 source = "registry+https://scarbs.xyz/"
-checksum = "sha256:2dd27e8215eea8785b3930e9f452e11b429ca262b1c1fbb071bfc173b9ebc125"
+checksum = "sha256:7b94edb0a94b93915200275076c29ef8266f4b870ffda04360cf36bc3b5e67cc"
 
 [[package]]
 name = "snforge_std"
-version = "0.48.1"
+version = "0.51.2"
 source = "registry+https://scarbs.xyz/"
-checksum = "sha256:89f759fa685d48ed0ba7152d2ac2eb168da08dfa8b84b2bee96e203dc5b2413e"
+checksum = "sha256:d7287b7e9c826ee560788a7a9b808a2a0454977ac4111bd3c1bcb3c7c5f01040"
 dependencies = [
  "snforge_scarb_plugin",
 ]

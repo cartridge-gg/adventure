@@ -1,19 +1,18 @@
-// Standard ERC721 NFT contract for The Ronin's Pact
-// This contract stores player progress only
-// Game logic and configuration are handled by treasure_hunt.cairo
+// ============================================================================
+// Adventure Map NFT Contract
+// ============================================================================
+//
+// Standard ERC721 NFT contract for FOCG Adventure.
+// Stores player progress via bitmap (supports up to 256 levels).
+// Dynamic SVG metadata updates as levels are completed.
 
 use starknet::ContractAddress;
 
-#[derive(Copy, Drop, Serde, starknet::Store)]
-pub struct TrialProgress {
-    pub waza_complete: bool,
-    pub chi_complete: bool,
-    pub shin_complete: bool,
-}
-
 #[starknet::interface]
-pub trait IRoninPact<TContractState> {
-    // ERC721 functions (from OpenZeppelin)
+pub trait IAdventureMap<TContractState> {
+    // ========================================================================
+    // ERC721 Standard Functions
+    // ========================================================================
     fn name(self: @TContractState) -> ByteArray;
     fn symbol(self: @TContractState) -> ByteArray;
     fn token_uri(self: @TContractState, token_id: u256) -> ByteArray;
@@ -36,25 +35,30 @@ pub trait IRoninPact<TContractState> {
         self: @TContractState, owner: ContractAddress, operator: ContractAddress
     ) -> bool;
 
-    // Custom functions
-    fn mint(ref self: TContractState, recipient: ContractAddress, username: felt252) -> u256;
-    fn get_progress(self: @TContractState, token_id: u256) -> TrialProgress;
-    fn get_timestamp(self: @TContractState, token_id: u256) -> u64;
-    fn get_username(self: @TContractState, token_id: u256) -> felt252;
-    fn get_vow_hash(self: @TContractState, token_id: u256) -> u256;
+    // ========================================================================
+    // Custom Functions
+    // ========================================================================
 
-    // Trial completion functions (only callable by authorized minter contract)
-    fn complete_waza(ref self: TContractState, token_id: u256);
-    fn complete_chi(ref self: TContractState, token_id: u256);
-    fn complete_shin(ref self: TContractState, token_id: u256, vow_hash: u256);
+    // Minting (only callable by authorized minter - the Actions contract)
+    fn mint(ref self: TContractState, recipient: ContractAddress, username: felt252) -> u256;
+
+    // Level completion (only callable by authorized minter - the Actions contract)
+    fn complete_level(ref self: TContractState, token_id: u256, level_number: u8);
+
+    // View functions
+    fn get_progress(self: @TContractState, token_id: u256) -> u256; // Returns bitmap
+    fn get_username(self: @TContractState, token_id: u256) -> felt252;
+    fn get_timestamp(self: @TContractState, token_id: u256) -> u64;
 
     // Admin functions
     fn set_minter(ref self: TContractState, minter: ContractAddress);
     fn get_minter(self: @TContractState) -> ContractAddress;
+    fn set_total_levels(ref self: TContractState, total: u8);
+    fn get_total_levels(self: @TContractState) -> u8;
 }
 
 #[starknet::contract]
-pub mod RoninPact {
+pub mod AdventureMap {
     use openzeppelin::introspection::src5::SRC5Component;
     use openzeppelin::token::erc721::{ERC721Component, ERC721HooksEmptyImpl};
     use starknet::{ContractAddress, get_caller_address};
@@ -62,8 +66,7 @@ pub mod RoninPact {
         Map, StorageMapReadAccess, StorageMapWriteAccess,
         StoragePointerReadAccess, StoragePointerWriteAccess
     };
-    use super::TrialProgress;
-    use ronin_quest::token::svg;
+    use focg_adventure::token::svg;
 
     component!(path: ERC721Component, storage: erc721, event: ERC721Event);
     component!(path: SRC5Component, storage: src5, event: SRC5Event);
@@ -73,24 +76,24 @@ pub mod RoninPact {
     impl ERC721MetadataImpl = ERC721Component::ERC721MetadataImpl<ContractState>;
     impl ERC721InternalImpl = ERC721Component::InternalImpl<ContractState>;
 
-    // Bit flags for trial progress
-    const WAZA_BIT: u8 = 0x04; // 0b100
-    const CHI_BIT: u8 = 0x02;  // 0b010
-    const SHIN_BIT: u8 = 0x01; // 0b001
-
     #[storage]
     struct Storage {
         #[substorage(v0)]
         erc721: ERC721Component::Storage,
         #[substorage(v0)]
         src5: SRC5Component::Storage,
+
         owner: ContractAddress,
-        minter: ContractAddress,
+        minter: ContractAddress,            // Adventure Actions contract
         token_count: u256,
+
+        // Per-token data
         mint_timestamps: Map<u256, u64>,
-        minter_usernames: Map<u256, felt252>,
-        token_progress: Map<u256, u8>,
-        vow_hashes: Map<u256, u256>,
+        usernames: Map<u256, felt252>,
+        progress_bitmaps: Map<u256, u256>,  // Bitmap: bit N = level N complete
+
+        // Configuration
+        total_levels: u8,                    // e.g., 6
     }
 
     #[event]
@@ -103,15 +106,20 @@ pub mod RoninPact {
     }
 
     #[constructor]
-    fn constructor(ref self: ContractState, owner: ContractAddress) {
-        self.erc721.initializer("The Ronin's Pact", "RONIN", "");
+    fn constructor(ref self: ContractState, owner: ContractAddress, total_levels: u8) {
+        self.erc721.initializer("FOCG Adventure Map", "FOCG", "");
         self.owner.write(owner);
         self.minter.write(owner);
         self.token_count.write(0);
+        self.total_levels.write(total_levels);
     }
 
     #[abi(embed_v0)]
-    impl RoninPactImpl of super::IRoninPact<ContractState> {
+    impl AdventureMapImpl of super::IAdventureMap<ContractState> {
+        // ====================================================================
+        // ERC721 Standard Functions
+        // ====================================================================
+
         fn name(self: @ContractState) -> ByteArray {
             self.erc721.name()
         }
@@ -123,7 +131,8 @@ pub mod RoninPact {
         fn token_uri(self: @ContractState, token_id: u256) -> ByteArray {
             let progress = self.get_progress(token_id);
             let username = self.get_username(token_id);
-            svg::generate_svg(progress, username)
+            let total_levels = self.total_levels.read();
+            svg::generate_adventure_map_svg(progress, username, total_levels)
         }
 
         fn balance_of(self: @ContractState, account: ContractAddress) -> u256 {
@@ -170,6 +179,10 @@ pub mod RoninPact {
             self.erc721.is_approved_for_all(owner, operator)
         }
 
+        // ====================================================================
+        // Custom Functions
+        // ====================================================================
+
         fn mint(ref self: ContractState, recipient: ContractAddress, username: felt252) -> u256 {
             self.assert_minter();
 
@@ -179,80 +192,99 @@ pub mod RoninPact {
 
             // Mint the token to recipient and initialize progress
             self.erc721.mint(recipient, token_id);
-            self.token_progress.write(token_id, 0);
+            self.progress_bitmaps.write(token_id, 0);  // No levels complete yet
 
             // Store mint timestamp and username
             let mint_timestamp = starknet::get_block_timestamp();
             self.mint_timestamps.write(token_id, mint_timestamp);
-            self.minter_usernames.write(token_id, username);
+            self.usernames.write(token_id, username);
 
             token_id
         }
 
-        fn get_progress(self: @ContractState, token_id: u256) -> TrialProgress {
-            let progress = self.token_progress.read(token_id);
+        fn complete_level(ref self: ContractState, token_id: u256, level_number: u8) {
+            self.assert_minter();  // Only Actions contract can call
 
-            TrialProgress {
-                waza_complete: (progress & WAZA_BIT) != 0,
-                chi_complete: (progress & CHI_BIT) != 0,
-                shin_complete: (progress & SHIN_BIT) != 0,
-            }
+            // Read current progress
+            let progress = self.progress_bitmaps.read(token_id);
+
+            // Set bit for this level (using 1-indexed levels)
+            // Shift 1 left by level_number positions
+            let mask: u256 = 1_u256;
+            let level_u256: u256 = level_number.into();
+            let shifted_mask = mask * InternalImpl::pow2(level_u256);
+
+            let new_progress = progress | shifted_mask;
+
+            // Write updated progress
+            self.progress_bitmaps.write(token_id, new_progress);
+        }
+
+        fn get_progress(self: @ContractState, token_id: u256) -> u256 {
+            self.progress_bitmaps.read(token_id)
+        }
+
+        fn get_username(self: @ContractState, token_id: u256) -> felt252 {
+            self.usernames.read(token_id)
         }
 
         fn get_timestamp(self: @ContractState, token_id: u256) -> u64 {
             self.mint_timestamps.read(token_id)
         }
 
-        fn get_username(self: @ContractState, token_id: u256) -> felt252 {
-            self.minter_usernames.read(token_id)
-        }
-
-        fn get_vow_hash(self: @ContractState, token_id: u256) -> u256 {
-            self.vow_hashes.read(token_id)
-        }
-
-        fn complete_waza(ref self: ContractState, token_id: u256) {
-            self.complete_challenge(token_id, WAZA_BIT);
-        }
-
-        fn complete_chi(ref self: ContractState, token_id: u256) {
-            self.complete_challenge(token_id, CHI_BIT);
-        }
-
-        fn complete_shin(ref self: ContractState, token_id: u256, vow_hash: u256) {
-            self.vow_hashes.write(token_id, vow_hash);
-            self.complete_challenge(token_id, SHIN_BIT);
-        }
-
         fn set_minter(ref self: ContractState, minter: ContractAddress) {
-            self.assert_only_owner();
+            self.assert_owner();
             self.minter.write(minter);
         }
 
         fn get_minter(self: @ContractState) -> ContractAddress {
             self.minter.read()
         }
+
+        fn set_total_levels(ref self: ContractState, total: u8) {
+            self.assert_owner();
+            self.total_levels.write(total);
+        }
+
+        fn get_total_levels(self: @ContractState) -> u8 {
+            self.total_levels.read()
+        }
     }
+
+    // ========================================================================
+    // Internal Functions
+    // ========================================================================
 
     #[generate_trait]
     impl InternalImpl of InternalTrait {
-        fn assert_only_owner(self: @ContractState) {
+        fn assert_owner(self: @ContractState) {
             let caller = get_caller_address();
             let owner = self.owner.read();
-            assert(caller == owner, 'Only owner');
+            assert(caller == owner, 'Caller is not owner');
         }
 
         fn assert_minter(self: @ContractState) {
             let caller = get_caller_address();
             let minter = self.minter.read();
-            assert(caller == minter, 'Only minter');
+            assert(caller == minter, 'Caller is not minter');
         }
 
-        fn complete_challenge(ref self: ContractState, token_id: u256, challenge_bit: u8) {
-            self.assert_minter();
-
-            let progress = self.token_progress.read(token_id);
-            self.token_progress.write(token_id, progress | challenge_bit);
+        // Helper function to compute 2^n for bitmap shifting
+        // Since Cairo doesn't have a built-in shift operator for large shifts
+        fn pow2(n: u256) -> u256 {
+            if n == 0 {
+                return 1_u256;
+            }
+            let mut result: u256 = 1_u256;
+            let mut i: u256 = 0;
+            loop {
+                if i >= n {
+                    break;
+                }
+                result = result * 2_u256;
+                i += 1;
+            };
+            result
         }
     }
 }

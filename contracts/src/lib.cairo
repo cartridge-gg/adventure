@@ -5,8 +5,13 @@ pub mod systems {
 pub mod models;
 
 pub mod token {
-    pub mod pact;
+    pub mod map;
     pub mod svg;
+}
+
+pub mod verifiers {
+    pub mod interface;
+    pub mod minimum_score;
 }
 
 #[cfg(test)]

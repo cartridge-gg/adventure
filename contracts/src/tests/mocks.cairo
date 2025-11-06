@@ -3,6 +3,38 @@
 use starknet::ContractAddress;
 
 // ============================================================================
+// Mock Verifier - for testing level verification
+// ============================================================================
+
+#[starknet::interface]
+pub trait IMockVerifier<TContractState> {
+    fn verify(self: @TContractState, player: ContractAddress, proof_data: Span<felt252>) -> bool;
+}
+
+#[starknet::contract]
+pub mod MockVerifier {
+    use starknet::ContractAddress;
+    use starknet::storage::{StoragePointerReadAccess, StoragePointerWriteAccess};
+
+    #[storage]
+    struct Storage {
+        should_pass: bool,
+    }
+
+    #[constructor]
+    fn constructor(ref self: ContractState, owner: ContractAddress, should_pass: bool) {
+        self.should_pass.write(should_pass);
+    }
+
+    #[abi(embed_v0)]
+    impl MockVerifierImpl of super::IMockVerifier<ContractState> {
+        fn verify(self: @ContractState, player: ContractAddress, proof_data: Span<felt252>) -> bool {
+            self.should_pass.read()
+        }
+    }
+}
+
+// ============================================================================
 // Mock ERC721 - for testing game NFT ownership
 // ============================================================================
 
