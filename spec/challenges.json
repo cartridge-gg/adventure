@@ -1,0 +1,40 @@
+{
+  "challenges": [
+    {
+      "level": 1,
+      "name": "Death Mountain",
+      "game": "Death Mountain",
+      "description": "Survive the treacherous Death Mountain and reach the summit.",
+      "repository": "https://github.com/Provable-Games/death-mountain",
+      "verifier_type": "MinimumScoreVerifier",
+      "requirements": {
+        "minimum_score": 1000,
+        "description": "Reach a score of at least 1000 points"
+      }
+    },
+    {
+      "level": 3,
+      "name": "Numbers Challenge",
+      "game": "Nums",
+      "description": "Solve the numbers puzzle and achieve the target score.",
+      "repository": "https://github.com/cartridge-gg/nums",
+      "verifier_type": "MinimumScoreVerifier",
+      "requirements": {
+        "minimum_score": 500,
+        "description": "Complete the puzzle with at least 500 points"
+      }
+    },
+    {
+      "level": 5,
+      "name": "Glitch in the System",
+      "game": "Glitchbomb",
+      "description": "Navigate through the glitching digital realm and defuse the bomb.",
+      "repository": "https://github.com/l10labsxwinwin/glitchbomb",
+      "verifier_type": "MinimumScoreVerifier",
+      "requirements": {
+        "minimum_score": 750,
+        "description": "Defuse the bomb with at least 750 points"
+      }
+    }
+  ]
+}

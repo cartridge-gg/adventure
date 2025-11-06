@@ -1,5 +1,5 @@
 {
-  "quests": [
+  "puzzles": [
     {
       "level": 2,
       "name": "Discover the Hub",
@@ -19,9 +19,9 @@
     {
       "level": 6,
       "name": "Journey's End",
-      "description": "Complete the final quest and claim your treasure.",
+      "description": "Complete the final puzzle and claim your treasure.",
       "location": "Return to where your journey began, but look closer this time.",
-      "puzzle": "Combine all the clues from previous quests to solve the final puzzle.",
+      "puzzle": "Combine all the clues from previous puzzles to solve the final riddle.",
       "codeword": "CARTRIDGE"
     }
   ]
