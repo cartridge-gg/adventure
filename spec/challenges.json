@@ -2,38 +2,38 @@
   "challenges": [
     {
       "level": 1,
-      "name": "Death Mountain",
-      "game": "Death Mountain",
+      "game": "Loot Survivor 2",
       "description": "Survive the treacherous Death Mountain and reach the summit.",
-      "repository": "https://github.com/Provable-Games/death-mountain",
-      "verifier_type": "MinimumScoreVerifier",
-      "requirements": {
-        "minimum_score": 1000,
-        "description": "Reach a score of at least 1000 points"
+      "location": "https://lootsurvivor.io/",
+      "minimum_score": 50,
+      "contract_address": {
+        "mainnet": "0x0",
+        "sepolia": "0x0",
+        "katana": "0x0"
       }
     },
     {
       "level": 3,
-      "name": "Numbers Challenge",
       "game": "Nums",
       "description": "Solve the numbers puzzle and achieve the target score.",
-      "repository": "https://github.com/cartridge-gg/nums",
-      "verifier_type": "MinimumScoreVerifier",
-      "requirements": {
-        "minimum_score": 500,
-        "description": "Complete the puzzle with at least 500 points"
+      "location": "https://nums-ebon.vercel.app/",
+      "minimum_score": 200,
+      "contract_address": {
+        "mainnet": "0x0",
+        "sepolia": "0x0",
+        "katana": "0x0"
       }
     },
     {
       "level": 5,
-      "name": "Glitch in the System",
-      "game": "Glitchbomb",
-      "description": "Navigate through the glitching digital realm and defuse the bomb.",
-      "repository": "https://github.com/l10labsxwinwin/glitchbomb",
-      "verifier_type": "MinimumScoreVerifier",
-      "requirements": {
-        "minimum_score": 750,
-        "description": "Defuse the bomb with at least 750 points"
+      "game": "Dope Wars",
+      "description": "Buy low, sell high, and make a profit.",
+      "location": "https://rollyourown.preview.cartridge.gg/",
+      "minimum_score": 200,
+      "contract_address": {
+        "mainnet": "0x0",
+        "sepolia": "0x0",
+        "katana": "0x0"
       }
     }
   ]

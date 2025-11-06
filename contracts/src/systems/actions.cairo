@@ -14,7 +14,8 @@ pub trait IAdventureActions<T> {
     // Player Actions
     // ========================================================================
     fn mint(ref self: T, username: felt252);
-    fn complete_level(ref self: T, token_id: u256, level_number: u8, proof_data: Span<felt252>);
+    fn complete_challenge_level(ref self: T, map_id: u256, level_number: u8, game_id: u64);
+    fn complete_puzzle_level(ref self: T, map_id: u256, level_number: u8, signature: Span<felt252>);
 
     // ========================================================================
     // View Functions
@@ -105,27 +106,27 @@ pub mod actions {
             world.emit_event(@MapMinted { player: caller, token_id });
         }
 
-        fn complete_level(ref self: ContractState, token_id: u256, level_number: u8, proof_data: Span<felt252>) {
+        fn complete_challenge_level(ref self: ContractState, map_id: u256, level_number: u8, game_id: u64) {
             let caller = get_caller_address();
             let mut world = self.world_default();
 
             // 1. Get NFT contract and verify ownership
             let config: AdventureConfig = world.read_model(CONFIG_KEY);
             let nft_erc721 = IERC721Dispatcher { contract_address: config.nft_contract };
-            let owner = nft_erc721.owner_of(token_id);
+            let owner = nft_erc721.owner_of(map_id);
             assert(owner == caller, 'Not token owner');
 
             // 2. Get level configuration
             let level_config: LevelConfig = world.read_model(level_number);
             assert(level_config.active, 'Level not active');
+            assert(level_config.level_type == 'challenge', 'Not a challenge level');
             assert(level_number >= 1 && level_number <= config.total_levels, 'Invalid level');
 
             // 3. Check sequential progression (must complete level N-1 first)
             let nft = IAdventureMapDispatcher { contract_address: config.nft_contract };
-            let progress = nft.get_progress(token_id);
+            let progress = nft.get_progress(map_id);
 
             if level_number > 1 {
-                // Check if previous level is complete
                 let prev_level_mask: u256 = self.compute_level_mask(level_number - 1);
                 assert((progress & prev_level_mask) != 0, 'Must complete previous level');
             }
@@ -136,24 +137,74 @@ pub mod actions {
                 return; // Already complete, no-op
             }
 
-            // 5. Verify based on level type
-            if level_config.level_type == 'challenge' {
-                self.verify_challenge_level(caller, level_config.game_contract, level_config.minimum_score, proof_data);
-            } else if level_config.level_type == 'puzzle' {
-                self.verify_puzzle_level(caller, level_config.solution_address, proof_data);
-            } else {
-                core::panic_with_felt252('Invalid level type');
-            }
+            // 5. Verify via Denshokan interface
+            let game = IMinigameTokenDataDispatcher { contract_address: level_config.game_contract };
+            let is_game_over = game.game_over(game_id);
+            assert(is_game_over, 'Game not completed');
+
+            let score = game.score(game_id);
+            assert(score >= level_config.minimum_score, 'Score too low');
 
             // 6. Mark level complete in NFT contract
-            nft.complete_level(token_id, level_number);
+            nft.complete_level(map_id, level_number);
 
             // 7. Emit event
             world.emit_event(@LevelCompleted {
-                token_id,
+                token_id: map_id,
                 player: caller,
                 level_number,
-                level_type: level_config.level_type
+                level_type: 'challenge'
+            });
+        }
+
+        fn complete_puzzle_level(ref self: ContractState, map_id: u256, level_number: u8, signature: Span<felt252>) {
+            let caller = get_caller_address();
+            let mut world = self.world_default();
+
+            // 1. Get NFT contract and verify ownership
+            let config: AdventureConfig = world.read_model(CONFIG_KEY);
+            let nft_erc721 = IERC721Dispatcher { contract_address: config.nft_contract };
+            let owner = nft_erc721.owner_of(map_id);
+            assert(owner == caller, 'Not token owner');
+
+            // 2. Get level configuration
+            let level_config: LevelConfig = world.read_model(level_number);
+            assert(level_config.active, 'Level not active');
+            assert(level_config.level_type == 'puzzle', 'Not a puzzle level');
+            assert(level_number >= 1 && level_number <= config.total_levels, 'Invalid level');
+
+            // 3. Check sequential progression (must complete level N-1 first)
+            let nft = IAdventureMapDispatcher { contract_address: config.nft_contract };
+            let progress = nft.get_progress(map_id);
+
+            if level_number > 1 {
+                let prev_level_mask: u256 = self.compute_level_mask(level_number - 1);
+                assert((progress & prev_level_mask) != 0, 'Must complete previous level');
+            }
+
+            // 4. Check if already complete (idempotency)
+            let level_mask: u256 = self.compute_level_mask(level_number);
+            if (progress & level_mask) != 0 {
+                return; // Already complete, no-op
+            }
+
+            // 5. Verify signature (codeword-based)
+            assert(signature.len() >= 4, 'Invalid signature format');
+            // TODO: Implement secp256k1 signature verification
+            // Expected signature format: [r_low, r_high, s_low, s_high]
+            // 1. Reconstruct message hash (hash of player address)
+            // 2. Recover signer from signature
+            // 3. Verify recovered address matches solution_address
+
+            // 6. Mark level complete in NFT contract
+            nft.complete_level(map_id, level_number);
+
+            // 7. Emit event
+            world.emit_event(@LevelCompleted {
+                token_id: map_id,
+                player: caller,
+                level_number,
+                level_type: 'puzzle'
             });
         }
 
@@ -256,65 +307,6 @@ pub mod actions {
             result
         }
 
-        // ====================================================================
-        // Verification Logic
-        // ====================================================================
-
-        fn verify_challenge_level(
-            self: @ContractState,
-            player: ContractAddress,
-            game_contract: ContractAddress,
-            minimum_score: u32,
-            proof_data: Span<felt252>
-        ) {
-            // proof_data format: [game_token_id_low, game_token_id_high]
-            // The game_token_id is the NFT token ID from the game's Denshokan contract
-            assert(proof_data.len() >= 2, 'Invalid proof data format');
-
-            // Reconstruct game_token_id from proof_data
-            let game_token_id_low: u64 = (*proof_data.at(0)).try_into().expect('Invalid token_id_low');
-            let game_token_id_high: u64 = (*proof_data.at(1)).try_into().expect('Invalid token_id_high');
-
-            // For now, we'll use the low part as the token_id (assuming it fits in u64)
-            // TODO: Support full u256 token IDs if needed
-            let game_token_id: u64 = game_token_id_low;
-
-            // Query the game contract via Denshokan interface
-            let game = IMinigameTokenDataDispatcher { contract_address: game_contract };
-
-            // Check that the game is over (completed)
-            let is_game_over = game.game_over(game_token_id);
-            assert(is_game_over, 'Game not completed');
-
-            // Check that the score meets the minimum requirement
-            let score = game.score(game_token_id);
-            assert(score >= minimum_score, 'Score too low');
-
-            // TODO: Verify that the player owns the game token
-            // This requires checking the game's ERC721 ownership
-            // For now, we trust that the player is providing their own game_token_id
-        }
-
-        fn verify_puzzle_level(
-            self: @ContractState,
-            player: ContractAddress,
-            solution_address: ContractAddress,
-            proof_data: Span<felt252>
-        ) {
-            // TODO: Implement secp256k1 signature verification
-            // For now, stub with basic check
-            //
-            // Expected proof_data format: [r_low, r_high, s_low, s_high]
-            // 1. Reconstruct message hash (hash of player address)
-            // 2. Recover signer from signature
-            // 3. Verify recovered address matches solution_address
-
-            assert(proof_data.len() >= 4, 'Invalid signature format');
-
-            // STUB: Always pass for now
-            // TODO: Implement actual signature verification in next phase
-            // See IMPL.md section 4.2 for full implementation details
-        }
     }
 
     // Empty initialization function - required by Dojo framework

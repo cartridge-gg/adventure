@@ -227,9 +227,9 @@ fn test_complete_challenge_level() {
     let mock_game = IMockGameAdminDispatcher { contract_address: game_address };
 
     // Setup: Configure a game token with passing score and game_over status
-    let game_token_id: u64 = 1;
-    mock_game.set_score(game_token_id, 1500); // Above minimum
-    mock_game.set_game_over(game_token_id, true);
+    let game_id: u64 = 1;
+    mock_game.set_score(game_id, 1500); // Above minimum
+    mock_game.set_game_over(game_id, true);
 
     start_cheat_caller_address(actions_address, owner());
     actions.set_nft_contract(nft_address, TOTAL_LEVELS);
@@ -245,9 +245,8 @@ fn test_complete_challenge_level() {
     start_cheat_caller_address(actions_address, player_addr);
     actions.mint('testuser');
 
-    // Complete level 1 with game_token_id as proof
-    let proof_data = array![game_token_id.into(), 0].span(); // [token_id_low, token_id_high]
-    actions.complete_level(0, 1, proof_data);
+    // Complete level 1 with game_id
+    actions.complete_challenge_level(0, 1, game_id);
     stop_cheat_caller_address(actions_address);
 
     // Verify level 1 is complete
@@ -279,8 +278,8 @@ fn test_complete_puzzle_level() {
     actions.mint('testuser');
 
     // Complete level 1 (puzzle) - stub verification always passes
-    let proof_data = array![1, 2, 3, 4].span(); // Mock signature
-    actions.complete_level(0, 1, proof_data);
+    let signature = array![1, 2, 3, 4].span(); // Mock signature
+    actions.complete_puzzle_level(0, 1, signature);
     stop_cheat_caller_address(actions_address);
 
     // Verify level 1 is complete
@@ -315,8 +314,7 @@ fn test_sequential_progression_enforced() {
     actions.mint('testuser');
 
     // Try to complete level 2 without completing level 1 - should fail
-    let proof_data = array![1, 0].span();
-    actions.complete_level(0, 2, proof_data);
+    actions.complete_challenge_level(0, 2, 1);
 }
 
 #[test]
@@ -345,8 +343,7 @@ fn test_inactive_level_fails() {
     actions.mint('testuser');
 
     // Try to complete inactive level - should fail
-    let proof_data = array![1, 0].span();
-    actions.complete_level(0, 1, proof_data);
+    actions.complete_challenge_level(0, 1, 1);
 }
 
 #[test]
@@ -378,8 +375,7 @@ fn test_non_owner_cannot_complete() {
     // Other user tries to complete player's level - should fail
     let other_addr = other();
     start_cheat_caller_address(actions_address, other_addr);
-    let proof_data = array![1, 0].span();
-    actions.complete_level(0, 1, proof_data);
+    actions.complete_challenge_level(0, 1, 1);
 }
 
 // ============================================================================
@@ -464,21 +460,19 @@ fn test_full_lifecycle() {
     let progress = nft.get_progress(0);
     assert(progress == 0, 'Initial progress wrong');
 
-    // Complete level 1
-    let proof_data = array![1, 0].span();
-    actions.complete_level(0, 1, proof_data);
+    // Complete level 1 (challenge)
+    actions.complete_challenge_level(0, 1, 1);
     let progress = nft.get_progress(0);
     assert((progress & 2) != 0, 'Level 1 not complete');
 
-    // Complete level 2
-    let proof_data = array![1, 2, 3, 4].span();
-    actions.complete_level(0, 2, proof_data);
+    // Complete level 2 (puzzle)
+    let signature = array![1, 2, 3, 4].span();
+    actions.complete_puzzle_level(0, 2, signature);
     let progress = nft.get_progress(0);
     assert((progress & 4) != 0, 'Level 2 not complete');
 
-    // Complete level 3
-    let proof_data = array![3, 0].span();
-    actions.complete_level(0, 3, proof_data);
+    // Complete level 3 (challenge)
+    actions.complete_challenge_level(0, 3, 3);
     let progress = nft.get_progress(0);
     assert((progress & 8) != 0, 'Level 3 not complete');
 
