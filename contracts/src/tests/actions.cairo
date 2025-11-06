@@ -17,6 +17,7 @@ use openzeppelin::token::erc721::interface::{IERC721Dispatcher, IERC721Dispatche
 use focg_adventure::systems::actions::{IAdventureActionsDispatcher, IAdventureActionsDispatcherTrait};
 use focg_adventure::models::{AdventureConfig, PlayerToken, LevelConfig};
 use focg_adventure::token::map::{IAdventureMapDispatcher, IAdventureMapDispatcherTrait};
+use focg_adventure::tests::mocks::{IMockGameAdminDispatcher, IMockGameAdminDispatcherTrait};
 
 // ============================================================================
 // Test Helpers
@@ -69,10 +70,10 @@ fn deploy_adventure_map(owner: ContractAddress, total_levels: u8) -> ContractAdd
     nft_address
 }
 
-fn deploy_mock_verifier(owner: ContractAddress, should_pass: bool) -> ContractAddress {
-    let contract = declare("MockVerifier").unwrap().contract_class();
-    let (verifier_address, _) = contract.deploy(@array![owner.into(), should_pass.into()]).unwrap();
-    verifier_address
+fn deploy_mock_game() -> ContractAddress {
+    let contract = declare("MockGame").unwrap().contract_class();
+    let (game_address, _) = contract.deploy(@array![]).unwrap();
+    game_address
 }
 
 // World setup with initialized contracts
@@ -118,15 +119,16 @@ fn test_set_nft_contract() {
 fn test_set_level_config() {
     let (world, actions, actions_address) = setup_world();
 
-    // Deploy mock verifier
-    let verifier_address = deploy_mock_verifier(owner(), true);
+    // Deploy mock game
+    let game_address = deploy_mock_game();
 
     // Configure level 1 as a challenge level
     start_cheat_caller_address(actions_address, owner());
     actions.set_level_config(
         1, // level_number
         'challenge', // level_type
-        verifier_address, // verifier
+        game_address, // game_contract
+        1000, // minimum_score
         0.try_into().unwrap(), // solution_address (not used for challenges)
         true // active
     );
@@ -137,7 +139,8 @@ fn test_set_level_config() {
     assert(level_config.level_number == 1, 'Level number wrong');
     assert(level_config.level_type == 'challenge', 'Level type wrong');
     assert(level_config.active == true, 'Level not active');
-    assert(level_config.verifier == verifier_address, 'Verifier wrong');
+    assert(level_config.game_contract == game_address, 'Game contract wrong');
+    assert(level_config.minimum_score == 1000, 'Min score wrong');
 }
 
 // ============================================================================
@@ -220,11 +223,17 @@ fn test_complete_challenge_level() {
     // Deploy and configure contracts
     let nft_address = deploy_adventure_map(owner(), TOTAL_LEVELS);
     let nft = IAdventureMapDispatcher { contract_address: nft_address };
-    let verifier_address = deploy_mock_verifier(owner(), true);
+    let game_address = deploy_mock_game();
+    let mock_game = IMockGameAdminDispatcher { contract_address: game_address };
+
+    // Setup: Configure a game token with passing score and game_over status
+    let game_token_id: u64 = 1;
+    mock_game.set_score(game_token_id, 1500); // Above minimum
+    mock_game.set_game_over(game_token_id, true);
 
     start_cheat_caller_address(actions_address, owner());
     actions.set_nft_contract(nft_address, TOTAL_LEVELS);
-    actions.set_level_config(1, 'challenge', verifier_address, 0.try_into().unwrap(), true);
+    actions.set_level_config(1, 'challenge', game_address, 1000, 0.try_into().unwrap(), true);
     stop_cheat_caller_address(actions_address);
 
     start_cheat_caller_address(nft_address, owner());
@@ -236,8 +245,8 @@ fn test_complete_challenge_level() {
     start_cheat_caller_address(actions_address, player_addr);
     actions.mint('testuser');
 
-    // Complete level 1
-    let proof_data = array![1000].span(); // Mock proof data
+    // Complete level 1 with game_token_id as proof
+    let proof_data = array![game_token_id.into(), 0].span(); // [token_id_low, token_id_high]
     actions.complete_level(0, 1, proof_data);
     stop_cheat_caller_address(actions_address);
 
@@ -257,7 +266,7 @@ fn test_complete_puzzle_level() {
 
     start_cheat_caller_address(actions_address, owner());
     actions.set_nft_contract(nft_address, TOTAL_LEVELS);
-    actions.set_level_config(1, 'puzzle', 0.try_into().unwrap(), 0x123.try_into().unwrap(), true);
+    actions.set_level_config(1, 'puzzle', 0.try_into().unwrap(), 0, 0x123.try_into().unwrap(), true);
     stop_cheat_caller_address(actions_address);
 
     start_cheat_caller_address(nft_address, owner());
@@ -288,12 +297,12 @@ fn test_sequential_progression_enforced() {
     // Deploy and configure contracts
     let nft_address = deploy_adventure_map(owner(), TOTAL_LEVELS);
     let nft = IAdventureMapDispatcher { contract_address: nft_address };
-    let verifier_address = deploy_mock_verifier(owner(), true);
+    let game_address = deploy_mock_game();
 
     start_cheat_caller_address(actions_address, owner());
     actions.set_nft_contract(nft_address, TOTAL_LEVELS);
-    actions.set_level_config(1, 'challenge', verifier_address, 0.try_into().unwrap(), true);
-    actions.set_level_config(2, 'challenge', verifier_address, 0.try_into().unwrap(), true);
+    actions.set_level_config(1, 'challenge', game_address, 1000, 0.try_into().unwrap(), true);
+    actions.set_level_config(2, 'challenge', game_address, 1000, 0.try_into().unwrap(), true);
     stop_cheat_caller_address(actions_address);
 
     start_cheat_caller_address(nft_address, owner());
@@ -306,7 +315,7 @@ fn test_sequential_progression_enforced() {
     actions.mint('testuser');
 
     // Try to complete level 2 without completing level 1 - should fail
-    let proof_data = array![1000].span();
+    let proof_data = array![1, 0].span();
     actions.complete_level(0, 2, proof_data);
 }
 
@@ -319,11 +328,11 @@ fn test_inactive_level_fails() {
     // Deploy and configure contracts
     let nft_address = deploy_adventure_map(owner(), TOTAL_LEVELS);
     let nft = IAdventureMapDispatcher { contract_address: nft_address };
-    let verifier_address = deploy_mock_verifier(owner(), true);
+    let game_address = deploy_mock_game();
 
     start_cheat_caller_address(actions_address, owner());
     actions.set_nft_contract(nft_address, TOTAL_LEVELS);
-    actions.set_level_config(1, 'challenge', verifier_address, 0.try_into().unwrap(), false); // inactive
+    actions.set_level_config(1, 'challenge', game_address, 1000, 0.try_into().unwrap(), false); // inactive
     stop_cheat_caller_address(actions_address);
 
     start_cheat_caller_address(nft_address, owner());
@@ -336,7 +345,7 @@ fn test_inactive_level_fails() {
     actions.mint('testuser');
 
     // Try to complete inactive level - should fail
-    let proof_data = array![1000].span();
+    let proof_data = array![1, 0].span();
     actions.complete_level(0, 1, proof_data);
 }
 
@@ -349,11 +358,11 @@ fn test_non_owner_cannot_complete() {
     // Deploy and configure contracts
     let nft_address = deploy_adventure_map(owner(), TOTAL_LEVELS);
     let nft = IAdventureMapDispatcher { contract_address: nft_address };
-    let verifier_address = deploy_mock_verifier(owner(), true);
+    let game_address = deploy_mock_game();
 
     start_cheat_caller_address(actions_address, owner());
     actions.set_nft_contract(nft_address, TOTAL_LEVELS);
-    actions.set_level_config(1, 'challenge', verifier_address, 0.try_into().unwrap(), true);
+    actions.set_level_config(1, 'challenge', game_address, 1000, 0.try_into().unwrap(), true);
     stop_cheat_caller_address(actions_address);
 
     start_cheat_caller_address(nft_address, owner());
@@ -369,7 +378,7 @@ fn test_non_owner_cannot_complete() {
     // Other user tries to complete player's level - should fail
     let other_addr = other();
     start_cheat_caller_address(actions_address, other_addr);
-    let proof_data = array![1000].span();
+    let proof_data = array![1, 0].span();
     actions.complete_level(0, 1, proof_data);
 }
 
@@ -418,21 +427,28 @@ fn test_view_functions() {
 // ============================================================================
 
 #[test]
-#[available_gas(l1_gas: 0, l1_data_gas: 12000, l2_gas: 25000000)]
+#[available_gas(l1_gas: 0, l1_data_gas: 12000, l2_gas: 30000000)]
 fn test_full_lifecycle() {
     let (_world, actions, actions_address) = setup_world();
 
     // Deploy and configure contracts
     let nft_address = deploy_adventure_map(owner(), TOTAL_LEVELS);
     let nft = IAdventureMapDispatcher { contract_address: nft_address };
-    let verifier_address = deploy_mock_verifier(owner(), true);
+    let game_address = deploy_mock_game();
+    let mock_game = IMockGameAdminDispatcher { contract_address: game_address };
+
+    // Setup game tokens
+    mock_game.set_score(1, 1500);
+    mock_game.set_game_over(1, true);
+    mock_game.set_score(3, 2000);
+    mock_game.set_game_over(3, true);
 
     start_cheat_caller_address(actions_address, owner());
     actions.set_nft_contract(nft_address, TOTAL_LEVELS);
     // Configure 3 levels
-    actions.set_level_config(1, 'challenge', verifier_address, 0.try_into().unwrap(), true);
-    actions.set_level_config(2, 'puzzle', 0.try_into().unwrap(), 0x123.try_into().unwrap(), true);
-    actions.set_level_config(3, 'challenge', verifier_address, 0.try_into().unwrap(), true);
+    actions.set_level_config(1, 'challenge', game_address, 1000, 0.try_into().unwrap(), true);
+    actions.set_level_config(2, 'puzzle', 0.try_into().unwrap(), 0, 0x123.try_into().unwrap(), true);
+    actions.set_level_config(3, 'challenge', game_address, 1000, 0.try_into().unwrap(), true);
     stop_cheat_caller_address(actions_address);
 
     start_cheat_caller_address(nft_address, owner());
@@ -449,7 +465,7 @@ fn test_full_lifecycle() {
     assert(progress == 0, 'Initial progress wrong');
 
     // Complete level 1
-    let proof_data = array![1000].span();
+    let proof_data = array![1, 0].span();
     actions.complete_level(0, 1, proof_data);
     let progress = nft.get_progress(0);
     assert((progress & 2) != 0, 'Level 1 not complete');
@@ -461,7 +477,7 @@ fn test_full_lifecycle() {
     assert((progress & 4) != 0, 'Level 2 not complete');
 
     // Complete level 3
-    let proof_data = array![1000].span();
+    let proof_data = array![3, 0].span();
     actions.complete_level(0, 3, proof_data);
     let progress = nft.get_progress(0);
     assert((progress & 8) != 0, 'Level 3 not complete');

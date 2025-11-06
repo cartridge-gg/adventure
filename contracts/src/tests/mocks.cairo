@@ -3,33 +3,54 @@
 use starknet::ContractAddress;
 
 // ============================================================================
-// Mock Verifier - for testing level verification
+// MockGame - Mock Denshokan Game for testing
 // ============================================================================
+//
+// Implements IMinigameTokenData interface for testing challenge level verification
+
+use focg_adventure::verifiers::interface::IMinigameTokenData;
 
 #[starknet::interface]
-pub trait IMockVerifier<TContractState> {
-    fn verify(self: @TContractState, player: ContractAddress, proof_data: Span<felt252>) -> bool;
+pub trait IMockGameAdmin<TContractState> {
+    fn set_score(ref self: TContractState, token_id: u64, score: u32);
+    fn set_game_over(ref self: TContractState, token_id: u64, is_over: bool);
 }
 
 #[starknet::contract]
-pub mod MockVerifier {
-    use starknet::ContractAddress;
-    use starknet::storage::{StoragePointerReadAccess, StoragePointerWriteAccess};
+pub mod MockGame {
+    use super::{IMinigameTokenData, IMockGameAdmin};
+    use starknet::storage::{Map, StorageMapReadAccess, StorageMapWriteAccess};
 
     #[storage]
     struct Storage {
-        should_pass: bool,
+        scores: Map<u64, u32>,
+        game_over: Map<u64, bool>,
     }
 
     #[constructor]
-    fn constructor(ref self: ContractState, owner: ContractAddress, should_pass: bool) {
-        self.should_pass.write(should_pass);
+    fn constructor(ref self: ContractState) {
+        // No initialization needed
     }
 
     #[abi(embed_v0)]
-    impl MockVerifierImpl of super::IMockVerifier<ContractState> {
-        fn verify(self: @ContractState, player: ContractAddress, proof_data: Span<felt252>) -> bool {
-            self.should_pass.read()
+    impl MockGameAdminImpl of IMockGameAdmin<ContractState> {
+        fn set_score(ref self: ContractState, token_id: u64, score: u32) {
+            self.scores.write(token_id, score);
+        }
+
+        fn set_game_over(ref self: ContractState, token_id: u64, is_over: bool) {
+            self.game_over.write(token_id, is_over);
+        }
+    }
+
+    #[abi(embed_v0)]
+    impl MinigameTokenDataImpl of IMinigameTokenData<ContractState> {
+        fn score(self: @ContractState, token_id: u64) -> u32 {
+            self.scores.read(token_id)
+        }
+
+        fn game_over(self: @ContractState, token_id: u64) -> bool {
+            self.game_over.read(token_id)
         }
     }
 }

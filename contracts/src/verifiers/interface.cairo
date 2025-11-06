@@ -1,22 +1,29 @@
 // ============================================================================
-// ILevelVerifier - Interface for Game Level Verification
+// Denshokan Interface - Game Token Data Queries
 // ============================================================================
 //
-// This trait defines the interface that all game verifiers must implement.
-// Each game can have its own custom verification logic (e.g., score threshold,
-// achievement unlock, NFT ownership, etc.)
-
-use starknet::ContractAddress;
+// This interface matches the Denshokan standard for querying game state.
+// All FOCG games implementing Denshokan will expose these methods.
+//
+// See: contracts/DENSHOKAN.md for full specification
 
 #[starknet::interface]
-pub trait ILevelVerifier<T> {
-    /// Verify that a player has completed the game challenge
+pub trait IMinigameTokenData<T> {
+    /// Returns the current score/progress for a game token
     ///
     /// # Arguments
-    /// * `player` - The player's address
-    /// * `proof_data` - Game-specific proof data (format varies by verifier)
+    /// * `token_id` - The game token ID
     ///
     /// # Returns
-    /// * `bool` - true if verification passes, false otherwise
-    fn verify(self: @T, player: ContractAddress, proof_data: Span<felt252>) -> bool;
+    /// * `u32` - The score/progress value
+    fn score(self: @T, token_id: u64) -> u32;
+
+    /// Returns whether the game has ended
+    ///
+    /// # Arguments
+    /// * `token_id` - The game token ID
+    ///
+    /// # Returns
+    /// * `bool` - true if game is over, false otherwise
+    fn game_over(self: @T, token_id: u64) -> bool;
 }

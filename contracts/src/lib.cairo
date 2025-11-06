@@ -11,7 +11,7 @@ pub mod token {
 
 pub mod verifiers {
     pub mod interface;
-    pub mod minimum_score;
+    pub mod mock_game;
 }
 
 #[cfg(test)]
