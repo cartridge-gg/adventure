@@ -289,6 +289,71 @@ export async function mockVerifyCodeword(
   return { success: false, error: 'Incorrect codeword' };
 }
 
+/**
+ * Complete puzzle level with cryptographic signature
+ * This uses real signing utilities but mocks the contract call
+ */
+export async function mockCompletePuzzleLevel(
+  tokenId: string,
+  levelNumber: number,
+  signature: string[],
+  mockResponse?: { success: boolean; error?: string }
+): Promise<{ success: boolean; error?: string; txHash?: string }> {
+  await mockDelay();
+
+  console.log('[MOCK] Complete puzzle level with signature:', {
+    tokenId,
+    levelNumber,
+    signature
+  });
+
+  // In mock mode, assume signature is valid and complete the level
+  if (mockResponse) {
+    if (mockResponse.success) {
+      mockState.levelsCompleted.add(levelNumber);
+      return { success: true, txHash: generateMockTxHash() };
+    } else {
+      return { success: false, error: mockResponse.error };
+    }
+  }
+
+  // Validate signature format
+  if (!signature || signature.length !== 2) {
+    return { success: false, error: 'Invalid signature format' };
+  }
+
+  // In mock mode, complete the level
+  mockState.levelsCompleted.add(levelNumber);
+  return { success: true, txHash: generateMockTxHash() };
+}
+
+/**
+ * Wrapper for completing puzzle level that can switch between mock and real
+ * This will be updated to use real contract calls when USE_MOCK_MODE = false
+ */
+export async function completePuzzleLevelWrapper(
+  account: any, // Account from starknet-react
+  tokenId: string,
+  levelNumber: number,
+  signature: string[]
+): Promise<{ success: boolean; error?: string; txHash?: string }> {
+  if (USE_MOCK_MODE) {
+    return mockCompletePuzzleLevel(tokenId, levelNumber, signature);
+  }
+
+  // Real contract call would go here
+  // For now, return error if not in mock mode
+  console.error('[Contract] Real contract calls not yet configured');
+  return {
+    success: false,
+    error: 'Real contract calls not yet configured. Please set USE_MOCK_MODE = true'
+  };
+
+  // Future implementation:
+  // import { completePuzzleLevel } from './contractCalls';
+  // return completePuzzleLevel(account, tokenId, levelNumber, signature);
+}
+
 // ============================================================================
 // EXPORT STATE FOR DEBUGGING
 // ============================================================================

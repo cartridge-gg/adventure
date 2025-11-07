@@ -7,14 +7,17 @@
 
 import { useState } from 'react';
 import { IRLQuestLevelProps } from '../lib/adventureTypes';
-import { mockVerifyCodeword, USE_MOCK_MODE } from '../lib/mock';
+import { mockCompletePuzzleLevel, USE_MOCK_MODE } from '../lib/mock';
 import { ADVENTURE_TEXT } from '../lib/adventureConfig';
+import { usePuzzleSigning } from '../hooks/usePuzzleSigning';
 
 export function IRLQuestLevel({ level, status, tokenId, onComplete }: IRLQuestLevelProps) {
   const [codeword, setCodeword] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
+
+  const { generateSignature, playerAddress } = usePuzzleSigning();
 
   if (status === 'locked') {
     return (
@@ -46,15 +49,35 @@ export function IRLQuestLevel({ level, status, tokenId, onComplete }: IRLQuestLe
       return;
     }
 
+    if (!playerAddress) {
+      setError('Please connect your wallet');
+      return;
+    }
+
     setIsVerifying(true);
     setError(null);
 
     try {
-      const result = await mockVerifyCodeword(
+      // Generate cryptographic signature from codeword
+      const signature = generateSignature(codeword);
+
+      if (!signature) {
+        setError('Failed to generate signature. Please try again.');
+        setIsVerifying(false);
+        return;
+      }
+
+      console.log('[Puzzle] Generated signature:', {
+        codeword: codeword.substring(0, 3) + '***', // Don't log full codeword
+        signature,
+        playerAddress
+      });
+
+      // Submit to contract (or mock)
+      const result = await mockCompletePuzzleLevel(
         tokenId,
         level.levelNumber,
-        codeword,
-        level.expectedCodeword
+        signature
       );
 
       if (result.success) {
@@ -67,6 +90,7 @@ export function IRLQuestLevel({ level, status, tokenId, onComplete }: IRLQuestLe
         setCodeword(''); // Clear input on error
       }
     } catch (err) {
+      console.error('[Puzzle] Error:', err);
       setError(ADVENTURE_TEXT.errors.generic);
     } finally {
       setIsVerifying(false);
