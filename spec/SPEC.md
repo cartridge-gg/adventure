@@ -743,6 +743,7 @@ We thank the THC team for their pioneering work on cryptographic treasure hunt m
 **Related Resources:**
 
 * THC Repository: https://github.com/social-dist0rtion-protocol/thc
+* THC Replay Protection implementation: https://github.com/social-dist0rtion-protocol/thc/tree/master/lib
 * THC Documentation: See `refs/thc/` submodule in this repository
 * Original DIP: See `refs/DIPs/` submodule, specifically DIP-69 and DIP-4
 

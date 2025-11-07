@@ -45,6 +45,8 @@ pub trait IAdventureActions<T> {
 #[dojo::contract]
 pub mod actions {
     use starknet::{ContractAddress, get_caller_address};
+    use core::poseidon::poseidon_hash_span;
+    use core::ecdsa::check_ecdsa_signature;
     use openzeppelin::token::erc721::interface::{IERC721Dispatcher, IERC721DispatcherTrait};
     use dojo::world::WorldStorage;
     use dojo::model::ModelStorage;
@@ -188,13 +190,8 @@ pub mod actions {
                 return; // Already complete, no-op
             }
 
-            // 5. Verify signature (codeword-based)
-            assert(signature.len() >= 4, 'Invalid signature format');
-            // TODO: Implement secp256k1 signature verification
-            // Expected signature format: [r_low, r_high, s_low, s_high]
-            // 1. Reconstruct message hash (hash of player address)
-            // 2. Recover signer from signature
-            // 3. Verify recovered address matches solution_address
+            // 5. Verify signature (codeword-based replay protection)
+            self.verify_puzzle_signature(caller, signature, level_config.solution_address);
 
             // 6. Mark level complete in NFT contract
             nft.complete_level(map_id, level_number);
@@ -317,6 +314,49 @@ pub mod actions {
                 i += 1;
             };
             result
+        }
+
+        // Verify puzzle signature (codeword-based replay protection)
+        // Implements the cryptographic verification from THC framework adapted for Starknet
+        //
+        // Protocol:
+        // 1. Player discovers codeword at physical location
+        // 2. Frontend derives solution_address from codeword: address = starkCurve.getPublicKey(hash(codeword))
+        // 3. Frontend signs player's address with codeword-derived key
+        // 4. Contract verifies signature using solution_address stored during deployment
+        //
+        // Security: This prevents replay attacks because:
+        // - Alice signs hash(0xAlice) with codeword-derived key
+        // - Bob cannot reuse Alice's signature for hash(0xBob)
+        // - Each player must know the codeword to generate valid signature for their address
+        fn verify_puzzle_signature(
+            self: @ContractState,
+            player: ContractAddress,
+            signature: Span<felt252>,
+            solution_address: ContractAddress
+        ) {
+            // Signature format: [r, s] (Starknet ECDSA signature)
+            assert(signature.len() == 2, 'Invalid signature format');
+
+            let r: felt252 = *signature.at(0);
+            let s: felt252 = *signature.at(1);
+
+            // Create message hash: hash(player_address)
+            // This ensures each player must sign their own address
+            let mut message_data = array![player.into()];
+            let message_hash = poseidon_hash_span(message_data.span());
+
+            // Verify signature using Starknet's native ECDSA verification
+            // check_ecdsa_signature returns true if signature is valid
+            // Note: solution_address should be the public key (Stark key) derived from codeword
+            let is_valid = check_ecdsa_signature(
+                message_hash,
+                solution_address.into(),  // Public key (solution address stored as felt252)
+                r,
+                s
+            );
+
+            assert(is_valid, 'Invalid solution');
         }
 
     }
