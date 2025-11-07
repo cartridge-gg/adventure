@@ -14,9 +14,9 @@
     },
     {
       "level": 3,
-      "game": "Nums",
-      "description": "Solve the numbers puzzle and achieve the target score.",
-      "location": "https://nums-ebon.vercel.app/",
+      "game": "Dope Wars",
+      "description": "Buy low, sell high, and make a profit.",
+      "location": "https://rollyourown.preview.cartridge.gg/",
       "minimum_score": 200,
       "contract_address": {
         "mainnet": "0x0",
@@ -26,9 +26,9 @@
     },
     {
       "level": 5,
-      "game": "Dope Wars",
-      "description": "Buy low, sell high, and make a profit.",
-      "location": "https://rollyourown.preview.cartridge.gg/",
+      "game": "Nums",
+      "description": "Solve the numbers puzzle and achieve the target score.",
+      "location": "https://nums-ebon.vercel.app/",
       "minimum_score": 200,
       "contract_address": {
         "mainnet": "0x0",

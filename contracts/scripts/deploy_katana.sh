@@ -134,9 +134,100 @@ else
     echo -e "${RED}✗ Failed to set minter${NC}"
 fi
 
-# Configure levels from spec files
-echo -e "${BLUE}Note: Level configuration can be done via configure_adventure.sh${NC}"
-echo -e "${BLUE}See IMPL.md section 6.2 for details${NC}"
+# Step 4.5: Configure levels from spec files
+echo -e "\n${YELLOW}Step 4.5: Configuring adventure levels from spec files...${NC}"
+
+# Get MockGame addresses from manifest
+mock_1=$(jq -r '.external_contracts[] | select(.tag == "focg_adventure-mock_1") | .address' "$CONTRACTS_DIR/manifest_dev.json")
+mock_3=$(jq -r '.external_contracts[] | select(.tag == "focg_adventure-mock_3") | .address' "$CONTRACTS_DIR/manifest_dev.json")
+mock_5=$(jq -r '.external_contracts[] | select(.tag == "focg_adventure-mock_5") | .address' "$CONTRACTS_DIR/manifest_dev.json")
+
+echo -e "${GREEN}MockGame contracts deployed:${NC}"
+echo -e "  Level 1: $mock_1"
+echo -e "  Level 3: $mock_3"
+echo -e "  Level 5: $mock_5"
+
+# Read spec files
+CHALLENGE_FILE="../spec/challenges.json"
+PUZZLE_FILE="../spec/puzzles.json"
+
+if [ ! -f "$CHALLENGE_FILE" ]; then
+    echo -e "${RED}Error: challenges.json not found${NC}"
+    exit 1
+fi
+
+if [ ! -f "$PUZZLE_FILE" ]; then
+    echo -e "${RED}Error: puzzles.json not found${NC}"
+    exit 1
+fi
+
+# Configure challenge levels
+echo -e "${BLUE}Configuring challenge levels...${NC}"
+CHALLENGE_COUNT=$(jq '.challenges | length' "$CHALLENGE_FILE")
+
+for i in $(seq 0 $((CHALLENGE_COUNT - 1))); do
+    LEVEL=$(jq -r ".challenges[$i].level" "$CHALLENGE_FILE")
+    GAME_NAME=$(jq -r ".challenges[$i].game" "$CHALLENGE_FILE")
+    MIN_SCORE=$(jq -r ".challenges[$i].minimum_score" "$CHALLENGE_FILE")
+
+    # Get the appropriate MockGame address
+    case $LEVEL in
+        1) GAME_CONTRACT=$mock_1 ;;
+        3) GAME_CONTRACT=$mock_3 ;;
+        5) GAME_CONTRACT=$mock_5 ;;
+        *)
+            echo -e "${RED}Unknown level $LEVEL${NC}"
+            continue
+            ;;
+    esac
+
+    echo -e "${YELLOW}Configuring challenge level $LEVEL ($GAME_NAME)...${NC}"
+    # set_challenge(level_number, game_contract, minimum_score)
+    sozo execute --profile dev --wait focg_adventure-actions set_challenge \
+        "$LEVEL" \
+        "$GAME_CONTRACT" \
+        "$MIN_SCORE"
+
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}✓ Challenge level $LEVEL configured${NC}"
+
+        # Configure test game using complete_game(game_id, score)
+        echo -e "${BLUE}  Configuring test game in MockGame...${NC}"
+        sozo execute --profile dev --wait "$GAME_CONTRACT" complete_game 1 "$MIN_SCORE"
+        echo -e "${GREEN}  ✓ Test game ready (game_id=1, score=$MIN_SCORE, completed=true)${NC}"
+    else
+        echo -e "${RED}✗ Failed to configure challenge level $LEVEL${NC}"
+    fi
+done
+
+# Configure puzzle levels
+echo -e "${BLUE}Configuring puzzle levels...${NC}"
+PUZZLE_COUNT=$(jq '.puzzles | length' "$PUZZLE_FILE")
+
+for i in $(seq 0 $((PUZZLE_COUNT - 1))); do
+    LEVEL=$(jq -r ".puzzles[$i].level" "$PUZZLE_FILE")
+    PUZZLE_NAME=$(jq -r ".puzzles[$i].name" "$PUZZLE_FILE")
+    CODEWORD=$(jq -r ".puzzles[$i].codeword" "$PUZZLE_FILE")
+
+    # For local testing, use a deterministic placeholder address derived from level
+    # In production, this would be derived from the codeword via Poseidon hash
+    # Each puzzle gets a unique solution address
+    SOLUTION_ADDRESS="0x$(printf '%062d' $LEVEL)00"
+
+    echo -e "${YELLOW}Configuring puzzle level $LEVEL ($PUZZLE_NAME)...${NC}"
+    echo -e "${BLUE}  Codeword: $CODEWORD (solution_address: $SOLUTION_ADDRESS)${NC}"
+
+    # set_puzzle(level_number, solution_address)
+    sozo execute --profile dev --wait focg_adventure-actions set_puzzle \
+        "$LEVEL" \
+        "$SOLUTION_ADDRESS"
+
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}✓ Puzzle level $LEVEL configured${NC}"
+    else
+        echo -e "${RED}✗ Failed to configure puzzle level $LEVEL${NC}"
+    fi
+done
 
 # Step 5: Mint initial NFT
 echo -e "\n${YELLOW}Step 5: Minting initial NFT...${NC}"
@@ -155,11 +246,20 @@ echo -e "\n${BLUE}Deployed Contracts:${NC}"
 echo -e "  World Address:    $WORLD_ADDRESS"
 echo -e "  AdventureMap NFT: $NFT_ADDRESS"
 echo -e "  Actions Contract: $ACTIONS_ADDRESS"
+echo -e "  MockGame Level 1: $mock_1"
+echo -e "  MockGame Level 3: $mock_3"
+echo -e "  MockGame Level 5: $mock_5"
 echo -e "\n${BLUE}Configuration:${NC}"
 echo -e "  ✓ Owner permissions granted to deployer"
-echo -e "  ✓ NFT contract configured in Actions"
-echo -e "  ✓ Actions contract set as minter"
+echo -e "  ✓ NFT contract configured in Actions with 6 levels"
+echo -e "  ✓ Actions contract set as minter on NFT"
+echo -e "  ✓ Challenge levels 1, 3, 5 configured with MockGame contracts"
+echo -e "  ✓ Puzzle levels 2, 4, 6 configured with solution addresses"
+echo -e "  ✓ MockGame contracts pre-configured with test game (game_id=1)"
 echo -e "  ✓ Initial NFT minted from deployer account"
+echo -e "\n${BLUE}Testing:${NC}"
+echo -e "  To test challenge completion: sozo execute focg_adventure-actions complete_challenge_level <map_id> <level> 1"
+echo -e "  To test puzzle completion:    sozo execute focg_adventure-actions complete_puzzle_level <map_id> <level> <signature>"
 echo -e "\n${BLUE}Logs:${NC}"
 echo -e "  Katana: /tmp/katana.log"
 echo -e "\n${YELLOW}Press Ctrl+C to stop all services${NC}\n"

@@ -23,20 +23,22 @@ pub trait IAdventureActions<T> {
     fn get_player_token_id(self: @T, player: ContractAddress) -> u256;
     fn get_level_status(self: @T, token_id: u256, level_number: u8) -> bool;
     fn get_progress(self: @T, token_id: u256) -> u256;
-    fn get_level_config(self: @T, level_number: u8) -> (felt252, bool, ContractAddress, u32, ContractAddress); // (type, active, game_contract, minimum_score, solution_address)
+    fn get_level_config(self: @T, level_number: u8) -> (felt252, ContractAddress, u32, ContractAddress); // (type, game_contract, minimum_score, solution_address)
 
     // ========================================================================
     // Admin Functions
     // ========================================================================
     fn set_nft_contract(ref self: T, nft_contract: ContractAddress, total_levels: u8);
-    fn set_level_config(
+    fn set_challenge(
         ref self: T,
         level_number: u8,
-        level_type: felt252,
         game_contract: ContractAddress,
-        minimum_score: u32,
-        solution_address: ContractAddress,
-        active: bool
+        minimum_score: u32
+    );
+    fn set_puzzle(
+        ref self: T,
+        level_number: u8,
+        solution_address: ContractAddress
     );
 }
 
@@ -118,7 +120,6 @@ pub mod actions {
 
             // 2. Get level configuration
             let level_config: LevelConfig = world.read_model(level_number);
-            assert(level_config.active, 'Level not active');
             assert(level_config.level_type == 'challenge', 'Not a challenge level');
             assert(level_number >= 1 && level_number <= config.total_levels, 'Invalid level');
 
@@ -169,7 +170,6 @@ pub mod actions {
 
             // 2. Get level configuration
             let level_config: LevelConfig = world.read_model(level_number);
-            assert(level_config.active, 'Level not active');
             assert(level_config.level_type == 'puzzle', 'Not a puzzle level');
             assert(level_number >= 1 && level_number <= config.total_levels, 'Invalid level');
 
@@ -235,10 +235,10 @@ pub mod actions {
             nft.get_progress(token_id)
         }
 
-        fn get_level_config(self: @ContractState, level_number: u8) -> (felt252, bool, ContractAddress, u32, ContractAddress) {
+        fn get_level_config(self: @ContractState, level_number: u8) -> (felt252, ContractAddress, u32, ContractAddress) {
             let world = self.world_default();
             let level_config: LevelConfig = world.read_model(level_number);
-            (level_config.level_type, level_config.active, level_config.game_contract, level_config.minimum_score, level_config.solution_address)
+            (level_config.level_type, level_config.game_contract, level_config.minimum_score, level_config.solution_address)
         }
 
         // ====================================================================
@@ -251,22 +251,34 @@ pub mod actions {
             world.write_model(@config);
         }
 
-        fn set_level_config(
+        fn set_challenge(
             ref self: ContractState,
             level_number: u8,
-            level_type: felt252,
             game_contract: ContractAddress,
-            minimum_score: u32,
-            solution_address: ContractAddress,
-            active: bool
+            minimum_score: u32
         ) {
             let mut world = self.world_default();
             let config = LevelConfig {
                 level_number,
-                level_type,
-                active,
+                level_type: 'challenge',
                 game_contract,
                 minimum_score,
+                solution_address: 0.try_into().unwrap()
+            };
+            world.write_model(@config);
+        }
+
+        fn set_puzzle(
+            ref self: ContractState,
+            level_number: u8,
+            solution_address: ContractAddress
+        ) {
+            let mut world = self.world_default();
+            let config = LevelConfig {
+                level_number,
+                level_type: 'puzzle',
+                game_contract: 0.try_into().unwrap(),
+                minimum_score: 0,
                 solution_address
             };
             world.write_model(@config);

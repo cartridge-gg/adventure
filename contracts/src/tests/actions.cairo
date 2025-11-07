@@ -124,21 +124,13 @@ fn test_set_level_config() {
 
     // Configure level 1 as a challenge level
     start_cheat_caller_address(actions_address, owner());
-    actions.set_level_config(
-        1, // level_number
-        'challenge', // level_type
-        game_address, // game_contract
-        1000, // minimum_score
-        0.try_into().unwrap(), // solution_address (not used for challenges)
-        true // active
-    );
+    actions.set_challenge(1, game_address, 1000);
     stop_cheat_caller_address(actions_address);
 
     // Verify level config was set
     let level_config: LevelConfig = world.read_model(1_u8);
     assert(level_config.level_number == 1, 'Level number wrong');
     assert(level_config.level_type == 'challenge', 'Level type wrong');
-    assert(level_config.active == true, 'Level not active');
     assert(level_config.game_contract == game_address, 'Game contract wrong');
     assert(level_config.minimum_score == 1000, 'Min score wrong');
 }
@@ -228,12 +220,11 @@ fn test_complete_challenge_level() {
 
     // Setup: Configure a game token with passing score and game_over status
     let game_id: u64 = 1;
-    mock_game.set_score(game_id, 1500); // Above minimum
-    mock_game.set_game_over(game_id, true);
+    mock_game.complete_game(game_id, 1500); // Above minimum
 
     start_cheat_caller_address(actions_address, owner());
     actions.set_nft_contract(nft_address, TOTAL_LEVELS);
-    actions.set_level_config(1, 'challenge', game_address, 1000, 0.try_into().unwrap(), true);
+    actions.set_challenge(1, game_address, 1000);
     stop_cheat_caller_address(actions_address);
 
     start_cheat_caller_address(nft_address, owner());
@@ -265,7 +256,7 @@ fn test_complete_puzzle_level() {
 
     start_cheat_caller_address(actions_address, owner());
     actions.set_nft_contract(nft_address, TOTAL_LEVELS);
-    actions.set_level_config(1, 'puzzle', 0.try_into().unwrap(), 0, 0x123.try_into().unwrap(), true);
+    actions.set_puzzle(1, 0x123.try_into().unwrap());
     stop_cheat_caller_address(actions_address);
 
     start_cheat_caller_address(nft_address, owner());
@@ -300,8 +291,8 @@ fn test_sequential_progression_enforced() {
 
     start_cheat_caller_address(actions_address, owner());
     actions.set_nft_contract(nft_address, TOTAL_LEVELS);
-    actions.set_level_config(1, 'challenge', game_address, 1000, 0.try_into().unwrap(), true);
-    actions.set_level_config(2, 'challenge', game_address, 1000, 0.try_into().unwrap(), true);
+    actions.set_challenge(1, game_address, 1000);
+    actions.set_challenge(2, game_address, 1000);
     stop_cheat_caller_address(actions_address);
 
     start_cheat_caller_address(nft_address, owner());
@@ -319,35 +310,6 @@ fn test_sequential_progression_enforced() {
 
 #[test]
 #[available_gas(l1_gas: 0, l1_data_gas: 10000, l2_gas: 20000000)]
-#[should_panic(expected: ('Level not active',))]
-fn test_inactive_level_fails() {
-    let (_world, actions, actions_address) = setup_world();
-
-    // Deploy and configure contracts
-    let nft_address = deploy_adventure_map(owner(), TOTAL_LEVELS);
-    let nft = IAdventureMapDispatcher { contract_address: nft_address };
-    let game_address = deploy_mock_game();
-
-    start_cheat_caller_address(actions_address, owner());
-    actions.set_nft_contract(nft_address, TOTAL_LEVELS);
-    actions.set_level_config(1, 'challenge', game_address, 1000, 0.try_into().unwrap(), false); // inactive
-    stop_cheat_caller_address(actions_address);
-
-    start_cheat_caller_address(nft_address, owner());
-    nft.set_minter(actions_address);
-    stop_cheat_caller_address(nft_address);
-
-    // Mint NFT
-    let player_addr = player();
-    start_cheat_caller_address(actions_address, player_addr);
-    actions.mint('testuser');
-
-    // Try to complete inactive level - should fail
-    actions.complete_challenge_level(0, 1, 1);
-}
-
-#[test]
-#[available_gas(l1_gas: 0, l1_data_gas: 10000, l2_gas: 20000000)]
 #[should_panic(expected: ('Not token owner',))]
 fn test_non_owner_cannot_complete() {
     let (_world, actions, actions_address) = setup_world();
@@ -359,7 +321,7 @@ fn test_non_owner_cannot_complete() {
 
     start_cheat_caller_address(actions_address, owner());
     actions.set_nft_contract(nft_address, TOTAL_LEVELS);
-    actions.set_level_config(1, 'challenge', game_address, 1000, 0.try_into().unwrap(), true);
+    actions.set_challenge(1, game_address, 1000);
     stop_cheat_caller_address(actions_address);
 
     start_cheat_caller_address(nft_address, owner());
@@ -434,17 +396,15 @@ fn test_full_lifecycle() {
     let mock_game = IMockGameAdminDispatcher { contract_address: game_address };
 
     // Setup game tokens
-    mock_game.set_score(1, 1500);
-    mock_game.set_game_over(1, true);
-    mock_game.set_score(3, 2000);
-    mock_game.set_game_over(3, true);
+    mock_game.complete_game(1, 1500);
+    mock_game.complete_game(3, 2000);
 
     start_cheat_caller_address(actions_address, owner());
     actions.set_nft_contract(nft_address, TOTAL_LEVELS);
     // Configure 3 levels
-    actions.set_level_config(1, 'challenge', game_address, 1000, 0.try_into().unwrap(), true);
-    actions.set_level_config(2, 'puzzle', 0.try_into().unwrap(), 0, 0x123.try_into().unwrap(), true);
-    actions.set_level_config(3, 'challenge', game_address, 1000, 0.try_into().unwrap(), true);
+    actions.set_challenge(1, game_address, 1000);
+    actions.set_puzzle(2, 0x123.try_into().unwrap());
+    actions.set_challenge(3, game_address, 1000);
     stop_cheat_caller_address(actions_address);
 
     start_cheat_caller_address(nft_address, owner());

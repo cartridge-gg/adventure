@@ -1,9 +1,10 @@
 // ============================================================================
-// MockGame - Mock Denshokan Game Contract for Testing
+// MockGame - Mock Denshokan Game Contract for Local Testing
 // ============================================================================
 //
 // This is a test implementation of the Denshokan IMinigameTokenData interface.
 // It allows setting scores and game_over states for testing purposes.
+// This contract should ONLY be used for local Katana development, not production.
 
 use super::interface::IMinigameTokenData;
 
@@ -11,6 +12,7 @@ use super::interface::IMinigameTokenData;
 pub trait IMockGameAdmin<T> {
     fn set_score(ref self: T, token_id: u64, score: u32);
     fn set_game_over(ref self: T, token_id: u64, is_over: bool);
+    fn complete_game(ref self: T, token_id: u64, score: u32);
 }
 
 #[starknet::contract]
@@ -37,6 +39,11 @@ pub mod MockGame {
 
         fn set_game_over(ref self: ContractState, token_id: u64, is_over: bool) {
             self.game_over.write(token_id, is_over);
+        }
+
+        fn complete_game(ref self: ContractState, token_id: u64, score: u32) {
+            self.scores.write(token_id, score);
+            self.game_over.write(token_id, true);
         }
     }
 
