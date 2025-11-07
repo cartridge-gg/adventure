@@ -78,15 +78,15 @@ export const DEFAULT_RPC_URL = getRpcUrlForEnv(CHAIN_ENV);
 
 export const WORLD_ADDRESS = manifest.world.address;
 
-// Find the Adventure Actions contract
-const actionsContract = manifest.contracts?.find((c: any) => c.tag === "focg_adventure-actions");
-export const ACTIONS_ADDRESS = actionsContract?.address || '0x0';
-export const ACTIONS_ABI = actionsContract?.abi;
+// Find the Adventure contract (Dojo game logic)
+const adventureContract = manifest.contracts?.find((c: any) => c.tag === "focg_adventure-actions");
+export const ADVENTURE_ADDRESS = adventureContract?.address || '0x0';
+export const ADVENTURE_ABI = adventureContract?.abi;
 
-// Find the Adventure Map NFT contract
-const adventureMapContract = manifest.external_contracts?.find((c: any) => c.tag === "focg_adventure-AdventureMap");
-export const ADVENTURE_MAP_ADDRESS = adventureMapContract?.address || '0x0';
-export const ADVENTURE_MAP_ABI = adventureMapContract?.abi;
+// Find the Map NFT contract (state storage)
+const mapContract = manifest.external_contracts?.find((c: any) => c.tag === "focg_adventure-adventure_map");
+export const MAP_ADDRESS = mapContract?.address || '0x0';
+export const MAP_ABI = mapContract?.abi;
 
 // ============================================================================
 // LOGGING
@@ -96,5 +96,5 @@ console.log('Configuration loaded:');
 console.log('  Environment:', CHAIN_ENV);
 console.log('  Chain ID:', DEFAULT_CHAIN_ID);
 console.log('  World:', WORLD_ADDRESS);
-console.log('  Actions:', ACTIONS_ADDRESS);
-console.log('  Adventure Map:', ADVENTURE_MAP_ADDRESS);
+console.log('  Adventure:', ADVENTURE_ADDRESS);
+console.log('  Map:', MAP_ADDRESS);

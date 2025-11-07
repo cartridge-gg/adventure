@@ -6,85 +6,90 @@
  */
 
 import { Level, OnchainGameLevel, IRLQuestLevel } from './adventureTypes';
-import questsData from '../../../spec/quests.json';
+import puzzlesData from '../../../spec/puzzles.json';
+import challengesData from '../../../spec/challenges.json';
 
 // ============================================================================
 // SAMPLE LEVEL CONFIGURATION
 // ============================================================================
 // This is a 6-level adventure with alternating game and quest levels
 // for demonstration purposes. Can be easily modified.
-// IRL Quest levels are loaded from spec/quests.json
+// IRL Quest levels are loaded from spec/puzzles.json
+// Onchain game levels are loaded from spec/challenges.json
 
-// Map quests data to a lookup by level number
-const questsMap = new Map(
-  questsData.quests.map(q => [q.level, q])
+// Map puzzles and challenges data to lookups by level number
+const puzzlesMap = new Map(
+  puzzlesData.puzzles.map(p => [p.level, p])
+);
+const challengesMap = new Map(
+  challengesData.challenges.map(c => [c.level, c])
 );
 
 export const ADVENTURE_LEVELS: Level[] = [
-  // Level 1: Onchain Game
+  // Level 1: Onchain Game (from challenges.json)
   {
     levelNumber: 1,
-    name: 'The First Trial',
-    description: 'Complete your first onchain challenge to begin your adventure.',
+    name: challengesMap.get(1)!.game,
+    description: challengesMap.get(1)!.description,
     type: 'game',
-    gameUrl: 'https://example.com/game1',
-    gameInstructions: 'Score at least 100 points in the challenge game. Once you succeed, return here to claim completion.',
+    gameUrl: challengesMap.get(1)!.location,
+    gameInstructions: `Play ${challengesMap.get(1)!.game} and score at least ${challengesMap.get(1)!.minimum_score} points. Once you succeed, return here to claim completion.`,
     verificationStrategy: 'score_threshold',
   } as OnchainGameLevel,
 
-  // Level 2: IRL Quest (from quests.json)
+  // Level 2: IRL Quest (from puzzles.json)
   {
     levelNumber: 2,
-    name: questsMap.get(2)!.name,
-    description: questsMap.get(2)!.description,
+    name: puzzlesMap.get(2)!.name,
+    description: puzzlesMap.get(2)!.description,
     type: 'quest',
-    location: questsMap.get(2)!.location,
-    puzzleDescription: questsMap.get(2)!.puzzle,
-    expectedCodeword: questsMap.get(2)!.codeword,
+    location: puzzlesMap.get(2)!.location,
+    puzzleDescription: puzzlesMap.get(2)!.description,
+    expectedCodeword: puzzlesMap.get(2)!.codeword,
   } as IRLQuestLevel,
 
-  // Level 3: Onchain Game
+  // Level 3: Onchain Game (from challenges.json)
   {
     levelNumber: 3,
-    name: 'The Strategy Challenge',
-    description: 'Test your strategic thinking in an onchain game.',
+    name: challengesMap.get(3)!.game,
+    description: challengesMap.get(3)!.description,
     type: 'game',
-    gameUrl: 'https://example.com/game2',
-    gameInstructions: 'Complete all 5 levels of the strategy game. Each level builds on the previous.',
-    verificationStrategy: 'completion_check',
+    gameUrl: challengesMap.get(3)!.location,
+    gameInstructions: `Play ${challengesMap.get(3)!.game} and score at least ${challengesMap.get(3)!.minimum_score} points. Once you succeed, return here to claim completion.`,
+    verificationStrategy: 'score_threshold',
   } as OnchainGameLevel,
 
-  // Level 4: IRL Quest (from quests.json)
+  // Level 4: IRL Quest (from puzzles.json)
   {
     levelNumber: 4,
-    name: questsMap.get(4)!.name,
-    description: questsMap.get(4)!.description,
+    name: puzzlesMap.get(4)!.name,
+    description: puzzlesMap.get(4)!.description,
     type: 'quest',
-    location: questsMap.get(4)!.location,
-    puzzleDescription: questsMap.get(4)!.puzzle,
-    expectedCodeword: questsMap.get(4)!.codeword,
+    location: puzzlesMap.get(4)!.location,
+    puzzleDescription: puzzlesMap.get(4)!.description,
+    expectedCodeword: puzzlesMap.get(4)!.codeword,
   } as IRLQuestLevel,
 
-  // Level 5: Onchain Game
+  // Level 5: Onchain Game (from challenges.json)
   {
     levelNumber: 5,
-    name: 'The Final Challenge',
-    description: 'Prove your skills in the ultimate onchain test.',
+    name: challengesMap.get(5)!.game,
+    description: challengesMap.get(5)!.description,
     type: 'game',
-    gameUrl: 'https://example.com/game3',
-    gameInstructions: 'Complete the advanced challenge. This is the hardest level yet!',
-    verificationStrategy: 'achievement_unlock',
+    gameUrl: challengesMap.get(5)!.location,
+    gameInstructions: `Play ${challengesMap.get(5)!.game} and score at least ${challengesMap.get(5)!.minimum_score} points. Once you succeed, return here to claim completion.`,
+    verificationStrategy: 'score_threshold',
   } as OnchainGameLevel,
 
-  // Level 6: IRL Quest (from quests.json)
+  // Level 6: IRL Quest (from puzzles.json)
   {
     levelNumber: 6,
-    name: questsMap.get(6)!.name,
-    description: questsMap.get(6)!.description,
+    name: puzzlesMap.get(6)!.name,
+    description: puzzlesMap.get(6)!.description,
     type: 'quest',
-    location: questsMap.get(6)!.location,
-    puzzleDescription: questsMap.get(6)!.puzzle,
-    expectedCodeword: questsMap.get(6)!.codeword,
+    location: puzzlesMap.get(6)!.location,
+    puzzleDescription: puzzlesMap.get(6)!.description,
+    expectedCodeword: puzzlesMap.get(6)!.codeword,
   } as IRLQuestLevel,
 ];
 
@@ -117,7 +122,7 @@ export const ADVENTURE_TEXT = {
   },
   mint: {
     title: 'Begin Your Adventure',
-    buttonText: 'Mint Adventure Map',
+    buttonText: 'Mint Your Map',
   },
   levelCard: {
     locked: '🔒 Complete previous level to unlock',

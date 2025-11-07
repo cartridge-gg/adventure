@@ -5,26 +5,28 @@
  */
 
 import { useAccount, useContract } from '@starknet-react/core';
-import { Call } from 'starknet';
-import { ACTIONS_ADDRESS, ACTIONS_ABI, ADVENTURE_MAP_ADDRESS, ADVENTURE_MAP_ABI } from '../lib/config';
+import { CallData } from 'starknet';
+import { ADVENTURE_ADDRESS, ADVENTURE_ABI, MAP_ADDRESS, MAP_ABI } from '../lib/config';
+import { executeTx, parseContractError, splitTokenIdToU256 } from '../lib/utils';
 
 export function useAdventureContract() {
   const { account } = useAccount();
 
-  // Actions contract (for gameplay)
-  const { contract: actionsContract } = useContract({
-    address: ACTIONS_ADDRESS,
-    abi: ACTIONS_ABI,
+  // Adventure contract (Dojo game logic)
+  const { contract: adventureContract } = useContract({
+    address: ADVENTURE_ADDRESS as `0x${string}`,
+    abi: ADVENTURE_ABI,
   });
 
-  // Adventure Map NFT contract
+  // Map NFT contract (state storage)
   const { contract: mapContract } = useContract({
-    address: ADVENTURE_MAP_ADDRESS,
-    abi: ADVENTURE_MAP_ABI,
+    address: MAP_ADDRESS as `0x${string}`,
+    abi: MAP_ABI,
   });
 
   /**
    * Mint a new Adventure Map NFT
+   * Calls the mint function on the Adventure (Actions) contract
    */
   const mintAdventureMap = async (username: string): Promise<{
     success: boolean;
@@ -32,26 +34,23 @@ export function useAdventureContract() {
     tokenId?: string;
     error?: string;
   }> => {
-    if (!account || !mapContract) {
-      return { success: false, error: 'Wallet not connected or contract not loaded' };
+    if (!account) {
+      return { success: false, error: 'Wallet not connected' };
     }
 
     try {
       console.log('[Contract] Minting Adventure Map:', { username });
 
-      // Call the mint function
-      const call: Call = {
-        contractAddress: ADVENTURE_MAP_ADDRESS,
-        entrypoint: 'mint',
-        calldata: [username], // Adjust based on actual contract interface
-      };
-
-      const result = await account.execute([call]);
-      console.log('[Contract] Mint transaction sent:', result.transaction_hash);
-
-      // Wait for confirmation
-      await account.waitForTransaction(result.transaction_hash);
-      console.log('[Contract] Mint transaction confirmed');
+      // Call the mint function on the Adventure contract
+      const result = await executeTx(
+        account,
+        {
+          contractAddress: ADVENTURE_ADDRESS,
+          entrypoint: 'mint',
+          calldata: CallData.compile([username.slice(0, 31)]), // Truncate for felt252 compatibility
+        },
+        'Mint Adventure Map'
+      );
 
       // TODO: Extract token ID from events
       // For now, return success without token ID
@@ -63,7 +62,7 @@ export function useAdventureContract() {
       console.error('[Contract] Error minting:', error);
       return {
         success: false,
-        error: error.message || 'Failed to mint Adventure Map',
+        error: parseContractError(error),
       };
     }
   };
@@ -80,7 +79,7 @@ export function useAdventureContract() {
     txHash?: string;
     error?: string;
   }> => {
-    if (!account || !actionsContract) {
+    if (!account || !adventureContract) {
       return { success: false, error: 'Wallet not connected or contract not loaded' };
     }
 
@@ -91,25 +90,23 @@ export function useAdventureContract() {
         signatureLength: signature.length,
       });
 
+      // Split map_id into u256 components
+      const { low, high } = splitTokenIdToU256(mapId);
+
       // Build the call
-      const call: Call = {
-        contractAddress: ACTIONS_ADDRESS,
-        entrypoint: 'complete_puzzle_level',
-        calldata: [
-          mapId,                    // map_id: u256 (will be split into low/high)
-          '0',                       // map_id high (u256 is 2 felts)
-          levelNumber.toString(),    // level_number: u8
-          signature.length.toString(), // signature span length
-          ...signature,              // signature data [r, s]
-        ],
-      };
-
-      const result = await account.execute([call]);
-      console.log('[Contract] Puzzle completion transaction sent:', result.transaction_hash);
-
-      // Wait for confirmation
-      await account.waitForTransaction(result.transaction_hash);
-      console.log('[Contract] Puzzle completion confirmed');
+      const result = await executeTx(
+        account,
+        {
+          contractAddress: ADVENTURE_ADDRESS,
+          entrypoint: 'complete_puzzle_level',
+          calldata: CallData.compile({
+            map_id: { low, high },
+            level_number: levelNumber,
+            signature: signature,
+          }),
+        },
+        'Complete Puzzle Level'
+      );
 
       return {
         success: true,
@@ -117,24 +114,9 @@ export function useAdventureContract() {
       };
     } catch (error: any) {
       console.error('[Contract] Error completing puzzle:', error);
-
-      // Parse error messages
-      let errorMessage = 'Failed to complete level';
-      if (error.message) {
-        if (error.message.includes('Invalid solution')) {
-          errorMessage = 'Invalid solution signature';
-        } else if (error.message.includes('Level not found')) {
-          errorMessage = 'Level configuration not found';
-        } else if (error.message.includes('Level already complete')) {
-          errorMessage = 'Level already completed';
-        } else if (error.message.includes('Not map owner')) {
-          errorMessage = 'You do not own this adventure map';
-        }
-      }
-
       return {
         success: false,
-        error: errorMessage,
+        error: parseContractError(error),
       };
     }
   };
@@ -151,7 +133,7 @@ export function useAdventureContract() {
     txHash?: string;
     error?: string;
   }> => {
-    if (!account || !actionsContract) {
+    if (!account || !adventureContract) {
       return { success: false, error: 'Wallet not connected or contract not loaded' };
     }
 
@@ -159,24 +141,26 @@ export function useAdventureContract() {
       console.log('[Contract] Completing onchain level:', {
         mapId,
         levelNumber,
+        proof,
       });
 
-      const call: Call = {
-        contractAddress: ACTIONS_ADDRESS,
-        entrypoint: 'complete_onchain_level',
-        calldata: [
-          mapId,
-          '0', // u256 high
-          levelNumber.toString(),
-          // Add proof data here based on level requirements
-        ],
-      };
+      // Split map_id into u256 components
+      const { low, high } = splitTokenIdToU256(mapId);
 
-      const result = await account.execute([call]);
-      console.log('[Contract] Onchain level transaction sent:', result.transaction_hash);
-
-      await account.waitForTransaction(result.transaction_hash);
-      console.log('[Contract] Onchain level confirmed');
+      // Build the call with game_id from proof
+      const result = await executeTx(
+        account,
+        {
+          contractAddress: ADVENTURE_ADDRESS,
+          entrypoint: 'complete_challenge_level',
+          calldata: CallData.compile({
+            map_id: { low, high },
+            level_number: levelNumber,
+            game_id: proof.game_id || 1, // game_id for verification
+          }),
+        },
+        'Complete Challenge Level'
+      );
 
       return {
         success: true,
@@ -186,7 +170,7 @@ export function useAdventureContract() {
       console.error('[Contract] Error completing onchain level:', error);
       return {
         success: false,
-        error: error.message || 'Failed to complete level',
+        error: parseContractError(error),
       };
     }
   };
@@ -265,7 +249,7 @@ export function useAdventureContract() {
     getPlayerTokenId,
     isLevelComplete,
     isConnected: !!account,
-    actionsContract,
+    adventureContract,
     mapContract,
   };
 }
