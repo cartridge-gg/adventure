@@ -189,8 +189,8 @@ for i in $(seq 0 $((PUZZLE_COUNT - 1))); do
     PUZZLE_NAME=$(jq -r ".puzzles[$i].name" "$PUZZLE_FILE")
     CODEWORD=$(jq -r ".puzzles[$i].codeword" "$PUZZLE_FILE")
 
-    # Derive solution address from codeword using the compute_solution_address utility
-    SOLUTION_ADDRESS=$(node "$SCRIPT_DIR/compute_solution_address.mjs" "$CODEWORD")
+    # Derive solution address from codeword using the codeword2address utility
+    SOLUTION_ADDRESS=$(node "$SCRIPT_DIR/../../client/scripts/codeword2address.mjs" "$CODEWORD")
 
     if [ -z "$SOLUTION_ADDRESS" ]; then
         echo -e "${RED}✗ Failed to compute solution address for level $LEVEL${NC}"

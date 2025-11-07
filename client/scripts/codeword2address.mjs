@@ -5,7 +5,7 @@
  * This script derives the Starknet public key (solution address) from a puzzle codeword.
  * Used during deployment to set the correct solution_address for puzzle levels.
  *
- * Usage: node compute_solution_address.mjs "CODEWORD"
+ * Usage: node codeword2address.mjs "CODEWORD"
  */
 
 import { ec, hash, num } from 'starknet';
@@ -41,7 +41,7 @@ function addressFromSolution(solution) {
 const codeword = process.argv[2];
 
 if (!codeword) {
-  console.error('Usage: node compute_solution_address.mjs "CODEWORD"');
+  console.error('Usage: node codeword2address.mjs "CODEWORD"');
   process.exit(1);
 }
 

@@ -125,7 +125,7 @@ export const ADVENTURE_TEXT = {
     buttonText: 'Mint Your Map',
   },
   levelCard: {
-    locked: '🔒 Complete previous level to unlock',
+    locked: 'Complete previous level to unlock',
   },
   gameLevel: {
     playButton: 'Play Game',
