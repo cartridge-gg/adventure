@@ -13,3 +13,6 @@
 [submodule "refs/death-mountain"]
 	path = refs/death-mountain
 	url = https://github.com/Provable-Games/death-mountain
+[submodule "contracts/refs/ronins-pact"]
+	path = contracts/refs/ronins-pact
+	url = https://github.com/cartridge-gg/ronins-pact
