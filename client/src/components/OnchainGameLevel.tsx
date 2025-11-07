@@ -7,13 +7,14 @@
 
 import { useState } from 'react';
 import { OnchainGameLevelProps } from '../lib/adventureTypes';
-import { mockCompleteLevel } from '../lib/mock';
 import { ADVENTURE_TEXT } from '../lib/adventureConfig';
+import { useAdventureContract } from '../hooks/useAdventureContract';
 
 export function OnchainGameLevel({ level, status, tokenId, onComplete }: OnchainGameLevelProps) {
   const [isVerifying, setIsVerifying] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
+  const { completeOnchainLevel } = useAdventureContract();
 
   if (status === 'locked') {
     return (
@@ -48,7 +49,9 @@ export function OnchainGameLevel({ level, status, tokenId, onComplete }: Onchain
     setError(null);
 
     try {
-      const result = await mockCompleteLevel(
+      // Complete the onchain level
+      // Note: proof data would be specific to the level's verification strategy
+      const result = await completeOnchainLevel(
         tokenId,
         level.levelNumber,
         { strategy: level.verificationStrategy }

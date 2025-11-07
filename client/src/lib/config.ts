@@ -78,15 +78,15 @@ export const DEFAULT_RPC_URL = getRpcUrlForEnv(CHAIN_ENV);
 
 export const WORLD_ADDRESS = manifest.world.address;
 
-// Find the Quest Manager (actions) contract
-const questManagerContract = manifest.contracts?.find((c: any) => c.tag === "ronin_quest-actions");
-export const QUEST_MANAGER_ADDRESS = questManagerContract?.address || '0x0';
-export const QUEST_MANAGER_ABI = questManagerContract?.abi;
+// Find the Adventure Actions contract
+const actionsContract = manifest.contracts?.find((c: any) => c.tag === "focg_adventure-actions");
+export const ACTIONS_ADDRESS = actionsContract?.address || '0x0';
+export const ACTIONS_ABI = actionsContract?.abi;
 
-// Find the Ronin Pact NFT contract
-const roninPactContract = manifest.external_contracts?.find((c: any) => c.tag === "ronin_quest-ronin_pact");
-export const RONIN_PACT_ADDRESS = roninPactContract?.address || '0x0';
-export const RONIN_PACT_ABI = roninPactContract?.abi;
+// Find the Adventure Map NFT contract
+const adventureMapContract = manifest.external_contracts?.find((c: any) => c.tag === "focg_adventure-AdventureMap");
+export const ADVENTURE_MAP_ADDRESS = adventureMapContract?.address || '0x0';
+export const ADVENTURE_MAP_ABI = adventureMapContract?.abi;
 
 // ============================================================================
 // LOGGING
@@ -96,5 +96,5 @@ console.log('Configuration loaded:');
 console.log('  Environment:', CHAIN_ENV);
 console.log('  Chain ID:', DEFAULT_CHAIN_ID);
 console.log('  World:', WORLD_ADDRESS);
-console.log('  Quest Manager:', QUEST_MANAGER_ADDRESS);
-console.log('  Ronin Pact:', RONIN_PACT_ADDRESS);
+console.log('  Actions:', ACTIONS_ADDRESS);
+console.log('  Adventure Map:', ADVENTURE_MAP_ADDRESS);

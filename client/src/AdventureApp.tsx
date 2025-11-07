@@ -12,7 +12,6 @@ import { AdventureMintButton } from './components/AdventureMintButton';
 import { AdventureQuestDashboard } from './components/AdventureQuestDashboard';
 import { useAdventureProgress } from './hooks/useAdventureProgress';
 import { ADVENTURE_LEVELS, ADVENTURE_TEXT, TOTAL_LEVELS } from './lib/adventureConfig';
-import { resetMockState, USE_MOCK_MODE } from './lib/mock';
 import { AdventureProgress } from './lib/adventureTypes';
 
 function AdventureApp() {
@@ -63,34 +62,12 @@ function AdventureApp() {
               </div>
 
               <div className="flex items-center gap-4">
-                {/* Dev Reset Button (only in mock mode) */}
-                {USE_MOCK_MODE && address && (
-                  <button
-                    onClick={() => {
-                      resetMockState();
-                      refetch();
-                    }}
-                    className="bg-red-600 hover:bg-red-700 text-white text-sm font-semibold py-2 px-4 rounded-lg transition-colors"
-                  >
-                    🔄 Reset (Dev)
-                  </button>
-                )}
-
                 {/* Connect Wallet */}
                 <div className="w-64">
                   <ConnectWallet />
                 </div>
               </div>
             </div>
-
-            {/* Mock Mode Indicator */}
-            {USE_MOCK_MODE && (
-              <div className="mt-4 bg-yellow-500/20 border border-yellow-500 text-yellow-100 rounded-lg p-3 text-center">
-                <p className="text-sm font-semibold">
-                  ⚠️ Running in MOCK MODE - No real blockchain transactions
-                </p>
-              </div>
-            )}
           </header>
 
           {/* Main Content */}

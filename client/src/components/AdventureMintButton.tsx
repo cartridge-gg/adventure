@@ -7,8 +7,8 @@
 import { useState, useEffect } from 'react';
 import { useAccount, useConnect } from '@starknet-react/core';
 import { ControllerConnector } from '@cartridge/connector';
-import { mockMintNFT } from '../lib/mock';
 import { ADVENTURE_TEXT } from '../lib/adventureConfig';
+import { useAdventureContract } from '../hooks/useAdventureContract';
 
 interface AdventureMintButtonProps {
   onMintSuccess: () => void;
@@ -17,6 +17,7 @@ interface AdventureMintButtonProps {
 export function AdventureMintButton({ onMintSuccess }: AdventureMintButtonProps) {
   const { address } = useAccount();
   const { connectors } = useConnect();
+  const { mintAdventureMap } = useAdventureContract();
   const [username, setUsername] = useState<string>('');
   const [isMinting, setIsMinting] = useState(false);
   const [isLoadingUsername, setIsLoadingUsername] = useState(true);
@@ -57,10 +58,10 @@ export function AdventureMintButton({ onMintSuccess }: AdventureMintButtonProps)
     setError(null);
 
     try {
-      const result = await mockMintNFT(finalUsername);
+      const result = await mintAdventureMap(finalUsername);
 
       if (result.success) {
-        console.log('NFT minted successfully:', result.tokenId);
+        console.log('NFT minted successfully:', result.txHash);
         onMintSuccess();
       } else {
         setError(result.error || 'Failed to mint NFT');

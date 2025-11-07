@@ -7,9 +7,9 @@
 
 import { useState } from 'react';
 import { IRLQuestLevelProps } from '../lib/adventureTypes';
-import { mockCompletePuzzleLevel, USE_MOCK_MODE } from '../lib/mock';
 import { ADVENTURE_TEXT } from '../lib/adventureConfig';
 import { usePuzzleSigning } from '../hooks/usePuzzleSigning';
+import { useAdventureContract } from '../hooks/useAdventureContract';
 
 export function IRLQuestLevel({ level, status, tokenId, onComplete }: IRLQuestLevelProps) {
   const [codeword, setCodeword] = useState('');
@@ -18,6 +18,7 @@ export function IRLQuestLevel({ level, status, tokenId, onComplete }: IRLQuestLe
   const [showSuccess, setShowSuccess] = useState(false);
 
   const { generateSignature, playerAddress } = usePuzzleSigning();
+  const { completePuzzleLevel } = useAdventureContract();
 
   if (status === 'locked') {
     return (
@@ -73,8 +74,8 @@ export function IRLQuestLevel({ level, status, tokenId, onComplete }: IRLQuestLe
         playerAddress
       });
 
-      // Submit to contract (or mock)
-      const result = await mockCompletePuzzleLevel(
+      // Submit to contract
+      const result = await completePuzzleLevel(
         tokenId,
         level.levelNumber,
         signature
@@ -126,14 +127,6 @@ export function IRLQuestLevel({ level, status, tokenId, onComplete }: IRLQuestLe
           <span>Location:</span>
         </h4>
         <p className="text-purple-800 text-sm">{level.location}</p>
-
-        {/* Mock Mode: Show Codeword */}
-        {USE_MOCK_MODE && (
-          <div className="mt-3 bg-yellow-100 border-2 border-yellow-400 rounded px-3 py-2">
-            <p className="text-xs text-yellow-800 font-semibold mb-1">🔓 MOCK MODE - Answer:</p>
-            <p className="text-lg font-mono font-bold text-yellow-900">{level.expectedCodeword}</p>
-          </div>
-        )}
       </div>
 
       {/* Codeword Input Form */}
