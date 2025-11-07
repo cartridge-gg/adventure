@@ -6,7 +6,7 @@
 //
 // Implements IMinigameTokenData interface for testing challenge level verification
 
-use focg_adventure::verifiers::interface::IMinigameTokenData;
+use focg_adventure::denshokan::interface::IMinigameTokenData;
 
 #[starknet::interface]
 pub trait IMockGameAdmin<TContractState> {

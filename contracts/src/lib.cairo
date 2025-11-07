@@ -9,9 +9,8 @@ pub mod token {
     pub mod svg;
 }
 
-pub mod verifiers {
+pub mod denshokan {
     pub mod interface;
-    pub mod mock_game;
 }
 
 #[cfg(test)]

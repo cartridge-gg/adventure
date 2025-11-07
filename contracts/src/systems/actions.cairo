@@ -55,7 +55,7 @@ pub mod actions {
     use super::IAdventureActions;
     use focg_adventure::models::{AdventureConfig, PlayerToken, LevelConfig};
     use focg_adventure::token::map::{IAdventureMapDispatcher, IAdventureMapDispatcherTrait};
-    use focg_adventure::verifiers::interface::{IMinigameTokenDataDispatcher, IMinigameTokenDataDispatcherTrait};
+    use focg_adventure::denshokan::interface::{IMinigameTokenDataDispatcher, IMinigameTokenDataDispatcherTrait};
 
     const CONFIG_KEY: u32 = 0;
 
