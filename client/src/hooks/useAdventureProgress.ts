@@ -39,21 +39,50 @@ export function useAdventureProgress() {
   // Derive hasNFT from tokenId (if we have a token_id, we have an NFT)
   const hasNFT = !!tokenId;
 
-  // TODO: Fetch level completion data from Map contract
-  // For now, return basic progress structure
+  // Query progress bitmap from contract (single call instead of 6 separate calls)
+  const {
+    data: progressData,
+    isPending: progressIsPending,
+  } = useReadContract({
+    abi: ADVENTURE_ABI as Abi,
+    address: ADVENTURE_ADDRESS as `0x${string}`,
+    functionName: 'get_progress',
+    args: [tokenId ? BigInt(tokenId) : 0n],
+    enabled: !!tokenId && !!ADVENTURE_ADDRESS && !!ADVENTURE_ABI,
+  });
+
+  // Decode bitmap to get completed levels
+  const levelsCompleted = useMemo(() => {
+    if (!tokenId || !progressData) return [];
+
+    const progressBitmap = progressData as bigint;
+    const completed: number[] = [];
+
+    // Check each level bit (contract uses: 1 << level_number as the mask)
+    for (let level = 1; level <= TOTAL_LEVELS; level++) {
+      const mask = 1n << BigInt(level);
+      if ((progressBitmap & mask) !== 0n) {
+        completed.push(level);
+      }
+    }
+
+    return completed;
+  }, [tokenId, progressData]);
+
   const progress = useMemo((): AdventureProgress | null => {
     if (!address || !hasNFT || !tokenId) return null;
 
     return {
       tokenId,
       username: 'Adventurer', // TODO: Fetch from contract or controller
-      levelsCompleted: [], // TODO: Query Map contract for completed levels
+      levelsCompleted,
       totalLevels: TOTAL_LEVELS,
-      completionPercentage: 0,
+      completionPercentage: (levelsCompleted.length / TOTAL_LEVELS) * 100,
     };
-  }, [address, hasNFT, tokenId]);
+  }, [address, hasNFT, tokenId, levelsCompleted]);
 
-  const isLoading = address ? tokenIdIsPending : false;
+  // Only wait for progress if we have a token ID to query
+  const isLoading = address ? (tokenIdIsPending || (!!tokenId && progressIsPending)) : false;
 
   return {
     progress,

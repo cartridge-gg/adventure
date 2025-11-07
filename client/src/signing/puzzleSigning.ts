@@ -22,7 +22,10 @@ import { ec, hash, CallData, num, Account, RpcProvider, constants } from 'starkn
  */
 export function privateKeyFromSolution(solution: string): string {
   const normalized = solution.trim().toLowerCase();
-  const solutionBytes = Buffer.from(normalized, 'utf-8');
+
+  // Use TextEncoder for browser compatibility (instead of Buffer)
+  const encoder = new TextEncoder();
+  const solutionBytes = encoder.encode(normalized);
 
   // Use Poseidon hash (Starknet native) to derive private key from solution
   // We hash the byte array as felts

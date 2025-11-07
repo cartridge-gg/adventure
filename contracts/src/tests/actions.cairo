@@ -400,13 +400,9 @@ fn test_view_functions() {
     let token_id = actions.get_player_token_id(player_addr);
     assert(token_id == 0, 'Wrong token id');
 
-    // Test get_progress
+    // Test get_progress - should be 0 (no levels complete)
     let progress = actions.get_progress(0);
     assert(progress == 0, 'Progress should be 0');
-
-    // Test get_level_status
-    let status = actions.get_level_status(0, 1);
-    assert(status == false, 'Level should not be complete');
 }
 
 // ============================================================================
@@ -460,9 +456,6 @@ fn test_full_lifecycle() {
 
     // Since level 3 requires level 2 to be complete, we can't test level 3 either
     // This test now only verifies level 1 (challenge) completion
-
-    // Verify level 1 complete
-    assert(actions.get_level_status(0, 1), 'Level 1 status wrong');
 
     stop_cheat_caller_address(actions_address);
 }

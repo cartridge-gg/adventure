@@ -189,10 +189,13 @@ for i in $(seq 0 $((PUZZLE_COUNT - 1))); do
     PUZZLE_NAME=$(jq -r ".puzzles[$i].name" "$PUZZLE_FILE")
     CODEWORD=$(jq -r ".puzzles[$i].codeword" "$PUZZLE_FILE")
 
-    # For local testing, use a deterministic placeholder address derived from level
-    # In production, this would be derived from the codeword via Poseidon hash
-    # Each puzzle gets a unique solution address
-    SOLUTION_ADDRESS="0x$(printf '%062d' $LEVEL)00"
+    # Derive solution address from codeword using the compute_solution_address utility
+    SOLUTION_ADDRESS=$(node "$SCRIPT_DIR/compute_solution_address.mjs" "$CODEWORD")
+
+    if [ -z "$SOLUTION_ADDRESS" ]; then
+        echo -e "${RED}✗ Failed to compute solution address for level $LEVEL${NC}"
+        exit 1
+    fi
 
     echo -e "${YELLOW}Configuring puzzle level $LEVEL ($PUZZLE_NAME)...${NC}"
     echo -e "${BLUE}  Codeword: $CODEWORD (solution_address: $SOLUTION_ADDRESS)${NC}"

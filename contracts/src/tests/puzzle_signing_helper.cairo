@@ -145,4 +145,5 @@ pub fn test_codeword_level_6() -> ByteArray {
 // actions.complete_puzzle_level(token_id, 2, signature);
 //
 // // Verify completion
-// assert(actions.get_level_status(token_id, 2), 'Level not complete');
+// let progress = actions.get_progress(token_id);
+// assert((progress & (1 << 2)) != 0, 'Level not complete');

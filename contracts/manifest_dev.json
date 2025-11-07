@@ -33,8 +33,8 @@
   },
   "contracts": [
     {
-      "address": "0x566649dc06366fd32df10aaeb9e4a0a3159e8d8408a1722387f51da9a41244f",
-      "class_hash": "0x43f583a0fa511de7540cb97dd089f72734ca811c4b51a2927cc063c6f92dd79",
+      "address": "0x3208961ba24ccaec04630b587f81e3a50aba44794aea6b2084956cd6e6e64cc",
+      "class_hash": "0x425b434205d05497b4fb70b0cefa5592caaa666b6791f725fc063501a2e1844",
       "init_calldata": [],
       "tag": "focg_adventure-actions",
       "selector": "0x45c87c63d9eb923e47da69456442cdb7124f20fa646081b3cead2a1526ae89e",
@@ -2388,26 +2388,6 @@
           "outputs": [
             {
               "type": "core::integer::u256"
-            }
-          ],
-          "state_mutability": "view"
-        },
-        {
-          "type": "function",
-          "name": "get_level_status",
-          "inputs": [
-            {
-              "name": "token_id",
-              "type": "core::integer::u256"
-            },
-            {
-              "name": "level_number",
-              "type": "core::integer::u8"
-            }
-          ],
-          "outputs": [
-            {
-              "type": "core::bool"
             }
           ],
           "state_mutability": "view"

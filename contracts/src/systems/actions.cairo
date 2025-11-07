@@ -21,7 +21,6 @@ pub trait IAdventureActions<T> {
     // View Functions
     // ========================================================================
     fn get_player_token_id(self: @T, player: ContractAddress) -> u256;
-    fn get_level_status(self: @T, token_id: u256, level_number: u8) -> bool;
     fn get_progress(self: @T, token_id: u256) -> u256;
     fn get_level_config(self: @T, level_number: u8) -> (felt252, ContractAddress, u32, ContractAddress); // (type, game_contract, minimum_score, solution_address)
 
@@ -213,16 +212,6 @@ pub mod actions {
             let world = self.world_default();
             let player_token: PlayerToken = world.read_model(player);
             player_token.token_id
-        }
-
-        fn get_level_status(self: @ContractState, token_id: u256, level_number: u8) -> bool {
-            let world = self.world_default();
-            let config: AdventureConfig = world.read_model(CONFIG_KEY);
-            let nft = IAdventureMapDispatcher { contract_address: config.nft_contract };
-            let progress = nft.get_progress(token_id);
-
-            let level_mask: u256 = self.compute_level_mask(level_number);
-            (progress & level_mask) != 0
         }
 
         fn get_progress(self: @ContractState, token_id: u256) -> u256 {
