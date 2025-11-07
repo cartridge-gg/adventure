@@ -16,7 +16,7 @@ import { AdventureProgress } from './lib/adventureTypes';
 
 function AdventureApp() {
   const { address } = useAccount();
-  const { progress: initialProgress, isLoading, hasNFT, refetch } = useAdventureProgress();
+  const { progress: initialProgress, isLoading, hasNFT } = useAdventureProgress();
   const [progress, setProgress] = useState<AdventureProgress | null>(initialProgress);
 
   // Sync local state with hook progress
@@ -80,7 +80,7 @@ function AdventureApp() {
                 </div>
               ) : !hasNFT ? (
                 <div className="py-8">
-                  <AdventureMintButton onMintSuccess={refetch} />
+                  <AdventureMintButton onMintSuccess={() => {}} />
                 </div>
               ) : progress ? (
                 <AdventureQuestDashboard
@@ -99,7 +99,7 @@ function AdventureApp() {
                       There was an error loading your progress. Please try refreshing the page.
                     </p>
                     <button
-                      onClick={refetch}
+                      onClick={() => window.location.reload()}
                       className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors"
                     >
                       Retry

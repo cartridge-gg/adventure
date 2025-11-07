@@ -81,7 +81,11 @@ export const WORLD_ADDRESS = manifest.world.address;
 // Find the Adventure contract (Dojo game logic)
 const adventureContract = manifest.contracts?.find((c: any) => c.tag === "focg_adventure-actions");
 export const ADVENTURE_ADDRESS = adventureContract?.address || '0x0';
-export const ADVENTURE_ABI = adventureContract?.abi;
+
+// Find ABIs from the separate abis array
+// In newer Dojo versions, ABIs are in manifest.abis with .items containing the actual ABI entries
+const adventureAbiEntry = manifest.abis?.find((a: any) => a.name === "focg_adventure::systems::actions::IAdventureActions");
+export const ADVENTURE_ABI = adventureAbiEntry?.items;
 
 // Find the Map NFT contract (state storage)
 const mapContract = manifest.external_contracts?.find((c: any) => c.tag === "focg_adventure-adventure_map");

@@ -4,90 +4,61 @@
  * Queries the contract to get player's NFT and progress data
  */
 
-import { useState, useEffect, useCallback } from 'react';
-import { useAccount } from '@starknet-react/core';
+import { useMemo } from 'react';
+import { useAccount, useReadContract } from '@starknet-react/core';
+import { Abi } from 'starknet';
 import { AdventureProgress } from '../lib/adventureTypes';
 import { TOTAL_LEVELS } from '../lib/adventureConfig';
-import { useAdventureContract } from './useAdventureContract';
+import { ADVENTURE_ADDRESS, ADVENTURE_ABI, MAP_ADDRESS, MAP_ABI } from '../lib/config';
 
 export function useAdventureProgress() {
   const { address } = useAccount();
-  const { getPlayerTokenId, isLevelComplete } = useAdventureContract();
-  const [progress, setProgress] = useState<AdventureProgress | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasNFT, setHasNFT] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  const fetchProgress = useCallback(async () => {
-    if (!address) {
-      setIsLoading(false);
-      setHasNFT(false);
-      setProgress(null);
-      return;
+  // Get token_id from Adventure contract (reads PlayerToken model)
+  const {
+    data: tokenIdData,
+    isPending: tokenIdIsPending,
+    error: tokenIdError,
+  } = useReadContract({
+    abi: ADVENTURE_ABI as Abi,
+    address: ADVENTURE_ADDRESS as `0x${string}`,
+    functionName: 'get_player_token_id',
+    args: [address || '0x0'],
+    enabled: !!address && !!ADVENTURE_ADDRESS && !!ADVENTURE_ABI,
+  });
+
+  // Extract token_id
+  const tokenId = useMemo(() => {
+    if (!tokenIdData || !address) {
+      return null;
     }
+    const tokenIdValue = tokenIdData as bigint;
+    return tokenIdValue > 0n ? tokenIdValue.toString() : null;
+  }, [tokenIdData, address]);
 
-    setIsLoading(true);
-    setError(null);
+  // Derive hasNFT from tokenId (if we have a token_id, we have an NFT)
+  const hasNFT = !!tokenId;
 
-    try {
-      // Check if player has minted NFT
-      // NOTE: This function needs to be implemented based on your contract
-      // For now, we'll use a placeholder approach
-      const tokenResult = await getPlayerTokenId(address);
+  // TODO: Fetch level completion data from Map contract
+  // For now, return basic progress structure
+  const progress = useMemo((): AdventureProgress | null => {
+    if (!address || !hasNFT || !tokenId) return null;
 
-      if (!tokenResult.success || !tokenResult.tokenId) {
-        // Player hasn't minted yet
-        setHasNFT(false);
-        setProgress(null);
-        setIsLoading(false);
-        return;
-      }
+    return {
+      tokenId,
+      username: 'Adventurer', // TODO: Fetch from contract or controller
+      levelsCompleted: [], // TODO: Query Map contract for completed levels
+      totalLevels: TOTAL_LEVELS,
+      completionPercentage: 0,
+    };
+  }, [address, hasNFT, tokenId]);
 
-      setHasNFT(true);
-      const tokenId = tokenResult.tokenId;
-
-      // Query level completion status for all levels
-      const levelsCompleted: number[] = [];
-
-      // Check each level (1 through TOTAL_LEVELS)
-      for (let levelNum = 1; levelNum <= TOTAL_LEVELS; levelNum++) {
-        try {
-          const levelResult = await isLevelComplete(tokenId, levelNum);
-          if (levelResult.success && levelResult.isComplete) {
-            levelsCompleted.push(levelNum);
-          }
-        } catch (err) {
-          console.warn(`Failed to check level ${levelNum}:`, err);
-          // Continue checking other levels
-        }
-      }
-
-      const adventureProgress: AdventureProgress = {
-        tokenId,
-        username: 'Adventurer', // TODO: Fetch from contract or controller
-        levelsCompleted,
-        totalLevels: TOTAL_LEVELS,
-        completionPercentage: (levelsCompleted.length / TOTAL_LEVELS) * 100,
-      };
-
-      setProgress(adventureProgress);
-    } catch (err) {
-      console.error('Error fetching progress:', err);
-      setError(err instanceof Error ? err.message : 'Unknown error');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [address, getPlayerTokenId, isLevelComplete]);
-
-  useEffect(() => {
-    fetchProgress();
-  }, [fetchProgress]);
+  const isLoading = address ? tokenIdIsPending : false;
 
   return {
     progress,
     isLoading,
     hasNFT,
-    error,
-    refetch: fetchProgress,
+    error: tokenIdError,
   };
 }

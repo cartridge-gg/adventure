@@ -62,14 +62,18 @@ export function AdventureMintButton({ onMintSuccess }: AdventureMintButtonProps)
 
       if (result.success) {
         console.log('NFT minted successfully:', result.txHash);
-        onMintSuccess();
+
+        // Reload the page to show the dashboard with fresh contract data
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       } else {
         setError(result.error || 'Failed to mint NFT');
+        setIsMinting(false);
       }
     } catch (err) {
       console.error('Mint error:', err);
       setError(err instanceof Error ? err.message : 'Unknown error occurred');
-    } finally {
       setIsMinting(false);
     }
   };
