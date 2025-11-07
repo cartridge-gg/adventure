@@ -137,31 +137,14 @@ fi
 # Step 4.5: Configure levels from spec files
 echo -e "\n${YELLOW}Step 4.5: Configuring adventure levels from spec files...${NC}"
 
-# Get MockGame addresses from manifest
-mock_1=$(jq -r '.external_contracts[] | select(.tag == "focg_adventure-mock_1") | .address' "$CONTRACTS_DIR/manifest_dev.json")
-mock_3=$(jq -r '.external_contracts[] | select(.tag == "focg_adventure-mock_3") | .address' "$CONTRACTS_DIR/manifest_dev.json")
-mock_5=$(jq -r '.external_contracts[] | select(.tag == "focg_adventure-mock_5") | .address' "$CONTRACTS_DIR/manifest_dev.json")
-
-echo -e "${GREEN}MockGame contracts deployed:${NC}"
-echo -e "  Level 1: $mock_1"
-echo -e "  Level 3: $mock_3"
-echo -e "  Level 5: $mock_5"
-
-# Read spec files
+# Configure challenge levels
 CHALLENGE_FILE="../spec/challenges.json"
-PUZZLE_FILE="../spec/puzzles.json"
 
 if [ ! -f "$CHALLENGE_FILE" ]; then
     echo -e "${RED}Error: challenges.json not found${NC}"
     exit 1
 fi
 
-if [ ! -f "$PUZZLE_FILE" ]; then
-    echo -e "${RED}Error: puzzles.json not found${NC}"
-    exit 1
-fi
-
-# Configure challenge levels
 echo -e "${BLUE}Configuring challenge levels...${NC}"
 CHALLENGE_COUNT=$(jq '.challenges | length' "$CHALLENGE_FILE")
 
@@ -169,17 +152,7 @@ for i in $(seq 0 $((CHALLENGE_COUNT - 1))); do
     LEVEL=$(jq -r ".challenges[$i].level" "$CHALLENGE_FILE")
     GAME_NAME=$(jq -r ".challenges[$i].game" "$CHALLENGE_FILE")
     MIN_SCORE=$(jq -r ".challenges[$i].minimum_score" "$CHALLENGE_FILE")
-
-    # Get the appropriate MockGame address
-    case $LEVEL in
-        1) GAME_CONTRACT=$mock_1 ;;
-        3) GAME_CONTRACT=$mock_3 ;;
-        5) GAME_CONTRACT=$mock_5 ;;
-        *)
-            echo -e "${RED}Unknown level $LEVEL${NC}"
-            continue
-            ;;
-    esac
+    GAME_CONTRACT=$(jq -r '.external_contracts[] | select(.tag == "focg_adventure-mock_'$LEVEL'") | .address' "$CONTRACTS_DIR/manifest_dev.json")
 
     echo -e "${YELLOW}Configuring challenge level $LEVEL ($GAME_NAME)...${NC}"
     # set_challenge(level_number, game_contract, minimum_score)
@@ -201,6 +174,13 @@ for i in $(seq 0 $((CHALLENGE_COUNT - 1))); do
 done
 
 # Configure puzzle levels
+PUZZLE_FILE="../spec/puzzles.json"
+
+if [ ! -f "$PUZZLE_FILE" ]; then
+    echo -e "${RED}Error: puzzles.json not found${NC}"
+    exit 1
+fi
+
 echo -e "${BLUE}Configuring puzzle levels...${NC}"
 PUZZLE_COUNT=$(jq '.puzzles | length' "$PUZZLE_FILE")
 
