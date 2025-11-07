@@ -21,7 +21,8 @@ openzeppelin = "1.0.0"
 [[target.starknet-contract]]
 build-external-contracts = [
     "dojo::world::world_contract::world",
-    "focg_adventure::token::map::AdventureMap"
+    "focg_adventure::token::map::AdventureMap",
+    "focg_adventure::denshokan::mock::MockGame"
 ]
 
 [tool.scarb]

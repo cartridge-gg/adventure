@@ -11,11 +11,11 @@ pub mod token {
 
 pub mod denshokan {
     pub mod interface;
+    pub mod mock;
 }
 
 #[cfg(test)]
 mod tests {
     mod actions;
-    mod mocks;
     mod svg;
 }

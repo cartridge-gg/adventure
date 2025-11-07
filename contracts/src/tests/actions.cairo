@@ -17,7 +17,7 @@ use openzeppelin::token::erc721::interface::{IERC721Dispatcher, IERC721Dispatche
 use focg_adventure::systems::actions::{IAdventureActionsDispatcher, IAdventureActionsDispatcherTrait};
 use focg_adventure::models::{AdventureConfig, PlayerToken, LevelConfig};
 use focg_adventure::token::map::{IAdventureMapDispatcher, IAdventureMapDispatcherTrait};
-use focg_adventure::tests::mocks::{IMockGameAdminDispatcher, IMockGameAdminDispatcherTrait};
+use focg_adventure::denshokan::mock::{IMockGameAdminDispatcher, IMockGameAdminDispatcherTrait};
 
 // ============================================================================
 // Test Helpers
