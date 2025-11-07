@@ -20,6 +20,9 @@ export function IRLQuestLevel({ level, status, tokenId, onComplete }: IRLQuestLe
   const { generateSignature, playerAddress } = usePuzzleSigning();
   const { completePuzzleLevel } = useAdventureContract();
 
+  // Show codewords in dev mode
+  const isDevMode = import.meta.env.VITE_CHAIN === 'dev' || !import.meta.env.VITE_CHAIN;
+
   if (status === 'locked') {
     return (
       <div className="bg-gray-100 border-2 border-gray-300 rounded-lg p-6 opacity-60">
@@ -128,6 +131,20 @@ export function IRLQuestLevel({ level, status, tokenId, onComplete }: IRLQuestLe
         </h4>
         <p className="text-purple-800 text-sm">{level.location}</p>
       </div>
+
+      {/* Dev Mode: Show Codeword */}
+      {isDevMode && (
+        <div className="bg-amber-50 border-2 border-amber-400 rounded-lg p-4 mb-4">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-xl">🔧</span>
+            <h4 className="font-semibold text-amber-900">Dev Mode</h4>
+          </div>
+          <p className="text-sm text-amber-800 mb-2">Codeword for testing:</p>
+          <p className="font-mono text-lg font-bold text-amber-900 bg-amber-100 px-3 py-2 rounded border border-amber-300">
+            {level.expectedCodeword}
+          </p>
+        </div>
+      )}
 
       {/* Codeword Input Form */}
       <form onSubmit={handleSubmit} className="space-y-4">
