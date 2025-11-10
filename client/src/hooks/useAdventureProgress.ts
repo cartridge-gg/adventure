@@ -9,7 +9,7 @@ import { useAccount, useReadContract } from '@starknet-react/core';
 import { Abi } from 'starknet';
 import { AdventureProgress } from '../lib/adventureTypes';
 import { TOTAL_LEVELS } from '../lib/adventureConfig';
-import { ADVENTURE_ADDRESS, ADVENTURE_ABI, MAP_ADDRESS, MAP_ABI } from '../lib/config';
+import { ADVENTURE_ADDRESS, ADVENTURE_ABI } from '../lib/config';
 
 export function useAdventureProgress() {
   const { address } = useAccount();
@@ -74,14 +74,14 @@ export function useAdventureProgress() {
 
     return {
       tokenId,
-      username: 'Adventurer', // TODO: Fetch from contract or controller
+      username: 'Adventurer',
       levelsCompleted,
       totalLevels: TOTAL_LEVELS,
       completionPercentage: (levelsCompleted.length / TOTAL_LEVELS) * 100,
     };
   }, [address, hasNFT, tokenId, levelsCompleted]);
 
-  // Only wait for progress if we have a token ID to query
+  // Only wait for queries that are actually running
   const isLoading = address ? (tokenIdIsPending || (!!tokenId && progressIsPending)) : false;
 
   return {

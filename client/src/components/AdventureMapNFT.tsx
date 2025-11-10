@@ -19,12 +19,9 @@ export function AdventureMapNFT({ progress }: AdventureMapNFTProps) {
   return (
     <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-lg p-6 shadow-lg border-2 border-amber-300">
       <div className="mb-4">
-        <h3 className="text-xl font-bold text-amber-900 mb-1">
+        <h3 className="text-xl font-bold text-amber-900">
           Adventure Map #{progress.tokenId}
         </h3>
-        <p className="text-sm text-amber-700">
-          Adventurer: {progress.username}
-        </p>
       </div>
 
       {/* Mock SVG Treasure Map */}
@@ -109,6 +106,19 @@ export function AdventureMapNFT({ progress }: AdventureMapNFTProps) {
               Journey Complete!
             </text>
           )}
+
+          {/* Username in lower-right corner */}
+          <text
+            x="360"
+            y="470"
+            textAnchor="end"
+            fill="#92400e"
+            fontSize="14"
+            fontFamily="serif"
+            fontStyle="italic"
+          >
+            {progress.username}
+          </text>
         </svg>
       </div>
 

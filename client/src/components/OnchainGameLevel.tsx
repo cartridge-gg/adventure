@@ -101,7 +101,7 @@ export function OnchainGameLevel({ level, status, tokenId, onComplete }: Onchain
       </div>
 
       {/* Action Buttons */}
-      <div className="space-y-3">
+      <div className="flex flex-col sm:flex-row gap-3">
         {level.gameUrl && (
           <button
             onClick={handlePlayGame}

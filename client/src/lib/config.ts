@@ -90,7 +90,10 @@ export const ADVENTURE_ABI = adventureAbiEntry?.items;
 // Find the Map NFT contract (state storage)
 const mapContract = manifest.external_contracts?.find((c: any) => c.tag === "focg_adventure-adventure_map");
 export const MAP_ADDRESS = mapContract?.address || '0x0';
-export const MAP_ABI = mapContract?.abi;
+
+// Find the Map NFT ABI from the separate abis array
+const mapAbiEntry = manifest.abis?.find((a: any) => a.name === "focg_adventure::token::map::IAdventureMap");
+export const MAP_ABI = mapAbiEntry?.items;
 
 // ============================================================================
 // LOGGING

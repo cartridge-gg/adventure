@@ -5,7 +5,7 @@
  */
 
 import { useAccount, useContract } from '@starknet-react/core';
-import { CallData } from 'starknet';
+import { CallData, shortString } from 'starknet';
 import { ADVENTURE_ADDRESS, ADVENTURE_ABI, MAP_ADDRESS, MAP_ABI } from '../lib/config';
 import { executeTx, parseContractError, splitTokenIdToU256 } from '../lib/utils';
 
@@ -39,7 +39,9 @@ export function useAdventureContract() {
     }
 
     try {
-      console.log('[Contract] Minting Adventure Map:', { username });
+      // Encode username as felt252 (Cairo short string)
+      // Truncate to 31 characters max for felt252 compatibility
+      const usernameFelt = shortString.encodeShortString(username.slice(0, 31));
 
       // Call the mint function on the Adventure contract
       const result = await executeTx(
@@ -47,7 +49,7 @@ export function useAdventureContract() {
         {
           contractAddress: ADVENTURE_ADDRESS,
           entrypoint: 'mint',
-          calldata: CallData.compile([username.slice(0, 31)]), // Truncate for felt252 compatibility
+          calldata: CallData.compile([usernameFelt]),
         },
         'Mint Adventure Map'
       );
