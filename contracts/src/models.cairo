@@ -27,6 +27,5 @@ pub struct LevelConfig {
     pub level_number: u8,
     pub level_type: felt252, // 'challenge' or 'puzzle'
     pub game_contract: ContractAddress, // Denshokan game contract (for challenge levels)
-    pub minimum_score: u32, // Minimum score required (for challenge levels)
     pub solution_address: ContractAddress, // Used for puzzle levels
 }

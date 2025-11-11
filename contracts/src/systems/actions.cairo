@@ -22,7 +22,7 @@ pub trait IAdventureActions<T> {
     // ========================================================================
     fn get_player_token_id(self: @T, player: ContractAddress) -> u256;
     fn get_progress(self: @T, token_id: u256) -> u256;
-    fn get_level_config(self: @T, level_number: u8) -> (felt252, ContractAddress, u32, ContractAddress); // (type, game_contract, minimum_score, solution_address)
+    fn get_level_config(self: @T, level_number: u8) -> (felt252, ContractAddress, ContractAddress); // (type, game_contract, solution_address)
 
     // ========================================================================
     // Admin Functions
@@ -31,8 +31,7 @@ pub trait IAdventureActions<T> {
     fn set_challenge(
         ref self: T,
         level_number: u8,
-        game_contract: ContractAddress,
-        minimum_score: u32
+        game_contract: ContractAddress
     );
     fn set_puzzle(
         ref self: T,
@@ -144,9 +143,6 @@ pub mod actions {
             let is_game_over = game.game_over(game_id);
             assert(is_game_over, 'Game not completed');
 
-            let score = game.score(game_id);
-            assert(score >= level_config.minimum_score, 'Score too low');
-
             // 6. Mark level complete in NFT contract
             nft.complete_level(map_id, level_number);
 
@@ -221,10 +217,10 @@ pub mod actions {
             nft.get_progress(token_id)
         }
 
-        fn get_level_config(self: @ContractState, level_number: u8) -> (felt252, ContractAddress, u32, ContractAddress) {
+        fn get_level_config(self: @ContractState, level_number: u8) -> (felt252, ContractAddress, ContractAddress) {
             let world = self.world_default();
             let level_config: LevelConfig = world.read_model(level_number);
-            (level_config.level_type, level_config.game_contract, level_config.minimum_score, level_config.solution_address)
+            (level_config.level_type, level_config.game_contract, level_config.solution_address)
         }
 
         // ====================================================================
@@ -240,15 +236,13 @@ pub mod actions {
         fn set_challenge(
             ref self: ContractState,
             level_number: u8,
-            game_contract: ContractAddress,
-            minimum_score: u32
+            game_contract: ContractAddress
         ) {
             let mut world = self.world_default();
             let config = LevelConfig {
                 level_number,
                 level_type: 'challenge',
                 game_contract,
-                minimum_score,
                 solution_address: 0.try_into().unwrap()
             };
             world.write_model(@config);
@@ -264,7 +258,6 @@ pub mod actions {
                 level_number,
                 level_type: 'puzzle',
                 game_contract: 0.try_into().unwrap(),
-                minimum_score: 0,
                 solution_address
             };
             world.write_model(@config);

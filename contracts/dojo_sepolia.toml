@@ -1,7 +1,7 @@
 [world]
 name = "FOCG Adventure"
-description = "A multi-level adventure quest system with challenges and puzzles for FOCG"
-seed = "focg_adventure"
+description = "A multi-level adventure quest system with challenges and puzzles for Devconnect"
+seed = "focg_adventure-v2"
 
 [namespace]
 default = "focg_adventure"
@@ -10,6 +10,7 @@ default = "focg_adventure"
 rpc_url = "https://api.cartridge.gg/x/starknet/sepolia"
 account_address = "0x05cb4ea8cc45dd51505a7e585b4a73d87d2f9448ed6a380155006229170e4819"
 keystore_path = "~/.starkli-wallets/deployer-sepolia.json"
+world_address = "0x433c59aa60cb73dab98dddc998057c83dcb4acda44d967dc609edc0849c50d6"
 
 [writers]
 "focg_adventure" = ["focg_adventure-actions"]
@@ -17,8 +18,8 @@ keystore_path = "~/.starkli-wallets/deployer-sepolia.json"
 [[external_contracts]]
 contract_name = "AdventureMap"
 instance_name = "adventure_map"
-salt = "v1"
+salt = "v2"
 constructor_data = [
-    "0x05cb4ea8cc45dd51505a7e585b4a73d87d2f9448ed6a380155006229170e4819",
+    "0x05cb4ea8cc45dd51505a7e585b4a73d87d2f9448ed6a380155006229170e4819",  # owner address
     "6"  # total_levels
 ]

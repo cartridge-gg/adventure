@@ -16,3 +16,6 @@
 [submodule "contracts/refs/ronins-pact"]
 	path = contracts/refs/ronins-pact
 	url = https://github.com/cartridge-gg/ronins-pact
+[submodule "refs/dopewars"]
+	path = refs/dopewars
+	url = https://github.com/cartridge-gg/dopewars

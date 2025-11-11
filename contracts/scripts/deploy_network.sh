@@ -47,8 +47,8 @@ done
 cd "$CONTRACTS_DIR"
 
 # Step 1: Build contracts
-echo -e "\n${YELLOW}Step 1: Building contracts...${NC}"
-sozo build
+echo -e "\n${YELLOW}Step 1: Building contracts for $NETWORK...${NC}"
+sozo build --profile $NETWORK
 
 # Step 2: Migrate world
 echo -e "\n${YELLOW}Step 2: Migrating world to $NETWORK...${NC}"
@@ -105,6 +105,103 @@ else
     echo -e "${RED}✗ Failed to set minter${NC}"
 fi
 
+# Step 4: Configure levels from spec files
+echo -e "\n${YELLOW}Step 4: Configuring adventure levels from spec files...${NC}"
+
+# Configure challenge levels
+CHALLENGE_FILE="../spec/challenges.json"
+
+if [ ! -f "$CHALLENGE_FILE" ]; then
+    echo -e "${RED}Error: challenges.json not found${NC}"
+    exit 1
+fi
+
+echo -e "${BLUE}Configuring challenge levels...${NC}"
+CHALLENGE_COUNT=$(jq '.challenges | length' "$CHALLENGE_FILE")
+
+for i in $(seq 0 $((CHALLENGE_COUNT - 1))); do
+    LEVEL=$(jq -r ".challenges[$i].level" "$CHALLENGE_FILE")
+    GAME_NAME=$(jq -r ".challenges[$i].game" "$CHALLENGE_FILE")
+
+    # Get Denshokan contract address from spec file (this is the game's NFT contract)
+    GAME_CONTRACT=$(jq -r ".challenges[$i].dojo.$NETWORK.denshokan_address" "$CHALLENGE_FILE")
+
+    if [ -z "$GAME_CONTRACT" ] || [ "$GAME_CONTRACT" == "null" ]; then
+        echo -e "${YELLOW}Warning: No Denshokan address found for level $LEVEL in $NETWORK config${NC}"
+        continue
+    fi
+
+    echo -e "${YELLOW}Configuring challenge level $LEVEL ($GAME_NAME)...${NC}"
+    echo -e "${BLUE}  Denshokan Contract: $GAME_CONTRACT${NC}"
+
+    # set_challenge(level_number, game_contract)
+    # Note: game_contract is the Denshokan NFT contract that implements IMinigameTokenData
+    sozo execute --profile $NETWORK --wait focg_adventure-actions set_challenge \
+        "$LEVEL" \
+        "$GAME_CONTRACT"
+
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}✓ Challenge level $LEVEL configured${NC}"
+    else
+        echo -e "${RED}✗ Failed to configure challenge level $LEVEL${NC}"
+    fi
+done
+
+# Configure puzzle levels
+PUZZLE_FILE="../spec/puzzles.json"
+
+if [ ! -f "$PUZZLE_FILE" ]; then
+    echo -e "${RED}Error: puzzles.json not found${NC}"
+    exit 1
+fi
+
+echo -e "${BLUE}Configuring puzzle levels...${NC}"
+PUZZLE_COUNT=$(jq '.puzzles | length' "$PUZZLE_FILE")
+
+for i in $(seq 0 $((PUZZLE_COUNT - 1))); do
+    LEVEL=$(jq -r ".puzzles[$i].level" "$PUZZLE_FILE")
+    PUZZLE_NAME=$(jq -r ".puzzles[$i].name" "$PUZZLE_FILE")
+    CODEWORD=$(jq -r ".puzzles[$i].codeword" "$PUZZLE_FILE")
+
+    # Check if node is available for codeword2address
+    if ! command -v node &> /dev/null; then
+        echo -e "${YELLOW}Warning: node not found, skipping puzzle level $LEVEL configuration${NC}"
+        echo -e "${BLUE}  You can configure this later using: sozo execute focg_adventure-actions set_puzzle $LEVEL <solution_address>${NC}"
+        continue
+    fi
+
+    # Derive solution address from codeword using the codeword2address utility
+    SOLUTION_ADDRESS=$(node "$SCRIPT_DIR/../../client/scripts/codeword2address.mjs" "$CODEWORD")
+
+    if [ -z "$SOLUTION_ADDRESS" ]; then
+        echo -e "${RED}✗ Failed to compute solution address for level $LEVEL${NC}"
+        exit 1
+    fi
+
+    echo -e "${YELLOW}Configuring puzzle level $LEVEL ($PUZZLE_NAME)...${NC}"
+    echo -e "${BLUE}  Codeword: $CODEWORD (solution_address: $SOLUTION_ADDRESS)${NC}"
+
+    # set_puzzle(level_number, solution_address)
+    sozo execute --profile $NETWORK --wait focg_adventure-actions set_puzzle \
+        "$LEVEL" \
+        "$SOLUTION_ADDRESS"
+
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}✓ Puzzle level $LEVEL configured${NC}"
+    else
+        echo -e "${RED}✗ Failed to configure puzzle level $LEVEL${NC}"
+    fi
+done
+
+# Step 5: Mint initial NFT
+echo -e "\n${YELLOW}Step 5: Minting initial NFT...${NC}"
+sozo execute --profile $NETWORK --wait focg_adventure-actions mint sstr:deployer
+if [ $? -eq 0 ]; then
+    echo -e "${GREEN}✓ Initial NFT minted${NC}"
+else
+    echo -e "${YELLOW}Warning: Failed to mint initial NFT (may already exist)${NC}"
+fi
+
 # Print deployment summary
 echo -e "\n${GREEN}=== Deployment Complete ===${NC}"
 echo -e "${BLUE}Network: $NETWORK${NC}"
@@ -113,11 +210,13 @@ echo -e "  World Address:    $WORLD_ADDRESS"
 echo -e "  AdventureMap NFT: $NFT_ADDRESS"
 echo -e "  Actions Contract: $ACTIONS_ADDRESS"
 echo -e "\n${BLUE}Configuration:${NC}"
-echo -e "  ✓ Owner permissions granted"
-echo -e "  ✓ NFT contract configured in Actions"
-echo -e "  ✓ Actions contract set as minter"
+echo -e "  ✓ Owner permissions granted to deployer"
+echo -e "  ✓ NFT contract configured in Actions with 6 levels"
+echo -e "  ✓ Actions contract set as minter on NFT"
+echo -e "  ✓ Challenge levels configured from spec/challenges.json"
+echo -e "  ✓ Puzzle levels configured from spec/puzzles.json"
+echo -e "  ✓ Initial NFT minted to deployer account"
 echo -e "\n${YELLOW}Next steps:${NC}"
-echo -e "  1. Configure levels via configure_adventure.sh (update for $NETWORK)"
-echo -e "  2. Deploy verifier contracts for challenge levels"
-echo -e "  3. Generate solution addresses for puzzle levels"
-echo -e "\nSee IMPL.md for details"
+echo -e "  1. Verify game contract addresses in spec/challenges.json match deployed games"
+echo -e "  2. Test challenge completion with real game sessions"
+echo -e "\nSee IMPL.md and spec/SPEC.md for details"

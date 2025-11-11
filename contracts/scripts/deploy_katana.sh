@@ -151,23 +151,22 @@ CHALLENGE_COUNT=$(jq '.challenges | length' "$CHALLENGE_FILE")
 for i in $(seq 0 $((CHALLENGE_COUNT - 1))); do
     LEVEL=$(jq -r ".challenges[$i].level" "$CHALLENGE_FILE")
     GAME_NAME=$(jq -r ".challenges[$i].game" "$CHALLENGE_FILE")
-    MIN_SCORE=$(jq -r ".challenges[$i].minimum_score" "$CHALLENGE_FILE")
     GAME_CONTRACT=$(jq -r '.external_contracts[] | select(.tag == "focg_adventure-mock_'$LEVEL'") | .address' "$CONTRACTS_DIR/manifest_dev.json")
 
     echo -e "${YELLOW}Configuring challenge level $LEVEL ($GAME_NAME)...${NC}"
-    # set_challenge(level_number, game_contract, minimum_score)
+    # set_challenge(level_number, game_contract)
     sozo execute --profile dev --wait focg_adventure-actions set_challenge \
         "$LEVEL" \
-        "$GAME_CONTRACT" \
-        "$MIN_SCORE"
+        "$GAME_CONTRACT"
 
     if [ $? -eq 0 ]; then
         echo -e "${GREEN}✓ Challenge level $LEVEL configured${NC}"
 
-        # Configure test game using complete_game(game_id, score)
+        # Configure test game using set_game_over(game_id, is_over)
+        # Note: Cairo booleans are represented as 0 (false) or 1 (true)
         echo -e "${BLUE}  Configuring test game in MockGame...${NC}"
-        sozo execute --profile dev --wait "$GAME_CONTRACT" complete_game 1 "$MIN_SCORE"
-        echo -e "${GREEN}  ✓ Test game ready (game_id=1, score=$MIN_SCORE, completed=true)${NC}"
+        sozo execute --profile dev --wait "$GAME_CONTRACT" set_game_over 1 1
+        echo -e "${GREEN}  ✓ Test game ready (game_id=1, game_over=true)${NC}"
     else
         echo -e "${RED}✗ Failed to configure challenge level $LEVEL${NC}"
     fi

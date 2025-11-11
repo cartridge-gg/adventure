@@ -1,6 +1,6 @@
 [world]
 name = "FOCG Adventure"
-description = "A multi-level adventure quest system with challenges and puzzles for FOCG"
+description = "A multi-level adventure quest system with challenges and puzzles for Devconnect"
 seed = "focg_adventure"
 
 [namespace]
@@ -17,8 +17,8 @@ keystore_path = "~/.starkli-wallets/deployer-mainnet.json"
 [[external_contracts]]
 contract_name = "AdventureMap"
 instance_name = "adventure_map"
-salt = "v1"
+salt = "1"
 constructor_data = [
-    "0x079b01c7fe90414b153f0457471c33e166ff5eee381e8dcd90f3214a56a3770b",
+    "0x079b01c7fe90414b153f0457471c33e166ff5eee381e8dcd90f3214a56a3770b",  # owner address
     "6"  # total_levels
 ]

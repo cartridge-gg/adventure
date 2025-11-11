@@ -1,6 +1,6 @@
 [world]
 name = "FOCG Adventure"
-description = "A multi-level adventure quest system with challenges and puzzles for FOCG"
+description = "A multi-level adventure quest system with challenges and puzzles for Devconnect"
 seed = "focg_adventure"
 
 [namespace]
