@@ -12,7 +12,7 @@ import manifestMainnet from "../../../contracts/manifest_mainnet.json";
 // Set via VITE_CHAIN environment variable: 'dev', 'sepolia', or 'mainnet'
 // Example: VITE_CHAIN=sepolia pnpm build
 
-const CHAIN_ENV = import.meta.env.VITE_CHAIN || 'dev';
+export const CHAIN_ENV = import.meta.env.VITE_CHAIN || 'dev';
 
 // ============================================================================
 // CHAIN CONFIGURATION

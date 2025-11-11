@@ -23,7 +23,7 @@ export function useAdventureProgress() {
     abi: ADVENTURE_ABI as Abi,
     address: ADVENTURE_ADDRESS as `0x${string}`,
     functionName: 'get_player_token_id',
-    args: [address || '0x0'],
+    args: address ? [address] : undefined,
     enabled: !!address && !!ADVENTURE_ADDRESS && !!ADVENTURE_ABI,
   });
 

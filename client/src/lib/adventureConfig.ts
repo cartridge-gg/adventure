@@ -1,8 +1,8 @@
 /**
  * FOCG Adventure Configuration
  *
- * This file contains the level configuration for the adventure.
- * It can be easily updated to add/remove/modify levels.
+ * Dynamically loads level configuration from spec files.
+ * Levels are automatically generated from spec/puzzles.json and spec/challenges.json.
  */
 
 import { Level, OnchainGameLevel, IRLQuestLevel } from './adventureTypes';
@@ -10,12 +10,12 @@ import puzzlesData from '../../../spec/puzzles.json';
 import challengesData from '../../../spec/challenges.json';
 
 // ============================================================================
-// SAMPLE LEVEL CONFIGURATION
+// DYNAMIC LEVEL CONFIGURATION
 // ============================================================================
-// This is a 6-level adventure with alternating game and quest levels
-// for demonstration purposes. Can be easily modified.
-// IRL Quest levels are loaded from spec/puzzles.json
-// Onchain game levels are loaded from spec/challenges.json
+// Levels are automatically generated from spec files:
+// - Challenge levels (type: 'game') from spec/challenges.json
+// - Puzzle levels (type: 'quest') from spec/puzzles.json
+// The levels are sorted by level number to create the final adventure sequence.
 
 // Map puzzles and challenges data to lookups by level number
 const puzzlesMap = new Map(
@@ -25,73 +25,45 @@ const challengesMap = new Map(
   challengesData.challenges.map(c => [c.level, c])
 );
 
-export const ADVENTURE_LEVELS: Level[] = [
-  // Level 1: Onchain Game (from challenges.json)
-  {
-    levelNumber: 1,
-    name: challengesMap.get(1)!.game,
-    description: challengesMap.get(1)!.description,
-    type: 'game',
-    gameUrl: challengesMap.get(1)!.location,
-    gameInstructions: `Play ${challengesMap.get(1)!.game} and score at least ${challengesMap.get(1)!.minimum_score} points. Once you succeed, return here to claim completion.`,
-    verificationStrategy: 'score_threshold',
-  } as OnchainGameLevel,
+// Get all level numbers from both sources
+const allLevelNumbers = [
+  ...puzzlesData.puzzles.map(p => p.level),
+  ...challengesData.challenges.map(c => c.level),
+].sort((a, b) => a - b);
 
-  // Level 2: IRL Quest (from puzzles.json)
-  {
-    levelNumber: 2,
-    name: puzzlesMap.get(2)!.name,
-    description: puzzlesMap.get(2)!.description,
-    type: 'quest',
-    location: puzzlesMap.get(2)!.location,
-    puzzleDescription: puzzlesMap.get(2)!.description,
-    expectedCodeword: puzzlesMap.get(2)!.codeword,
-  } as IRLQuestLevel,
+// Dynamically build the ADVENTURE_LEVELS array
+export const ADVENTURE_LEVELS: Level[] = allLevelNumbers.map((levelNum) => {
+  // Check if this is a challenge level
+  const challenge = challengesMap.get(levelNum);
+  if (challenge) {
+    return {
+      levelNumber: levelNum,
+      name: challenge.game,
+      description: challenge.description,
+      type: 'game',
+      gameUrl: challenge.location,
+      gameInstructions: `Play ${challenge.game} and complete a game session. Once you succeed, return here to claim completion.`,
+      verificationStrategy: 'score_threshold',
+    } as OnchainGameLevel;
+  }
 
-  // Level 3: Onchain Game (from challenges.json)
-  {
-    levelNumber: 3,
-    name: challengesMap.get(3)!.game,
-    description: challengesMap.get(3)!.description,
-    type: 'game',
-    gameUrl: challengesMap.get(3)!.location,
-    gameInstructions: `Play ${challengesMap.get(3)!.game} and score at least ${challengesMap.get(3)!.minimum_score} points. Once you succeed, return here to claim completion.`,
-    verificationStrategy: 'score_threshold',
-  } as OnchainGameLevel,
+  // Otherwise it's a puzzle level
+  const puzzle = puzzlesMap.get(levelNum);
+  if (puzzle) {
+    return {
+      levelNumber: levelNum,
+      name: puzzle.name,
+      description: puzzle.description,
+      type: 'quest',
+      location: puzzle.location,
+      puzzleDescription: puzzle.description,
+      expectedCodeword: puzzle.codeword,
+    } as IRLQuestLevel;
+  }
 
-  // Level 4: IRL Quest (from puzzles.json)
-  {
-    levelNumber: 4,
-    name: puzzlesMap.get(4)!.name,
-    description: puzzlesMap.get(4)!.description,
-    type: 'quest',
-    location: puzzlesMap.get(4)!.location,
-    puzzleDescription: puzzlesMap.get(4)!.description,
-    expectedCodeword: puzzlesMap.get(4)!.codeword,
-  } as IRLQuestLevel,
-
-  // Level 5: Onchain Game (from challenges.json)
-  {
-    levelNumber: 5,
-    name: challengesMap.get(5)!.game,
-    description: challengesMap.get(5)!.description,
-    type: 'game',
-    gameUrl: challengesMap.get(5)!.location,
-    gameInstructions: `Play ${challengesMap.get(5)!.game} and score at least ${challengesMap.get(5)!.minimum_score} points. Once you succeed, return here to claim completion.`,
-    verificationStrategy: 'score_threshold',
-  } as OnchainGameLevel,
-
-  // Level 6: IRL Quest (from puzzles.json)
-  {
-    levelNumber: 6,
-    name: puzzlesMap.get(6)!.name,
-    description: puzzlesMap.get(6)!.description,
-    type: 'quest',
-    location: puzzlesMap.get(6)!.location,
-    puzzleDescription: puzzlesMap.get(6)!.description,
-    expectedCodeword: puzzlesMap.get(6)!.codeword,
-  } as IRLQuestLevel,
-];
+  // This shouldn't happen if the data is consistent
+  throw new Error(`Level ${levelNum} not found in challenges or puzzles data`);
+});
 
 // ============================================================================
 // CONFIGURATION HELPERS
