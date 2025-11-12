@@ -9,7 +9,7 @@
  * FUTURE IMPLEMENTATION NOTES:
  * - Use tokenBalances query to find ERC721 tokens owned by player
  * - Query game-specific models (e.g., NUMS_Game, ls_AdventurerPacked) for game state
- * - For Death Mountain: decode AdventurerPacked using deathMountainDecoder
+ * - Use Denshokan standard contract calls (score, game_over) for all games
  * - See docs/TORII_DENSHOKAN_APPROACH.md for detailed implementation strategy
  */
 
