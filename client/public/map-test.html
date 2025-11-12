@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adventure Map Procedural Generation Test</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #78350f, #92400e, #78350f);
+            color: #fef3c7;
+            padding: 2rem;
+            margin: 0;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .subtitle {
+            text-align: center;
+            margin-bottom: 3rem;
+            opacity: 0.9;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        .map-card {
+            background: linear-gradient(to bottom right, #fef3c7, #fde68a);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .map-title {
+            color: #78350f;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        svg {
+            width: 100%;
+            height: auto;
+            border: 3px dashed #92400e;
+            border-radius: 8px;
+            background: #fef3c7;
+        }
+        .info-box {
+            background: #fef3c7;
+            border-radius: 12px;
+            padding: 2rem;
+            color: #78350f;
+        }
+        .info-box h2 {
+            margin-top: 0;
+        }
+        .info-box ul {
+            line-height: 1.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗺️ Adventure Map Gallery</h1>
+        <p class="subtitle">
+            Each map has a unique layout based on its token ID. Same token ID always generates the same map!
+        </p>
+
+        <div class="grid" id="map-gallery"></div>
+
+        <div class="info-box">
+            <h2>How It Works</h2>
+            <ul>
+                <li><strong>Polygon Layout:</strong> Levels are arranged on vertices of a regular polygon (6 levels = hexagon)</li>
+                <li><strong>Pseudorandom Assignment:</strong> Each token ID determines which level appears at which vertex</li>
+                <li><strong>Criss-Cross Paths:</strong> Players traverse levels in order (1→2→3...), creating unique path patterns</li>
+                <li><strong>Medium Jitter:</strong> Each location has a small random offset (±20px, ±4.6°) for organic feel</li>
+                <li><strong>Hidden Locks:</strong> Incomplete levels are hidden until unlocked</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Procedural generation functions (copied from AdventureMapNFT.tsx)
+        function seededRandom(seed) {
+            const x = Math.sin(seed) * 10000;
+            return x - Math.floor(x);
+        }
+
+        function randomInRange(seed, min, max) {
+            return min + seededRandom(seed) * (max - min);
+        }
+
+        function shuffleWithSeed(array, seed) {
+            const result = [...array];
+            for (let i = result.length - 1; i > 0; i--) {
+                const j = Math.floor(seededRandom(seed + i) * (i + 1));
+                [result[i], result[j]] = [result[j], result[i]];
+            }
+            return result;
+        }
+
+        function generateLevelAssignments(tokenId, totalLevels) {
+            const seed = tokenId * 12345;
+            const vertices = Array.from({ length: totalLevels }, (_, i) => i);
+            const shuffled = shuffleWithSeed(vertices, seed);
+
+            const map = new Map();
+            for (let level = 0; level < totalLevels; level++) {
+                map.set(level, shuffled[level]);
+            }
+            return map;
+        }
+
+        function getLevelPosition(level, vertexIndex, totalLevels, centerX, centerY, radius) {
+            const angle = (2 * Math.PI * vertexIndex) / totalLevels - Math.PI / 2;
+
+            return {
+                x: centerX + radius * Math.cos(angle),
+                y: centerY + radius * Math.sin(angle)
+            };
+        }
+
+        function generateMapSVG(tokenId, completedLevels, totalLevels, username) {
+            const centerX = 200;
+            const centerY = 250;
+            const radius = 150;
+
+            const levelAssignments = generateLevelAssignments(tokenId, totalLevels);
+            const levelPositions = new Map();
+
+            for (let level = 0; level < totalLevels; level++) {
+                const vertexIndex = levelAssignments.get(level);
+                const pos = getLevelPosition(level, vertexIndex, totalLevels, centerX, centerY, radius);
+                levelPositions.set(level, pos);
+            }
+
+            let svg = `
+                <svg viewBox="0 0 400 500">
+                    <!-- Background -->
+                    <rect width="400" height="500" fill="#fef3c7" />
+
+                    <!-- Border -->
+                    <rect x="10" y="10" width="380" height="480" fill="none" stroke="#92400e" stroke-width="3" stroke-dasharray="10,5" />
+
+                    <!-- Title -->
+                    <text x="200" y="40" text-anchor="middle" fill="#78350f" font-size="24" font-weight="bold" font-family="serif">
+                        Adventure Map
+                    </text>
+
+                    <!-- Compass -->
+                    <g transform="translate(350, 70)">
+                        <circle r="25" fill="#fef3c7" stroke="#92400e" stroke-width="2" />
+                        <polygon points="0,-20 -4,0 0,-3 4,0" fill="#dc2626" stroke="#78350f" stroke-width="1" />
+                        <polygon points="0,20 -4,0 0,3 4,0" fill="#f5f5f4" stroke="#78350f" stroke-width="1" />
+                        <polygon points="20,0 0,-4 3,0 0,4" fill="#f5f5f4" stroke="#78350f" stroke-width="1" />
+                        <polygon points="-20,0 0,-4 -3,0 0,4" fill="#f5f5f4" stroke="#78350f" stroke-width="1" />
+                        <circle r="4" fill="#92400e" />
+                        <text x="0" y="-28" text-anchor="middle" fill="#78350f" font-size="10" font-weight="bold">N</text>
+                    </g>
+            `;
+
+            // Draw paths
+            for (let i = 0; i < totalLevels - 1; i++) {
+                if (completedLevels.includes(i + 1) && completedLevels.includes(i + 2)) {
+                    const start = levelPositions.get(i);
+                    const end = levelPositions.get(i + 1);
+
+                    svg += `<line x1="${start.x}" y1="${start.y}" x2="${end.x}" y2="${end.y}" stroke="#8B4513" stroke-width="3" stroke-dasharray="5,5" opacity="0.7" />`;
+
+                    const angle = Math.atan2(end.y - start.y, end.x - start.x);
+                    const arrowSize = 10;
+                    const arrowX = end.x - arrowSize * Math.cos(angle);
+                    const arrowY = end.y - arrowSize * Math.sin(angle);
+
+                    svg += `<polygon points="${end.x},${end.y} ${arrowX - arrowSize * Math.sin(angle) / 2},${arrowY + arrowSize * Math.cos(angle) / 2} ${arrowX + arrowSize * Math.sin(angle) / 2},${arrowY - arrowSize * Math.cos(angle) / 2}" fill="#8B4513" opacity="0.7" />`;
+                }
+            }
+
+            // Draw all locations (completed and unexplored)
+            for (let level = 0; level < totalLevels; level++) {
+                const levelNum = level + 1;
+                const isComplete = completedLevels.includes(levelNum);
+                const pos = levelPositions.get(level);
+
+                if (isComplete) {
+                    // Completed treasure
+                    svg += `
+                        <g transform="translate(${pos.x}, ${pos.y})">
+                            <circle r="20" fill="#fbbf24" stroke="#92400e" stroke-width="2" />
+                            <rect x="-8" y="-6" width="16" height="12" fill="#92400e" rx="2" />
+                            <rect x="-6" y="-4" width="12" height="3" fill="#fef3c7" />
+                            <circle cx="0" cy="-1" r="2" fill="#fef3c7" />
+                            <g transform="translate(16, -16)">
+                                <circle r="12" fill="#15803d" stroke="#fff" stroke-width="2" />
+                                <text text-anchor="middle" y="4" fill="#fff" font-size="11" font-weight="bold">${levelNum}</text>
+                            </g>
+                        </g>
+                    `;
+                } else {
+                    // Unexplored location
+                    svg += `
+                        <g transform="translate(${pos.x}, ${pos.y})">
+                            <circle r="20" fill="#d6d3d1" stroke="#78350f" stroke-width="2" opacity="0.5" />
+                            <text text-anchor="middle" y="8" fill="#78350f" font-size="24" font-weight="bold" opacity="0.6">?</text>
+                        </g>
+                    `;
+                }
+            }
+
+            // Username
+            svg += `
+                <text x="360" y="470" text-anchor="end" fill="#92400e" font-size="14" font-family="serif" font-style="italic">
+                    ${username}
+                </text>
+            </svg>`;
+
+            return svg;
+        }
+
+        // Test configurations
+        const testMaps = [
+            { tokenId: 42, username: 'Alice', completedLevels: [1, 2] },
+            { tokenId: 123, username: 'Bob', completedLevels: [1, 2, 3, 4] },
+            { tokenId: 777, username: 'Charlie', completedLevels: [1, 2, 3, 4, 5, 6] },
+            { tokenId: 999, username: 'Diana', completedLevels: [1] },
+        ];
+
+        const gallery = document.getElementById('map-gallery');
+
+        testMaps.forEach(config => {
+            const card = document.createElement('div');
+            card.className = 'map-card';
+            card.innerHTML = `
+                <div class="map-title">Token #${config.tokenId} - ${config.username}</div>
+                ${generateMapSVG(config.tokenId, config.completedLevels, 6, config.username)}
+                <div style="margin-top: 1rem; color: #78350f;">
+                    Progress: ${config.completedLevels.length}/6 levels
+                </div>
+            `;
+            gallery.appendChild(card);
+        });
+    </script>
+</body>
+</html>

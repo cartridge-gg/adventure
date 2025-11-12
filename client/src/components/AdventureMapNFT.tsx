@@ -72,11 +72,28 @@ export function AdventureMapNFT({ progress }: AdventureMapNFTProps) {
             fontWeight="bold"
             fontFamily="serif"
           >
-            FOCG Adventure
+            Adventure Map
           </text>
 
+          {/* Compass decoration */}
+          <g transform="translate(350, 70)">
+            {/* Compass rose background circle */}
+            <circle r="25" fill="#fef3c7" stroke="#92400e" strokeWidth="2" />
+            {/* North arrow (red) */}
+            <polygon points="0,-20 -4,0 0,-3 4,0" fill="#dc2626" stroke="#78350f" strokeWidth="1" />
+            {/* South arrow (white) */}
+            <polygon points="0,20 -4,0 0,3 4,0" fill="#f5f5f4" stroke="#78350f" strokeWidth="1" />
+            {/* East/West markers */}
+            <polygon points="20,0 0,-4 3,0 0,4" fill="#f5f5f4" stroke="#78350f" strokeWidth="1" />
+            <polygon points="-20,0 0,-4 -3,0 0,4" fill="#f5f5f4" stroke="#78350f" strokeWidth="1" />
+            {/* Center circle */}
+            <circle r="4" fill="#92400e" />
+            {/* N marker */}
+            <text x="0" y="-28" textAnchor="middle" fill="#78350f" fontSize="10" fontWeight="bold">N</text>
+          </g>
+
           {/* Map path - draws waypoints and connections */}
-          {renderMapPath(progress.levelsCompleted, progress.totalLevels)}
+          {renderMapPath(progress.levelsCompleted, progress.totalLevels, parseInt(progress.tokenId) || 1)}
 
           {/* Treasure chest at the end */}
           {isComplete && (
@@ -172,91 +189,198 @@ function ShareButton({ progress }: { progress: AdventureProgress }) {
 }
 
 /**
- * Renders the map path with waypoints
+ * Pseudorandom number generator (seeded)
+ * Uses simple LCG algorithm for deterministic randomness
  */
-function renderMapPath(completedLevels: number[], totalLevels: number) {
-  const waypoints = calculateWaypoints(totalLevels);
-  const elements: React.ReactElement[] = [];
-
-  // Draw paths between waypoints
-  for (let i = 0; i < waypoints.length - 1; i++) {
-    const start = waypoints[i];
-    const end = waypoints[i + 1];
-    const isComplete = completedLevels.includes(i + 1);
-
-    elements.push(
-      <line
-        key={`path-${i}`}
-        x1={start.x}
-        y1={start.y}
-        x2={end.x}
-        y2={end.y}
-        stroke={isComplete ? '#15803d' : '#d6d3d1'}
-        strokeWidth="3"
-        strokeDasharray={isComplete ? '0' : '5,5'}
-      />
-    );
-  }
-
-  // Draw waypoints
-  waypoints.forEach((point, index) => {
-    const levelNum = index + 1;
-    const isComplete = completedLevels.includes(levelNum);
-    const isActive = !isComplete && (index === 0 || completedLevels.includes(levelNum - 1));
-
-    elements.push(
-      <g key={`waypoint-${index}`} transform={`translate(${point.x}, ${point.y})`}>
-        {/* Waypoint circle */}
-        <circle
-          r="15"
-          fill={isComplete ? '#15803d' : isActive ? '#fbbf24' : '#e7e5e4'}
-          stroke="#78350f"
-          strokeWidth="2"
-        />
-        {/* Level number */}
-        <text
-          textAnchor="middle"
-          y="5"
-          fill={isComplete ? '#fff' : '#78350f'}
-          fontSize="14"
-          fontWeight="bold"
-        >
-          {levelNum}
-        </text>
-        {/* Checkmark for completed */}
-        {isComplete && (
-          <text
-            x="18"
-            y="-10"
-            fontSize="16"
-          >
-            ✓
-          </text>
-        )}
-      </g>
-    );
-  });
-
-  return <>{elements}</>;
+function seededRandom(seed: number): number {
+  const x = Math.sin(seed) * 10000;
+  return x - Math.floor(x);
 }
 
 /**
- * Calculate waypoint positions for a treasure map layout
+ * Generate pseudorandom number in range [min, max]
  */
-function calculateWaypoints(totalLevels: number): Array<{ x: number; y: number }> {
-  const waypoints: Array<{ x: number; y: number }> = [];
-  const startY = 80;
-  const endY = 420;
-  const verticalSpacing = (endY - startY) / (totalLevels - 1);
-  const centerX = 200;
-  const amplitude = 80; // How far waypoints swing left/right
+function randomInRange(seed: number, min: number, max: number): number {
+  return min + seededRandom(seed) * (max - min);
+}
 
-  for (let i = 0; i < totalLevels; i++) {
-    const y = startY + i * verticalSpacing;
-    // Alternate left and right in a wave pattern
-    const x = centerX + Math.sin(i) * amplitude;
-    waypoints.push({ x, y });
+/**
+ * Fisher-Yates shuffle with deterministic seed
+ */
+function shuffleWithSeed(array: number[], seed: number): number[] {
+  const result = [...array];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(seededRandom(seed + i) * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+
+/**
+ * Generate pseudorandom level-to-vertex assignments
+ * Each level is assigned to a random polygon vertex
+ */
+function generateLevelAssignments(tokenId: number, totalLevels: number): Map<number, number> {
+  const seed = tokenId * 12345; // Hash token ID
+  const vertices = Array.from({ length: totalLevels }, (_, i) => i);
+  const shuffled = shuffleWithSeed(vertices, seed);
+
+  return new Map(
+    Array.from({ length: totalLevels }, (_, level) => [level, shuffled[level]])
+  );
+}
+
+/**
+ * Calculate position for a level on the polygon
+ */
+interface Point {
+  x: number;
+  y: number;
+}
+
+function getLevelPosition(
+  level: number,
+  vertexIndex: number,
+  totalLevels: number,
+  centerX: number,
+  centerY: number,
+  radius: number
+): Point {
+  // Base angle for this vertex (evenly distributed around polygon)
+  const angle = (2 * Math.PI * vertexIndex) / totalLevels - Math.PI / 2; // Start at top
+
+  return {
+    x: centerX + radius * Math.cos(angle),
+    y: centerY + radius * Math.sin(angle),
+  };
+}
+
+/**
+ * Renders the procedurally generated map with polygon layout
+ */
+function renderMapPath(completedLevels: number[], totalLevels: number, tokenId: number) {
+  const centerX = 200;
+  const centerY = 250;
+  const radius = 150;
+
+  const elements: React.ReactElement[] = [];
+
+  // Generate level-to-vertex assignments
+  const levelAssignments = generateLevelAssignments(tokenId, totalLevels);
+
+  // Calculate positions for all levels
+  const levelPositions = new Map<number, Point>();
+  for (let level = 0; level < totalLevels; level++) {
+    const vertexIndex = levelAssignments.get(level)!;
+    const pos = getLevelPosition(level, vertexIndex, totalLevels, centerX, centerY, radius);
+    levelPositions.set(level, pos);
   }
 
-  return waypoints;
+  // Draw paths between consecutive completed levels
+  for (let i = 0; i < totalLevels - 1; i++) {
+    const currentLevel = i;
+    const nextLevel = i + 1;
+
+    // Only show path if both levels are complete
+    if (completedLevels.includes(currentLevel + 1) && completedLevels.includes(nextLevel + 1)) {
+      const start = levelPositions.get(currentLevel)!;
+      const end = levelPositions.get(nextLevel)!;
+
+      elements.push(
+        <line
+          key={`path-${i}`}
+          x1={start.x}
+          y1={start.y}
+          x2={end.x}
+          y2={end.y}
+          stroke="#8B4513"
+          strokeWidth="3"
+          strokeDasharray="5,5"
+          opacity="0.7"
+        />
+      );
+
+      // Add arrowhead at end
+      const angle = Math.atan2(end.y - start.y, end.x - start.x);
+      const arrowSize = 10;
+      const arrowX = end.x - arrowSize * Math.cos(angle);
+      const arrowY = end.y - arrowSize * Math.sin(angle);
+
+      elements.push(
+        <polygon
+          key={`arrow-${i}`}
+          points={`${end.x},${end.y} ${arrowX - arrowSize * Math.sin(angle) / 2},${arrowY + arrowSize * Math.cos(angle) / 2} ${arrowX + arrowSize * Math.sin(angle) / 2},${arrowY - arrowSize * Math.cos(angle) / 2}`}
+          fill="#8B4513"
+          opacity="0.7"
+        />
+      );
+    }
+  }
+
+  // Draw all level icons (completed and unexplored)
+  for (let level = 0; level < totalLevels; level++) {
+    const levelNum = level + 1;
+    const isComplete = completedLevels.includes(levelNum);
+    const pos = levelPositions.get(level)!;
+
+    if (isComplete) {
+      // Completed treasure icon
+      elements.push(
+        <g key={`treasure-${level}`} transform={`translate(${pos.x}, ${pos.y})`}>
+          {/* Treasure icon - gold circle with treasure chest */}
+          <circle
+            r="20"
+            fill="#fbbf24"
+            stroke="#92400e"
+            strokeWidth="2"
+          />
+          {/* Simple treasure chest icon */}
+          <rect x="-8" y="-6" width="16" height="12" fill="#92400e" rx="2" />
+          <rect x="-6" y="-4" width="12" height="3" fill="#fef3c7" />
+          <circle cx="0" cy="-1" r="2" fill="#fef3c7" />
+
+          {/* Level number badge */}
+          <g transform="translate(16, -16)">
+            <circle r="12" fill="#15803d" stroke="#fff" strokeWidth="2" />
+            <text
+              textAnchor="middle"
+              y="4"
+              fill="#fff"
+              fontSize="11"
+              fontWeight="bold"
+            >
+              {levelNum}
+            </text>
+          </g>
+        </g>
+      );
+    } else {
+      // Unexplored location icon
+      elements.push(
+        <g key={`unexplored-${level}`} transform={`translate(${pos.x}, ${pos.y})`}>
+          {/* Mysterious location - gray circle with question mark */}
+          <circle
+            r="20"
+            fill="#d6d3d1"
+            stroke="#78350f"
+            strokeWidth="2"
+            opacity="0.5"
+          />
+          {/* Question mark */}
+          <text
+            textAnchor="middle"
+            y="8"
+            fill="#78350f"
+            fontSize="24"
+            fontWeight="bold"
+            opacity="0.6"
+          >
+            ?
+          </text>
+        </g>
+      );
+    }
+  }
+
+  return <>{elements}</>;
 }
