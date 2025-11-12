@@ -3,6 +3,15 @@
  *
  * Loads challenge data from spec/challenges.json and provides
  * type-safe access to game configuration for Torii queries.
+ *
+ * NOTE: Minigame contract addresses should be imported from dojoContracts.ts
+ * which automatically pulls from the refs/ deployment manifests.
+ *
+ * Example minigame_contract values:
+ * - NUMS_MINIGAME.sepolia
+ * - NUMS_MINIGAME.mainnet
+ * - DEATH_MOUNTAIN_GAME_TOKEN_SYSTEMS.sepolia
+ * - DEATH_MOUNTAIN_GAME_TOKEN_SYSTEMS.mainnet
  */
 
 import challengesData from '../../../spec/challenges.json';
@@ -13,8 +22,8 @@ export interface DojoGameConfig {
   torii_url: string;
   torii_graphql: string;
   namespace: string;
-  minigame_contract: string;
-  denshokan_address: string;
+  minigame_contract: string; // Minigame system contract address (implements IMinigameTokenData with game_over)
+  denshokan_address: string; // ERC721 NFT contract for ownership (Denshokan standard)
 }
 
 export interface Challenge {

@@ -1,44 +1,81 @@
 /**
- * Torii GraphQL query utilities
+ * Torii query utilities
  *
- * Queries game sessions from external Dojo worlds using Torii's GraphQL API.
+ * Queries game sessions from external Dojo worlds using Torii's SQL endpoint.
  *
- * NOTE: This is currently a stub implementation that returns empty results.
- * Full Torii integration will be implemented when needed for production deployment.
+ * APPROACH:
+ * Use Torii's /sql endpoint to query the token_balances table directly.
+ * This gives us token ownership indexed by Torii without needing contract calls.
  *
- * FUTURE IMPLEMENTATION NOTES:
- * - Use tokenBalances query to find ERC721 tokens owned by player
- * - Query game-specific models (e.g., NUMS_Game, ls_AdventurerPacked) for game state
- * - Use Denshokan standard contract calls (score, game_over) for all games
- * - See docs/TORII_DENSHOKAN_APPROACH.md for detailed implementation strategy
+ * Reference: Death Mountain client implementation
+ * @see https://github.com/cartridge-gg/loot-survivor/blob/main/client/src/dojo/useGameTokens.ts
  */
 
 import { DojoGameConfig } from './challenges';
 
-export interface GameSession {
-  token_id: string;
-  owner: string;
-  score: number;
-  game_over: boolean;
+/**
+ * Add padding to StarkNet addresses (ensure 66 character format with 0x prefix)
+ */
+function addAddressPadding(address: string): string {
+  const cleaned = address.toLowerCase().replace('0x', '');
+  return '0x' + cleaned.padStart(64, '0');
 }
 
 /**
- * Query player's completed game sessions from Torii
+ * Query player's game session token IDs from Torii SQL endpoint
+ *
+ * Uses Torii's indexed token_balances table to find tokens owned by the player.
+ * This is much more efficient than querying all tokens and checking ownership.
  *
  * @param playerAddress - The player's wallet address
- * @param dojoConfig - Dojo world configuration (Torii endpoints, etc.)
- * @returns Array of game sessions with score and completion status
- *
- * NOTE: Currently returns empty array. Implement when Torii integration is needed.
+ * @param dojoConfig - Dojo world configuration (Torii endpoints, Denshokan address, etc.)
+ * @returns Array of token IDs owned by the player
  */
-export async function queryPlayerCompletedGames(
+export async function queryPlayerGameTokenIds(
   playerAddress: string,
   dojoConfig: DojoGameConfig
-): Promise<GameSession[]> {
-  console.log('[Torii] Stub: queryPlayerCompletedGames called for', playerAddress);
-  console.log('[Torii] Endpoint:', dojoConfig.torii_graphql);
+): Promise<string[]> {
+  console.log('[Torii] Querying player tokens from:', dojoConfig.torii_url);
+  console.log('[Torii] Player:', playerAddress);
+  console.log('[Torii] Denshokan:', dojoConfig.denshokan_address);
 
-  // TODO: Implement Torii GraphQL queries
-  // For now, return empty array to indicate no sessions found
-  return [];
+  try {
+    const paddedPlayer = addAddressPadding(playerAddress);
+    const paddedContract = addAddressPadding(dojoConfig.denshokan_address);
+
+    const query = `
+      SELECT token_id FROM token_balances
+      WHERE account_address = "${paddedPlayer}"
+      AND contract_address = "${paddedContract}"
+      LIMIT 10000
+    `;
+
+    const url = `${dojoConfig.torii_url}/sql?query=${encodeURIComponent(query)}`;
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+
+    // Token IDs come in format "contract:tokenId", extract the tokenId part
+    const tokenIds = data.map((row: any) => {
+      const parts = row.token_id.split(':');
+      return '0x' + parseInt(parts[1], 16).toString(16);
+    });
+
+    console.log(`[Torii] Found ${tokenIds.length} tokens owned by player`);
+    return tokenIds;
+  } catch (error) {
+    console.error('[Torii] Error querying player tokens:', error);
+    return [];
+  }
 }
+
