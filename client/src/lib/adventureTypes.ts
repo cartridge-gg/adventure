@@ -20,9 +20,9 @@ export interface BaseLevel {
 }
 
 /**
- * Onchain game level configuration
+ * Challenge level configuration (external game)
  */
-export interface OnchainGameLevel extends BaseLevel {
+export interface ChallengeLevel extends BaseLevel {
   type: 'game';
   gameUrl?: string;
   gameInstructions: string;
@@ -30,16 +30,16 @@ export interface OnchainGameLevel extends BaseLevel {
 }
 
 /**
- * IRL quest level configuration
+ * Quest level configuration
  */
-export interface IRLQuestLevel extends BaseLevel {
+export interface QuestLevel extends BaseLevel {
   type: 'quest';
   location: string;
   puzzleDescription: string;
   expectedCodeword: string; // For mock verification only
 }
 
-export type Level = OnchainGameLevel | IRLQuestLevel;
+export type Level = ChallengeLevel | QuestLevel;
 
 // ============================================================================
 // PROGRESS TRACKING
@@ -64,12 +64,12 @@ export interface BaseLevelProps {
   onComplete: (levelNumber: number) => void;
 }
 
-export interface OnchainGameLevelProps extends BaseLevelProps {
-  level: OnchainGameLevel;
+export interface ChallengeLevelProps extends BaseLevelProps {
+  level: ChallengeLevel;
 }
 
-export interface IRLQuestLevelProps extends BaseLevelProps {
-  level: IRLQuestLevel;
+export interface QuestLevelProps extends BaseLevelProps {
+  level: QuestLevel;
 }
 
 export interface LevelCardProps {

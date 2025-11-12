@@ -2,12 +2,12 @@
  * Level Card Component
  *
  * Wrapper component that renders the appropriate level type
- * (ChallengeLevel for games or IRLQuestLevel for quests) based on configuration.
+ * (ChallengeLevel for games or QuestLevel for quests) based on configuration.
  */
 
 import { LevelCardProps } from '../lib/adventureTypes';
 import { ChallengeLevel } from './ChallengeLevel';
-import { IRLQuestLevel } from './IRLQuestLevel';
+import { QuestLevel } from './QuestLevel';
 
 export function LevelCard({ level, status, tokenId, onComplete, completedAt }: LevelCardProps) {
   return (
@@ -28,7 +28,7 @@ export function LevelCard({ level, status, tokenId, onComplete, completedAt }: L
           onComplete={onComplete}
         />
       ) : (
-        <IRLQuestLevel
+        <QuestLevel
           level={level}
           status={status}
           tokenId={tokenId}

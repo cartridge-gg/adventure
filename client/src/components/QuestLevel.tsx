@@ -1,17 +1,17 @@
 /**
- * IRL Quest Level Component
+ * Quest Level Component
  *
- * Reusable component for in-real-life quest challenges.
+ * Reusable component for quest challenges.
  * Handles codeword submission with cryptographic verification.
  */
 
 import { useState } from 'react';
-import { IRLQuestLevelProps } from '../lib/adventureTypes';
+import { QuestLevelProps } from '../lib/adventureTypes';
 import { ADVENTURE_TEXT } from '../lib/adventureConfig';
 import { usePuzzleSigning } from '../hooks/usePuzzleSigning';
 import { useAdventureContract } from '../hooks/useAdventureContract';
 
-export function IRLQuestLevel({ level, status, tokenId, onComplete }: IRLQuestLevelProps) {
+export function QuestLevel({ level, status, tokenId, onComplete }: QuestLevelProps) {
   const [codeword, setCodeword] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
   const [error, setError] = useState<string | null>(null);

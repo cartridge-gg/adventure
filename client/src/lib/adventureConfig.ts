@@ -5,7 +5,7 @@
  * Levels are automatically generated from spec/puzzles.json and spec/challenges.json.
  */
 
-import { Level, OnchainGameLevel, IRLQuestLevel } from './adventureTypes';
+import { Level, ChallengeLevel, QuestLevel } from './adventureTypes';
 import puzzlesData from '../../../spec/puzzles.json';
 import challengesData from '../../../spec/challenges.json';
 
@@ -44,7 +44,7 @@ export const ADVENTURE_LEVELS: Level[] = allLevelNumbers.map((levelNum) => {
       gameUrl: challenge.location,
       gameInstructions: `Play ${challenge.game} and complete a game session. Once you succeed, return here to claim completion.`,
       verificationStrategy: 'score_threshold',
-    } as OnchainGameLevel;
+    } as ChallengeLevel;
   }
 
   // Otherwise it's a puzzle level
@@ -58,7 +58,7 @@ export const ADVENTURE_LEVELS: Level[] = allLevelNumbers.map((levelNum) => {
       location: puzzle.location,
       puzzleDescription: puzzle.description,
       expectedCodeword: puzzle.codeword,
-    } as IRLQuestLevel;
+    } as QuestLevel;
   }
 
   // This shouldn't happen if the data is consistent
@@ -75,12 +75,12 @@ export function getLevelByNumber(levelNumber: number): Level | undefined {
   return ADVENTURE_LEVELS.find(l => l.levelNumber === levelNumber);
 }
 
-export function getGameLevels(): OnchainGameLevel[] {
-  return ADVENTURE_LEVELS.filter(l => l.type === 'game') as OnchainGameLevel[];
+export function getGameLevels(): ChallengeLevel[] {
+  return ADVENTURE_LEVELS.filter(l => l.type === 'game') as ChallengeLevel[];
 }
 
-export function getQuestLevels(): IRLQuestLevel[] {
-  return ADVENTURE_LEVELS.filter(l => l.type === 'quest') as IRLQuestLevel[];
+export function getQuestLevels(): QuestLevel[] {
+  return ADVENTURE_LEVELS.filter(l => l.type === 'quest') as QuestLevel[];
 }
 
 // ============================================================================
