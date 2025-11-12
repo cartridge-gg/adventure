@@ -7,7 +7,7 @@
 
 import { useState } from 'react';
 import { useAdventureContract } from '../hooks/useAdventureContract';
-import { useGameSessionsWithState, useGameSessionState } from '../hooks/useGameSessions';
+import { useGameSessions } from '../hooks/useGameSessions';
 import { ADVENTURE_TEXT } from '../lib/adventureConfig';
 
 interface ChallengeLevelProps {
@@ -27,7 +27,7 @@ export function ChallengeLevel({ levelNumber, tokenId, status, onComplete }: Cha
     error: tokensError,
     challenge,
     dojoConfig,
-  } = useGameSessionsWithState(levelNumber);
+  } = useGameSessions(levelNumber);
 
   if (status === 'locked') {
     return (

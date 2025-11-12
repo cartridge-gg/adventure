@@ -1,15 +1,13 @@
 /**
- * Hook for finding and verifying player's game sessions
+ * Hook for finding player's game sessions
  *
- * Queries Torii to find game NFTs owned by the player, then
- * calls the minigame contract to verify score and completion status.
+ * Queries Torii to find game NFTs owned by the player with their completion status.
  */
 
 import { useState, useEffect } from 'react';
-import { useAccount, useReadContract } from '@starknet-react/core';
-import { Abi } from 'starknet';
+import { useAccount } from '@starknet-react/core';
 import { getChallengeByLevel, getDojoConfigForChallenge } from '../lib/challenges';
-import { queryPlayerCompletedGames, queryPlayerGameSessions } from '../lib/toriiQueries';
+import { queryPlayerCompletedGames } from '../lib/toriiQueries';
 
 export interface GameSessionWithState {
   token_id: string;
@@ -17,29 +15,10 @@ export interface GameSessionWithState {
   game_over: boolean;
 }
 
-// Minimal ABI for IMinigameTokenData interface (Denshokan standard)
-const MINIGAME_ABI = [
-  {
-    type: 'function',
-    name: 'score',
-    inputs: [{ name: 'token_id', type: 'core::integer::u64' }],
-    outputs: [{ type: 'core::integer::u32' }],
-    state_mutability: 'view',
-  },
-  {
-    type: 'function',
-    name: 'game_over',
-    inputs: [{ name: 'token_id', type: 'core::integer::u64' }],
-    outputs: [{ type: 'core::bool' }],
-    state_mutability: 'view',
-  },
-] as const;
-
 /**
- * Hook to find and verify player's game sessions for a specific challenge level (OPTIMIZED)
+ * Hook to find player's game sessions for a specific challenge level
  *
- * Uses queryPlayerCompletedGames which queries Game models from Torii,
- * getting score and game_over status without additional contract calls.
+ * Queries Torii for game sessions with score and completion status.
  */
 export function useGameSessions(challengeLevel: number) {
   const { address } = useAccount();
@@ -100,75 +79,8 @@ export function useGameSessions(challengeLevel: number) {
 
   return {
     sessions,
-    isLoadingTokens,
-    error,
-    challenge,
-    dojoConfig,
-  };
-}
-
-/**
- * Hook to verify a specific game session's state
- *
- * Calls the minigame contract to get score and game_over status
- */
-export function useGameSessionState(
-  tokenId: string | null,
-  minigameContractAddress: string | null,
-  minimumScore: number
-) {
-  // Query score
-  const {
-    data: scoreData,
-    isLoading: isLoadingScore,
-    error: scoreError,
-  } = useReadContract({
-    abi: MINIGAME_ABI as Abi,
-    address: minigameContractAddress as `0x${string}`,
-    functionName: 'score',
-    args: tokenId ? [BigInt(tokenId)] : undefined,
-    enabled: !!tokenId && !!minigameContractAddress,
-  });
-
-  // Query game_over
-  const {
-    data: gameOverData,
-    isLoading: isLoadingGameOver,
-    error: gameOverError,
-  } = useReadContract({
-    abi: MINIGAME_ABI as Abi,
-    address: minigameContractAddress as `0x${string}`,
-    functionName: 'game_over',
-    args: tokenId ? [BigInt(tokenId)] : undefined,
-    enabled: !!tokenId && !!minigameContractAddress,
-  });
-
-  const score = scoreData ? Number(scoreData) : 0;
-  const gameOver = gameOverData ? Boolean(gameOverData) : false;
-  const isLoading = isLoadingScore || isLoadingGameOver;
-  const error = scoreError || gameOverError;
-
-  return {
-    score,
-    gameOver,
-    isLoading,
-    error,
-  };
-}
-
-/**
- * Combined hook that fetches all game sessions with their states (OPTIMIZED)
- *
- * Returns sessions with score and game_over already fetched from Torii,
- * no additional contract calls needed!
- */
-export function useGameSessionsWithState(challengeLevel: number) {
-  const { sessions, isLoadingTokens, error: tokensError, challenge, dojoConfig } = useGameSessions(challengeLevel);
-
-  return {
-    sessions,
     isLoading: isLoadingTokens,
-    error: tokensError,
+    error,
     challenge,
     dojoConfig,
   };
