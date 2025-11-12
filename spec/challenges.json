@@ -2,53 +2,41 @@
   "challenges": [
     {
       "level": 1,
-      "game": "Death Mountain (Loot Survivor)",
-      "description": "Survive the treacherous Death Mountain dungeon. Complete a game session to proceed.",
-      "location": "https://deathmountain.gg/",
+      "game": "Loot Survivor 2",
+      "description": "Survive the treacherous Loot Survivor 2 dungeon. Complete a game session to proceed.",
+      "location": "https://lootsurvivor.io/",
+      "manifest_path": "death-mountain/contracts",
+      "minigame_tag": "ls_0_0_9-game_token_systems",
+      "namespace": "ls_0_0_9",
       "dojo": {
         "mainnet": {
-          "world_address": "0x02ef591697f0fd9adc0ba9dbe0ca04dabad80cf95f08ba02e435d9cb6698a28a",
           "torii_url": "https://api.cartridge.gg/x/pg-mainnet-10/torii",
-          "torii_graphql": "https://api.cartridge.gg/x/pg-mainnet-10/torii/graphql",
-          "namespace": "ls_0_0_9",
-          "minigame_contract": "ls_0_0_9-game_token_systems",
           "denshokan_address": "0x036017e69d21d6d8c13e266eabb73ef1f1d02722d86bdcabe5f168f8e549d3cd"
         },
         "sepolia": {
-          "world_address": "0x785401cf74071ec444e37dbbd87281aba48afc86570b1a1537193d1ce39086f",
           "torii_url": "https://api.cartridge.gg/x/pg-sepolia/torii",
-          "torii_graphql": "https://api.cartridge.gg/x/pg-sepolia/torii/graphql",
-          "namespace": "ls_0_0_6",
-          "minigame_contract": "ls_0_0_6-game_token_systems",
           "denshokan_address": "0x02334dc9c950c74c3228e2a343d495ae36f0b4edf06767a679569e9f9de08776"
         }
-      },
-      "notes": "Score is adventurer XP. Game is over when adventurer.health == 0."
+      }
     },
     {
       "level": 3,
       "game": "Nums",
       "description": "Place 20 numbers in ascending order with optimal distribution. Complete a game session to proceed.",
       "location": "https://nums.gg/",
+      "manifest_path": "nums",
+      "minigame_tag": "NUMS-Minigame",
+      "namespace": "NUMS",
       "dojo": {
         "mainnet": {
-          "world_address": "0x03e9de5354a43dcc0daf083da2a87a099ce9ea3cec1e8c442f2f448eed6b9c12",
           "torii_url": "https://api.cartridge.gg/x/nums-starknet/torii",
-          "torii_graphql": "https://api.cartridge.gg/x/nums-starknet/torii/graphql",
-          "namespace": "NUMS",
-          "minigame_contract": "NUMS-Minigame",
           "denshokan_address": "0x036017E69D21D6D8c13E266EaBB73ef1f1D02722D86BDcAbe5f168f8e549d3cD"
         },
         "sepolia": {
-          "world_address": "0x03997daf0c65abdcf67264dc1df1d5ceb54c4faac0c6262b2dc8883abcedc21f",
           "torii_url": "https://api.cartridge.gg/x/nums-bal/torii",
-          "torii_graphql": "https://api.cartridge.gg/x/nums-bal/torii/graphql",
-          "namespace": "NUMS",
-          "minigame_contract": "NUMS-Minigame",
           "denshokan_address": "0x02334dc9c950c74c3228e2a343d495ae36f0b4edf06767a679569e9f9de08776"
         }
-      },
-      "notes": "Score based on uniform distribution (perfect = 20,000,000). Game over when all slots filled or no valid moves."
+      }
     }
   ]
 }

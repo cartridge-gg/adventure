@@ -5,33 +5,15 @@
  * Run with: node scripts/test-torii-integration.mjs
  */
 
-import { RpcProvider, Contract, hash } from 'starknet';
+import { RpcProvider, Contract } from 'starknet';
 
-// Import contract addresses from refs manifests
-import numsManifestSepolia from '../../refs/nums/manifest_sepolia.json' with { type: 'json' };
-import deathMountainManifestMainnet from '../../refs/death-mountain/contracts/manifest_mainnet.json' with { type: 'json' };
-
-/**
- * Get contract address from manifest by tag
- */
-function getContractAddress(manifest, tag) {
-  const contract = manifest.contracts.find((c) => c.tag === tag);
-  if (!contract) {
-    throw new Error(`Contract with tag "${tag}" not found in manifest`);
-  }
-  return contract.address;
-}
-
-// Get minigame contract addresses from manifests
-const NUMS_MINIGAME_SEPOLIA = getContractAddress(numsManifestSepolia, 'NUMS-Minigame');
-const DEATH_MOUNTAIN_GAME_TOKEN_SYSTEMS_MAINNET = getContractAddress(
-  deathMountainManifestMainnet,
-  'ls_0_0_9-game_token_systems'
-);
+// Import manifest utilities and challenges config
+import { getContractAddress } from '../src/lib/challengeContracts.mjs';
+import challengesData from '../../spec/challenges.json' with { type: 'json' };
 
 // Import production code
-// Note: We need to inline the functions here since we can't import TypeScript directly
-// But this ensures we're testing the exact same logic
+// Note: We inline the functions here since we're testing them directly
+// This ensures we're testing the exact same logic as production
 
 /**
  * Production code copied from toriiQueries.ts
@@ -116,37 +98,47 @@ async function isGameComplete(provider, minigameAddress, tokenId) {
 }
 
 /**
+ * Build test configs from challenges.json - test both mainnet and sepolia for each game
+ */
+function buildTestConfigs() {
+  const configs = [];
+
+  for (const challenge of challengesData.challenges) {
+    // Test both networks for each challenge
+    for (const network of ['mainnet', 'sepolia']) {
+      const deploymentConfig = challenge.dojo[network];
+
+      // Resolve minigame contract from manifest
+      const minigameContract = getContractAddress(
+        challenge.manifest_path,
+        network,
+        challenge.minigame_tag
+      );
+
+      configs.push({
+        name: `${challenge.game} (${network.charAt(0).toUpperCase() + network.slice(1)})`,
+        level: challenge.level,
+        network,
+        dojoConfig: {
+          torii_url: deploymentConfig.torii_url,
+          torii_graphql: `${deploymentConfig.torii_url}/graphql`,
+          namespace: challenge.namespace,
+          denshokan_address: deploymentConfig.denshokan_address,
+          minigame_contract: minigameContract,
+        },
+      });
+    }
+  }
+
+  return configs;
+}
+
+/**
  * Test configuration
  */
 const TEST_CONFIG = {
   player_address: '0x046a8868178Fa8bF56A5c3b48f903ab406e5a324517D990Af786D5AB54D86865',
-
-  games: [
-    {
-      name: 'Nums (Sepolia)',
-      level: 3,
-      dojoConfig: {
-        torii_url: 'https://api.cartridge.gg/x/nums-bal/torii',
-        torii_graphql: 'https://api.cartridge.gg/x/nums-bal/torii/graphql',
-        namespace: 'NUMS',
-        denshokan_address: '0x02334dc9c950c74c3228e2a343d495ae36f0b4edf06767a679569e9f9de08776',
-        world_address: '0x03997daf0c65abdcf67264dc1df1d5ceb54c4faac0c6262b2dc8883abcedc21f',
-        minigame_contract: NUMS_MINIGAME_SEPOLIA, // Imported from refs/nums/manifest_sepolia.json
-      },
-    },
-    {
-      name: 'Death Mountain (Mainnet)',
-      level: 1,
-      dojoConfig: {
-        torii_url: 'https://api.cartridge.gg/x/pg-mainnet-10/torii',
-        torii_graphql: 'https://api.cartridge.gg/x/pg-mainnet-10/torii/graphql',
-        namespace: 'ls_0_0_9',
-        denshokan_address: '0x036017e69d21d6d8c13e266eabb73ef1f1d02722d86bdcabe5f168f8e549d3cd',
-        world_address: '0x02ef591697f0fd9adc0ba9dbe0ca04dabad80cf95f08ba02e435d9cb6698a28a',
-        minigame_contract: DEATH_MOUNTAIN_GAME_TOKEN_SYSTEMS_MAINNET, // Imported from refs/death-mountain/contracts/manifest_mainnet.json
-      },
-    },
-  ],
+  games: buildTestConfigs(),
 };
 
 /**
@@ -242,7 +234,7 @@ async function main() {
 
   for (const game of TEST_CONFIG.games) {
     // Use appropriate provider based on game network
-    const provider = game.name.includes('Mainnet') ? mainnetProvider : sepoliaProvider;
+    const provider = game.network === 'mainnet' ? mainnetProvider : sepoliaProvider;
     const result = await testGame(game, provider);
     results.push(result);
   }
@@ -261,17 +253,6 @@ async function main() {
     totalTokens += result.tokens;
     totalCompleted += result.completed || 0;
   });
-
-  console.log(`\nTotal game sessions: ${totalTokens}`);
-  console.log(`Completed games (sampled): ${totalCompleted}`);
-
-  console.log('\n' + '='.repeat(70));
-  console.log('PRODUCTION CODE VERIFICATION');
-  console.log('='.repeat(70));
-  console.log('✅ queryPlayerGameTokenIds() - Working');
-  console.log('✅ resolveMinigameContract() - Implemented (testing now)');
-  console.log('✅ isGameComplete() - Implemented (testing now)');
-  console.log('\nFull end-to-end flow tested!');
 }
 
 main();
