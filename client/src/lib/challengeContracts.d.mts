@@ -29,3 +29,5 @@ export const numsManifestSepolia: DojoManifest;
 export const numsManifestMainnet: DojoManifest;
 export const deathMountainManifestSepolia: DojoManifest;
 export const deathMountainManifestMainnet: DojoManifest;
+export const dopewarsManifestSepolia: DojoManifest;
+export const dopewarsManifestMainnet: DojoManifest;

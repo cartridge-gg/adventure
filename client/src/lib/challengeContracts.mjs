@@ -10,11 +10,20 @@
 // Import manifests from refs
 import numsManifestSepolia from '../../../refs/nums/manifest_sepolia.json' with { type: 'json' };
 import numsManifestMainnet from '../../../refs/nums/manifest_mainnet.json' with { type: 'json' };
+import dopewarsManifestSepolia from '../../../refs/dopewars/manifest_provable-dw.json' with { type: 'json' };
+import dopewarsManifestMainnet from '../../../refs/dopewars/manifest_mainnet.json' with { type: 'json' };
 import deathMountainManifestSepolia from '../../../refs/death-mountain/contracts/manifest_sepolia.json' with { type: 'json' };
 import deathMountainManifestMainnet from '../../../refs/death-mountain/contracts/manifest_mainnet.json' with { type: 'json' };
 
 // Export manifests for direct use
-export { numsManifestSepolia, numsManifestMainnet, deathMountainManifestSepolia, deathMountainManifestMainnet };
+export {
+  numsManifestSepolia,
+  numsManifestMainnet,
+  deathMountainManifestSepolia,
+  deathMountainManifestMainnet,
+  dopewarsManifestSepolia,
+  dopewarsManifestMainnet,
+};
 
 /**
  * Manifest registry - maps manifest_path to actual manifest imports
@@ -27,6 +36,10 @@ export const MANIFEST_REGISTRY = {
   'death-mountain/contracts': {
     mainnet: deathMountainManifestMainnet,
     sepolia: deathMountainManifestSepolia,
+  },
+  dopewars: {
+    mainnet: dopewarsManifestMainnet,
+    sepolia: dopewarsManifestSepolia,
   },
 };
 

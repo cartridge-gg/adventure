@@ -153,6 +153,12 @@ for i in $(seq 0 $((CHALLENGE_COUNT - 1))); do
     GAME_NAME=$(jq -r ".challenges[$i].game" "$CHALLENGE_FILE")
     GAME_CONTRACT=$(jq -r '.external_contracts[] | select(.tag == "focg_adventure-mock_'$LEVEL'") | .address' "$CONTRACTS_DIR/manifest_dev.json")
 
+    # Skip if no mock contract exists for this level
+    if [ -z "$GAME_CONTRACT" ] || [ "$GAME_CONTRACT" == "null" ]; then
+        echo -e "${YELLOW}Skipping challenge level $LEVEL - no mock game contract found${NC}"
+        continue
+    fi
+
     echo -e "${YELLOW}Configuring challenge level $LEVEL ($GAME_NAME)...${NC}"
     # set_challenge(level_number, game_contract)
     sozo execute --profile dev --wait focg_adventure-actions set_challenge \
@@ -187,6 +193,12 @@ for i in $(seq 0 $((PUZZLE_COUNT - 1))); do
     LEVEL=$(jq -r ".puzzles[$i].level" "$PUZZLE_FILE")
     PUZZLE_NAME=$(jq -r ".puzzles[$i].name" "$PUZZLE_FILE")
     CODEWORD=$(jq -r ".puzzles[$i].codeword" "$PUZZLE_FILE")
+
+    # Skip if no solution address exists for this level
+    if [ -z "$CODEWORD" ] || [ "$CODEWORD" == "null" ]; then
+        echo -e "${YELLOW}Skipping puzzle level $LEVEL - no codeword found${NC}"
+        continue
+    fi
 
     # Derive solution address from codeword using the codeword2address utility
     SOLUTION_ADDRESS=$(node "$SCRIPT_DIR/../../client/scripts/codeword2address.mjs" "$CODEWORD")

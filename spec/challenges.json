@@ -2,25 +2,6 @@
   "challenges": [
     {
       "level": 1,
-      "game": "Loot Survivor 2",
-      "description": "Survive the treacherous Loot Survivor 2 dungeon. Complete a game session to proceed.",
-      "location": "https://lootsurvivor.io/",
-      "manifest_path": "death-mountain/contracts",
-      "minigame_tag": "ls_0_0_9-game_token_systems",
-      "namespace": "ls_0_0_9",
-      "dojo": {
-        "mainnet": {
-          "torii_url": "https://api.cartridge.gg/x/pg-mainnet-10/torii",
-          "denshokan_address": "0x036017e69d21d6d8c13e266eabb73ef1f1d02722d86bdcabe5f168f8e549d3cd"
-        },
-        "sepolia": {
-          "torii_url": "https://api.cartridge.gg/x/pg-sepolia/torii",
-          "denshokan_address": "0x02334dc9c950c74c3228e2a343d495ae36f0b4edf06767a679569e9f9de08776"
-        }
-      }
-    },
-    {
-      "level": 3,
       "game": "Nums",
       "description": "Place 20 numbers in ascending order with optimal distribution. Complete a game session to proceed.",
       "location": "https://nums.gg/",
@@ -34,6 +15,44 @@
         },
         "sepolia": {
           "torii_url": "https://api.cartridge.gg/x/nums-bal/torii",
+          "denshokan_address": "0x02334dc9c950c74c3228e2a343d495ae36f0b4edf06767a679569e9f9de08776"
+        }
+      }
+    },
+    {
+      "level": 3,
+      "game": "Dope Wars",
+      "description": "Navigate the streets of NYC, arbitrage drugs, and survive encounters. Complete a game session to proceed.",
+      "location": "https://dopewars.game/",
+      "manifest_path": "dopewars",
+      "minigame_tag": "dopewars-game_token_system_v0",
+      "namespace": "dopewars",
+      "dojo": {
+        "mainnet": {
+          "torii_url": "https://api.cartridge.gg/x/dopewars-mainnet/torii",
+          "denshokan_address": "0x036017e69d21d6d8c13e266eabb73ef1f1d02722d86bdcabe5f168f8e549d3cd"
+        },
+        "sepolia": {
+          "torii_url": "https://api.cartridge.gg/x/provable-dw/torii",
+          "denshokan_address": "0x02334dc9c950c74c3228e2a343d495ae36f0b4edf06767a679569e9f9de08776"
+        }
+      }
+    },
+    {
+      "level": 5,
+      "game": "Loot Survivor 2",
+      "description": "Survive the treacherous Loot Survivor 2 dungeon. Complete a game session to proceed.",
+      "location": "https://lootsurvivor.io/",
+      "manifest_path": "death-mountain/contracts",
+      "minigame_tag": "ls_0_0_9-game_token_systems",
+      "namespace": "ls_0_0_9",
+      "dojo": {
+        "mainnet": {
+          "torii_url": "https://api.cartridge.gg/x/pg-mainnet-10/torii",
+          "denshokan_address": "0x036017e69d21d6d8c13e266eabb73ef1f1d02722d86bdcabe5f168f8e549d3cd"
+        },
+        "sepolia": {
+          "torii_url": "https://api.cartridge.gg/x/pg-sepolia/torii",
           "denshokan_address": "0x02334dc9c950c74c3228e2a343d495ae36f0b4edf06767a679569e9f9de08776"
         }
       }
