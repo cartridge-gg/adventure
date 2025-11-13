@@ -19,9 +19,28 @@ export function ConnectWallet() {
   const { address } = useAccount();
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [username, setUsername] = useState<string>('');
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const controller = connectors[0] as ControllerConnector
+
+  // Fetch username when connected
+  useEffect(() => {
+    async function fetchUsername() {
+      if (address && controller?.controller) {
+        try {
+          const controllerUsername = await controller.controller.username();
+          if (controllerUsername) {
+            setUsername(controllerUsername);
+          }
+        } catch (err) {
+          console.error('Failed to fetch username:', err);
+        }
+      }
+    }
+
+    fetchUsername();
+  }, [address, controller]);
 
   // Handle click outside dropdown
   useEffect(() => {
@@ -102,7 +121,7 @@ export function ConnectWallet() {
     );
   }
 
-  // If connected, show address and dropdown
+  // If connected, show username (or address) and dropdown
   return (
     <div className="relative w-full" ref={dropdownRef}>
       <button
@@ -119,7 +138,7 @@ export function ConnectWallet() {
         "
       >
         <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-        <span>{formatAddress(address)}</span>
+        <span>{username || formatAddress(address)}</span>
         <svg
           className={`w-4 h-4 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
           fill="none"
