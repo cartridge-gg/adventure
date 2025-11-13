@@ -89,32 +89,32 @@ export function getQuestLevels(): QuestLevel[] {
 
 export const ADVENTURE_TEXT = {
   header: {
-    title: 'FOCG Adventure',
-    subtitle: 'Complete challenges and explore community hubs at DevConnect',
+    title: 'The Lost Temple Adventure',
+    subtitle: 'Break seals and navigate waypoints to unlock ancient mysteries.',
   },
   mint: {
-    title: 'Begin Your Adventure',
-    buttonText: 'Mint Your Map',
+    title: 'Begin Your Journey',
+    buttonText: 'Claim Your Wayfinder\'s Map',
   },
   levelCard: {
-    locked: 'Complete previous level to unlock',
+    locked: 'Previous waypoint must be discovered',
   },
   gameLevel: {
-    playButton: 'Play Game',
-    completeButton: 'Mark Complete',
-    verifying: 'Verifying...',
-    success: 'Level complete!',
-    error: 'Verification failed. Please try again.',
+    playButton: 'Enter the Challenge',
+    completeButton: 'Claim Victory',
+    verifying: 'Verifying your trial...',
+    success: 'Waypoint discovered!',
+    error: 'The guardian rejects your proof. Try again.',
   },
   questLevel: {
-    codewordLabel: 'Enter Codeword',
-    codewordPlaceholder: 'Enter the codeword...',
-    submitButton: 'Submit Codeword',
-    verifying: 'Verifying...',
-    success: 'Quest complete!',
-    error: 'Incorrect codeword. Try again.',
+    codewordLabel: 'Speak the Ancient Word',
+    codewordPlaceholder: 'Enter the secret word...',
+    submitButton: 'Submit to the Guardian',
+    verifying: 'The guardian tests your knowledge...',
+    success: 'The seal is broken!',
+    error: 'The word is false. Seek the truth.',
   },
   errors: {
-    generic: 'Something went wrong. Please try again.',
+    generic: 'The path grows dark. Seek the way again.',
   },
 };

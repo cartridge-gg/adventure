@@ -31,10 +31,11 @@ export function ChallengeLevel({ levelNumber, tokenId, status, onComplete }: Cha
 
   if (status === 'locked') {
     return (
-      <div className="bg-gray-100 border-2 border-gray-300 rounded-lg p-6 opacity-60">
-        <div className="text-center text-gray-500">
+      <div className="bg-temple-shadow border-2 border-temple-dusk rounded-lg p-6 opacity-50 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-temple-void/50 to-transparent"></div>
+        <div className="relative text-center text-temple-bronze">
           <div className="text-4xl mb-2">🔒</div>
-          <p className="font-semibold">{ADVENTURE_TEXT.levelCard.locked}</p>
+          <p className="font-semibold italic">{ADVENTURE_TEXT.levelCard.locked}</p>
         </div>
       </div>
     );
@@ -42,10 +43,12 @@ export function ChallengeLevel({ levelNumber, tokenId, status, onComplete }: Cha
 
   if (status === 'completed') {
     return (
-      <div className="bg-green-50 border-2 border-green-300 rounded-lg p-6">
-        <div className="text-center text-green-700">
-          <div className="text-4xl mb-2">✅</div>
-          <p className="font-semibold text-lg">{challenge?.game || 'Challenge Complete'}</p>
+      <div className="bg-temple-jade/20 border-2 border-temple-jade rounded-lg p-6 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-temple-jade/10 to-transparent"></div>
+        <div className="relative text-center text-temple-jade">
+          <div className="text-4xl mb-2">✓</div>
+          <p className="font-semibold text-lg font-heading">{challenge?.game || 'Trial Overcome'}</p>
+          <p className="text-sm text-temple-moss mt-1">Seal Broken</p>
         </div>
       </div>
     );
@@ -53,10 +56,11 @@ export function ChallengeLevel({ levelNumber, tokenId, status, onComplete }: Cha
 
   if (showSuccess) {
     return (
-      <div className="bg-green-50 border-2 border-green-400 rounded-lg p-6 animate-pulse">
-        <div className="text-center text-green-700">
-          <div className="text-5xl mb-3">🎉</div>
-          <p className="font-bold text-xl">{ADVENTURE_TEXT.gameLevel.success}</p>
+      <div className="bg-temple-jade/20 border-2 border-temple-gold rounded-lg p-6 animate-pulse relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-temple-gold/20 to-transparent"></div>
+        <div className="relative text-center text-temple-gold">
+          <div className="text-5xl mb-3">⚔️</div>
+          <p className="font-bold text-xl font-heading">{ADVENTURE_TEXT.gameLevel.success}</p>
         </div>
       </div>
     );
@@ -75,24 +79,28 @@ export function ChallengeLevel({ levelNumber, tokenId, status, onComplete }: Cha
   };
 
   return (
-    <div className="bg-white border-2 border-purple-400 rounded-lg p-6 shadow-md">
-      {/* Header */}
-      <div className="mb-4">
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-3xl">🎮</span>
-          <h3 className="text-xl font-bold text-gray-900">{challenge.game}</h3>
-        </div>
-        <p className="text-gray-600">{challenge.description}</p>
-      </div>
+    <div className="bg-temple-dusk/40 border-2 border-temple-bronze rounded-lg p-6 shadow-xl relative overflow-hidden backdrop-blur-sm">
+      {/* Mystical background gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-temple-mystic/20 to-transparent pointer-events-none"></div>
 
-      {/* Requirements */}
-      <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-4">
-        <h4 className="font-semibold text-purple-900 mb-2">Requirements:</h4>
-        <ul className="text-purple-800 text-sm space-y-1">
-          <li>• Complete a game session</li>
-          <li>• Verify completion to unlock next level</li>
-        </ul>
-      </div>
+      <div className="relative">
+        {/* Header */}
+        <div className="mb-4">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-3xl">⚔️</span>
+            <h3 className="text-xl font-bold text-temple-gold font-heading">{challenge.game}</h3>
+          </div>
+          <p className="text-temple-parchment/80">{challenge.description}</p>
+        </div>
+
+        {/* Requirements */}
+        <div className="bg-temple-shadow/60 border-2 border-temple-ember/30 rounded-lg p-4 mb-4">
+          <h4 className="font-semibold text-temple-ember mb-2">The Trial:</h4>
+          <ul className="text-temple-parchment/70 text-sm space-y-1">
+            <li>• Complete the ancient challenge</li>
+            <li>• Return to claim your victory</li>
+          </ul>
+        </div>
 
       {/* Game Sessions */}
       {!dojoConfig ? (
@@ -157,12 +165,13 @@ export function ChallengeLevel({ levelNumber, tokenId, status, onComplete }: Cha
       {dojoConfig && (
         <button
           onClick={handlePlayGame}
-          className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+          className="w-full bg-gradient-to-r from-temple-ember to-temple-flame hover:from-temple-flame hover:to-temple-ember text-white font-semibold py-3 px-4 rounded-lg transition-all border-2 border-temple-bronze/50 hover:border-temple-gold shadow-lg flex items-center justify-center gap-2"
         >
-          <span>{gameSessions.length > 0 ? 'Continue Playing' : 'Start New Game'}</span>
-          <span>🚀</span>
+          <span>{gameSessions.length > 0 ? 'Return to Trial' : 'Enter the Challenge'}</span>
+          <span>⚔️</span>
         </button>
       )}
+      </div>
     </div>
   );
 }
@@ -243,9 +252,9 @@ function GameSessionCard({
         <button
           onClick={handleVerify}
           disabled={isVerifying}
-          className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white text-sm font-semibold py-2 px-3 rounded transition-colors"
+          className="w-full bg-temple-jade hover:bg-temple-moss disabled:bg-temple-shadow text-white text-sm font-semibold py-2 px-3 rounded transition-colors border border-temple-bronze/30"
         >
-          {isVerifying ? 'Verifying...' : 'Mark Complete'}
+          {isVerifying ? 'The Guardian Judges...' : 'Claim Victory'}
         </button>
       )}
 

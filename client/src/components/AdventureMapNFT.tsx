@@ -48,15 +48,19 @@ export function AdventureMapNFT({ progress }: AdventureMapNFTProps) {
   const isComplete = progress.levelsCompleted.length === progress.totalLevels;
 
   return (
-    <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-lg p-6 shadow-lg border-2 border-amber-300">
-      <div className="mb-4">
-        <h3 className="text-xl font-bold text-amber-900">
-          Adventure Map #{progress.tokenId}
-        </h3>
-      </div>
+    <div className="bg-temple-dusk/40 rounded-lg p-6 shadow-xl border-2 border-temple-bronze backdrop-blur-sm relative overflow-hidden">
+      {/* Mystical background gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-temple-mystic/20 to-transparent pointer-events-none"></div>
 
-      {/* Mock SVG Treasure Map */}
-      <div className="relative bg-amber-50 rounded border-2 border-amber-400 overflow-hidden">
+      <div className="relative">
+        <div className="mb-4 text-center">
+          <h3 className="text-xl font-bold text-temple-gold font-heading">
+            Adventure Map #{progress.tokenId}
+          </h3>
+        </div>
+
+        {/* Mock SVG Treasure Map */}
+        <div className="relative bg-temple-shadow/60 rounded overflow-hidden">
         <svg
           viewBox="0 0 400 500"
           className="w-full h-auto"
@@ -139,30 +143,17 @@ export function AdventureMapNFT({ progress }: AdventureMapNFTProps) {
         </svg>
       </div>
 
-      {/* Progress indicator */}
-      <div className="mt-4">
-        <div className="flex justify-between text-sm text-amber-800 mb-1">
-          <span>Progress</span>
-          <span>{Math.round(completionPercentage)}%</span>
-        </div>
-        <div className="w-full bg-amber-200 rounded-full h-2.5">
-          <div
-            className="bg-amber-600 h-2.5 rounded-full transition-all duration-500"
-            style={{ width: `${completionPercentage}%` }}
-          />
-        </div>
-      </div>
-
-      {/* Journey Complete Section */}
-      {isComplete && (
-        <div className="mt-4 pt-4 border-t border-amber-300">
-          <div className="text-center">
-            <div className="text-5xl mb-3">🏆</div>
-            <h3 className="text-xl font-bold text-amber-900 mb-2">Journey Complete!</h3>
-            <ShareButton progress={progress} />
+        {/* Journey Complete Section */}
+        {isComplete && (
+          <div className="mt-4 pt-4 border-t border-temple-bronze/50">
+            <div className="text-center">
+              <div className="text-5xl mb-3">⛩️</div>
+              <h3 className="text-xl font-bold text-temple-gold mb-2 font-heading">The Temple Revealed!</h3>
+              <ShareButton progress={progress} />
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
@@ -172,7 +163,7 @@ export function AdventureMapNFT({ progress }: AdventureMapNFTProps) {
  */
 function ShareButton({ progress }: { progress: AdventureProgress }) {
   const handleShare = () => {
-    const message = `🎉 I just completed the FOCG Adventure! ${progress.levelsCompleted.length}/${progress.totalLevels} levels conquered! #FOCGAdventure #DevConnect #Starknet`;
+    const message = `⛩️ I've revealed the Lost Temple! ${progress.levelsCompleted.length}/${progress.totalLevels} waypoints discovered! Join the journey at #LostTempleAdventure #DevConnect #Starknet`;
     const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
   };
@@ -180,9 +171,9 @@ function ShareButton({ progress }: { progress: AdventureProgress }) {
   return (
     <button
       onClick={handleShare}
-      className="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+      className="w-full bg-gradient-to-r from-temple-ember to-temple-flame hover:from-temple-flame hover:to-temple-ember text-white font-semibold py-2 px-4 rounded-lg transition-all border-2 border-temple-bronze/50 hover:border-temple-gold shadow-lg flex items-center justify-center gap-2"
     >
-      <span>Share on X</span>
+      <span>Share Your Victory</span>
       <span>🐦</span>
     </button>
   );

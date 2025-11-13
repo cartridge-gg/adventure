@@ -22,17 +22,17 @@ export function AdventureQuestDashboard({ progress, levels, onLevelComplete }: Q
 
   return (
     <div className="space-y-8">
-      {/* Main Content Grid - 50/50 split */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Left Column: NFT Preview */}
-        <div>
+      {/* Main Content Grid - 5:7 ratio (map:levels) closest to 4:7 in 12-col grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* Left Column: NFT Preview (5/12 width) */}
+        <div className="lg:col-span-5">
           <div className="sticky top-4">
             <AdventureMapNFT progress={progress} />
           </div>
         </div>
 
-        {/* Right Column: Level Cards */}
-        <div>
+        {/* Right Column: Level Cards (7/12 width) */}
+        <div className="lg:col-span-7">
           <div className="space-y-6">
             {levels.map((level) => {
               const status = getLevelStatus(level.levelNumber);

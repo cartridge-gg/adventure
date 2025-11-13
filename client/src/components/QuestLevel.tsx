@@ -25,10 +25,11 @@ export function QuestLevel({ level, status, tokenId, onComplete }: QuestLevelPro
 
   if (status === 'locked') {
     return (
-      <div className="bg-gray-100 border-2 border-gray-300 rounded-lg p-6 opacity-60">
-        <div className="text-center text-gray-500">
+      <div className="bg-temple-shadow border-2 border-temple-dusk rounded-lg p-6 opacity-50 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-temple-void/50 to-transparent"></div>
+        <div className="relative text-center text-temple-bronze">
           <div className="text-4xl mb-2">🔒</div>
-          <p className="font-semibold">{ADVENTURE_TEXT.levelCard.locked}</p>
+          <p className="font-semibold italic">{ADVENTURE_TEXT.levelCard.locked}</p>
         </div>
       </div>
     );
@@ -36,10 +37,12 @@ export function QuestLevel({ level, status, tokenId, onComplete }: QuestLevelPro
 
   if (status === 'completed') {
     return (
-      <div className="bg-green-50 border-2 border-green-300 rounded-lg p-6">
-        <div className="text-center text-green-700">
-          <div className="text-4xl mb-2">✅</div>
-          <p className="font-semibold text-lg">{level.name}</p>
+      <div className="bg-temple-jade/20 border-2 border-temple-jade rounded-lg p-6 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-temple-jade/10 to-transparent"></div>
+        <div className="relative text-center text-temple-jade">
+          <div className="text-4xl mb-2">🔮</div>
+          <p className="font-semibold text-lg font-heading">{level.name}</p>
+          <p className="text-sm text-temple-moss mt-1">Waypoint Discovered</p>
         </div>
       </div>
     );
@@ -103,82 +106,88 @@ export function QuestLevel({ level, status, tokenId, onComplete }: QuestLevelPro
 
   if (showSuccess) {
     return (
-      <div className="bg-green-50 border-2 border-green-400 rounded-lg p-6 animate-pulse">
-        <div className="text-center text-green-700">
-          <div className="text-5xl mb-3">🎉</div>
-          <p className="font-bold text-xl">{ADVENTURE_TEXT.questLevel.success}</p>
+      <div className="bg-temple-jade/20 border-2 border-temple-gold rounded-lg p-6 animate-pulse relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-temple-gold/20 to-transparent"></div>
+        <div className="relative text-center text-temple-gold">
+          <div className="text-5xl mb-3">🔮</div>
+          <p className="font-bold text-xl font-heading">{ADVENTURE_TEXT.questLevel.success}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white border-2 border-purple-400 rounded-lg p-6 shadow-md">
-      {/* Header */}
-      <div className="mb-4">
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-3xl">🗺️</span>
-          <h3 className="text-xl font-bold text-gray-900">{level.name}</h3>
-        </div>
-        <p className="text-gray-600">{level.description}</p>
-      </div>
+    <div className="bg-temple-dusk/40 border-2 border-temple-bronze rounded-lg p-6 shadow-xl relative overflow-hidden backdrop-blur-sm">
+      {/* Mystical background gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-temple-seal/20 to-transparent pointer-events-none"></div>
 
-      {/* Location */}
-      <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-4">
-        <h4 className="font-semibold text-purple-900 mb-2 flex items-center gap-2">
-          <span>📍</span>
-          <span>Location:</span>
-        </h4>
-        <p className="text-purple-800 text-sm">{level.location}</p>
-      </div>
-
-      {/* Dev Mode: Show Codeword */}
-      {isDevMode && (
-        <div className="bg-amber-50 border-2 border-amber-400 rounded-lg p-4 mb-4">
+      <div className="relative">
+        {/* Header */}
+        <div className="mb-4">
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-xl">🔧</span>
-            <h4 className="font-semibold text-amber-900">Dev Mode</h4>
+            <span className="text-3xl">🔮</span>
+            <h3 className="text-xl font-bold text-temple-gold font-heading">{level.name}</h3>
           </div>
-          <p className="text-sm text-amber-800 mb-2">Codeword for testing:</p>
-          <p className="font-mono text-lg font-bold text-amber-900 bg-amber-100 px-3 py-2 rounded border border-amber-300">
-            {level.expectedCodeword}
-          </p>
-        </div>
-      )}
-
-      {/* Codeword Input Form */}
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="codeword" className="block text-sm font-semibold text-gray-700 mb-2">
-            {ADVENTURE_TEXT.questLevel.codewordLabel}
-          </label>
-          <input
-            id="codeword"
-            type="text"
-            value={codeword}
-            onChange={(e) => setCodeword(e.target.value)}
-            placeholder={ADVENTURE_TEXT.questLevel.codewordPlaceholder}
-            disabled={isVerifying}
-            className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none disabled:bg-gray-100 text-lg font-mono uppercase"
-            autoComplete="off"
-          />
+          <p className="text-temple-parchment/80">{level.description}</p>
         </div>
 
-        <button
-          type="submit"
-          disabled={isVerifying || !codeword.trim()}
-          className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
-        >
-          {isVerifying ? ADVENTURE_TEXT.questLevel.verifying : ADVENTURE_TEXT.questLevel.submitButton}
-        </button>
-      </form>
-
-      {/* Error Message */}
-      {error && (
-        <div className="mt-4 bg-red-50 border border-red-300 rounded-lg p-3">
-          <p className="text-red-800 text-sm">{error}</p>
+        {/* Location */}
+        <div className="bg-temple-shadow/60 border-2 border-temple-seal/30 rounded-lg p-4 mb-4">
+          <h4 className="font-semibold text-temple-ember mb-2 flex items-center gap-2">
+            <span>📍</span>
+            <span>The Hidden Place:</span>
+          </h4>
+          <p className="text-temple-parchment/70 text-sm italic">{level.location}</p>
         </div>
-      )}
+
+        {/* Dev Mode: Show Codeword */}
+        {isDevMode && (
+          <div className="bg-temple-ember/20 border-2 border-temple-gold/50 rounded-lg p-4 mb-4">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-xl">🔧</span>
+              <h4 className="font-semibold text-temple-gold">Dev Mode</h4>
+            </div>
+            <p className="text-sm text-temple-parchment/70 mb-2">Test codeword:</p>
+            <p className="font-mono text-lg font-bold text-temple-gold bg-temple-shadow px-3 py-2 rounded border border-temple-bronze/40">
+              {level.expectedCodeword}
+            </p>
+          </div>
+        )}
+
+        {/* Codeword Input Form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="codeword" className="block text-sm font-semibold text-temple-gold mb-2 font-heading">
+              {ADVENTURE_TEXT.questLevel.codewordLabel}
+            </label>
+            <input
+              id="codeword"
+              type="text"
+              value={codeword}
+              onChange={(e) => setCodeword(e.target.value)}
+              placeholder={ADVENTURE_TEXT.questLevel.codewordPlaceholder}
+              disabled={isVerifying}
+              className="w-full px-4 py-3 border-2 border-temple-bronze bg-temple-shadow/50 text-temple-parchment rounded-lg focus:border-temple-gold focus:outline-none disabled:opacity-50 text-lg font-mono uppercase placeholder:text-temple-bronze/50"
+              autoComplete="off"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={isVerifying || !codeword.trim()}
+            className="w-full bg-gradient-to-r from-temple-seal to-temple-mystic hover:from-temple-mystic hover:to-temple-seal disabled:from-temple-shadow disabled:to-temple-shadow text-white font-semibold py-3 px-4 rounded-lg transition-all border-2 border-temple-bronze/50 hover:border-temple-gold disabled:border-temple-dusk shadow-lg"
+          >
+            {isVerifying ? ADVENTURE_TEXT.questLevel.verifying : ADVENTURE_TEXT.questLevel.submitButton}
+          </button>
+        </form>
+
+        {/* Error Message */}
+        {error && (
+          <div className="mt-4 bg-temple-ember/20 border-2 border-temple-flame/50 rounded-lg p-3">
+            <p className="text-temple-flame text-sm font-semibold">{error}</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

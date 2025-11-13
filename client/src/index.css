@@ -4,11 +4,26 @@
   --font-sans: "Crimson Pro", Georgia, serif;
   --font-heading: "Cinzel", serif;
 
+  /* Ronin colors (preserved for NFT rendering) */
   --color-ronin-primary: #E63946;
   --color-ronin-secondary: #F1FAEE;
   --color-ronin-accent: #A8DADC;
   --color-ronin-dark: #1D3557;
   --color-ronin-light: #457B9D;
+
+  /* 80's Dark Fantasy Palette */
+  --color-temple-void: #0a0612;        /* Deep void black-purple */
+  --color-temple-shadow: #1a0f2e;      /* Dark purple shadow */
+  --color-temple-dusk: #2d1b3d;        /* Dusky purple */
+  --color-temple-mystic: #4a2c5c;      /* Mystic purple */
+  --color-temple-ember: #d2691e;       /* Burnt orange ember */
+  --color-temple-flame: #ff6b35;       /* Orange flame */
+  --color-temple-bronze: #8b6f47;      /* Weathered bronze */
+  --color-temple-gold: #d4af37;        /* Ancient gold */
+  --color-temple-jade: #3d6b5a;        /* Mysterious jade green */
+  --color-temple-moss: #5a7d6f;        /* Forest moss */
+  --color-temple-seal: #7c3f58;        /* Sealed door crimson */
+  --color-temple-parchment: #e8dcc4;   /* Aged parchment */
 }
 
 :root {
