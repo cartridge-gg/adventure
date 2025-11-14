@@ -112,10 +112,12 @@ export function ConnectWallet() {
           md:px-8 md:py-3 text-sm md:text-base
           shadow-lg uppercase tracking-wide
           flex items-center justify-center gap-2
+          effect-raised relative overflow-hidden
         "
       >
-        <span>🎮</span>
-        <span>{WALLET_TEXT.connect}</span>
+        <span className="relative z-10">🎮</span>
+        <span className="relative z-10">{WALLET_TEXT.connect}</span>
+        <div className="absolute inset-0 effect-metallic pointer-events-none"></div>
       </button>
     );
   }

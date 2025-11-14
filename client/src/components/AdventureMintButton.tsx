@@ -80,9 +80,15 @@ export function AdventureMintButton({ onMintSuccess }: AdventureMintButtonProps)
 
   return (
     <div className="max-w-2xl mx-auto">
-      <div className="bg-temple-dusk/40 border-2 border-temple-bronze rounded-lg p-8 shadow-xl backdrop-blur-sm relative overflow-hidden">
+      <div className="bg-temple-dusk/40 border-2 border-temple-bronze rounded-lg p-8 shadow-xl backdrop-blur-sm relative overflow-hidden texture-parchment effect-embossed texture-grain">
         {/* Mystical background gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-temple-mystic/20 to-transparent pointer-events-none"></div>
+
+        {/* Decorative corner ornaments */}
+        <div className="absolute top-3 left-3 w-12 h-12 border-l-2 border-t-2 border-temple-gold/40 rounded-tl"></div>
+        <div className="absolute top-3 right-3 w-12 h-12 border-r-2 border-t-2 border-temple-gold/40 rounded-tr"></div>
+        <div className="absolute bottom-3 left-3 w-12 h-12 border-l-2 border-b-2 border-temple-gold/40 rounded-bl"></div>
+        <div className="absolute bottom-3 right-3 w-12 h-12 border-r-2 border-b-2 border-temple-gold/40 rounded-br"></div>
 
         <div className="relative">
           <div className="text-center mb-8">
@@ -100,9 +106,10 @@ export function AdventureMintButton({ onMintSuccess }: AdventureMintButtonProps)
             <button
               type="submit"
               disabled={isMinting || isLoadingUsername}
-              className="w-full bg-gradient-to-r from-temple-ember to-temple-flame hover:from-temple-flame hover:to-temple-ember disabled:from-temple-shadow disabled:to-temple-shadow text-white font-ui font-bold py-4 px-6 rounded-lg transition-all border-2 border-temple-bronze/50 hover:border-temple-gold disabled:border-temple-dusk shadow-lg text-lg uppercase tracking-wide"
+              className="w-full bg-gradient-to-r from-temple-ember to-temple-flame hover:from-temple-flame hover:to-temple-ember disabled:from-temple-shadow disabled:to-temple-shadow text-white font-ui font-bold py-4 px-6 rounded-lg transition-all border-2 border-temple-bronze/50 hover:border-temple-gold disabled:border-temple-dusk shadow-lg text-lg uppercase tracking-wide effect-raised relative overflow-hidden"
             >
-              {isMinting ? 'Minting...' : isLoadingUsername ? 'Loading...' : ADVENTURE_TEXT.mint.buttonText}
+              <span className="relative z-10">{isMinting ? 'Minting...' : isLoadingUsername ? 'Loading...' : ADVENTURE_TEXT.mint.buttonText}</span>
+              <div className="absolute inset-0 effect-metallic pointer-events-none"></div>
             </button>
           </form>
 
@@ -114,9 +121,15 @@ export function AdventureMintButton({ onMintSuccess }: AdventureMintButtonProps)
       </div>
 
       {/* Preview of the adventure */}
-      <div className="mt-8 bg-temple-dusk/40 border-2 border-temple-bronze rounded-lg p-6 shadow-xl backdrop-blur-sm relative overflow-hidden">
+      <div className="mt-8 bg-temple-dusk/40 border-2 border-temple-bronze rounded-lg p-6 shadow-xl backdrop-blur-sm relative overflow-hidden texture-stone effect-embossed texture-grain">
         {/* Mystical background gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-temple-seal/20 to-transparent pointer-events-none"></div>
+
+        {/* Decorative corner ornaments */}
+        <div className="absolute top-2 left-2 w-10 h-10 border-l-2 border-t-2 border-temple-bronze/30 rounded-tl"></div>
+        <div className="absolute top-2 right-2 w-10 h-10 border-r-2 border-t-2 border-temple-bronze/30 rounded-tr"></div>
+        <div className="absolute bottom-2 left-2 w-10 h-10 border-l-2 border-b-2 border-temple-bronze/30 rounded-bl"></div>
+        <div className="absolute bottom-2 right-2 w-10 h-10 border-r-2 border-b-2 border-temple-bronze/30 rounded-br"></div>
 
         <div className="relative">
           <h3 className="font-bold text-temple-gold mb-4 font-heading text-center">{ADVENTURE_TEXT.mint.whatAwaitsTitle}</h3>

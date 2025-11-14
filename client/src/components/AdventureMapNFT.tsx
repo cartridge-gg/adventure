@@ -47,19 +47,25 @@ export function AdventureMapNFT({ progress }: AdventureMapNFTProps) {
   const isComplete = progress.levelsCompleted.length === progress.totalLevels;
 
   return (
-    <div className="bg-temple-dusk/40 rounded-lg p-6 shadow-xl border-2 border-temple-bronze backdrop-blur-sm relative overflow-hidden">
+    <div className="bg-temple-dusk/40 rounded-lg p-6 shadow-xl border-2 border-temple-bronze backdrop-blur-sm relative overflow-hidden texture-parchment effect-embossed texture-grain effect-weathered">
       {/* Mystical background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-temple-mystic/20 to-transparent pointer-events-none"></div>
 
+      {/* Decorative corner ornaments */}
+      <div className="absolute top-2 left-2 w-10 h-10 border-l-2 border-t-2 border-temple-gold/40 rounded-tl"></div>
+      <div className="absolute top-2 right-2 w-10 h-10 border-r-2 border-t-2 border-temple-gold/40 rounded-tr"></div>
+      <div className="absolute bottom-2 left-2 w-10 h-10 border-l-2 border-b-2 border-temple-gold/40 rounded-bl"></div>
+      <div className="absolute bottom-2 right-2 w-10 h-10 border-r-2 border-b-2 border-temple-gold/40 rounded-br"></div>
+
       <div className="relative">
         <div className="mb-4 text-center">
-          <h3 className="text-xl font-bold text-temple-gold font-heading">
+          <h3 className="text-xl font-bold text-temple-gold font-heading" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8), 0 0 20px rgba(212, 175, 55, 0.4)' }}>
             {ADVENTURE_TEXT.map.title} #{progress.tokenId}
           </h3>
         </div>
 
         {/* Mock SVG Treasure Map */}
-        <div className="relative bg-temple-shadow/60 rounded overflow-hidden">
+        <div className="relative rounded overflow-hidden mb-4">
         <svg
           viewBox="0 0 400 500"
           className="w-full h-auto"

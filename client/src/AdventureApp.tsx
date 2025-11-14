@@ -46,17 +46,18 @@ function AdventureApp() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-temple-void via-temple-shadow to-temple-dusk">
+    <div className="min-h-screen bg-gradient-to-br from-temple-void via-temple-shadow to-temple-dusk texture-grain">
       <div className="min-h-screen bg-temple-void/30">
         <div className="container mx-auto px-4 py-8">
           {/* Header */}
           <header className="mb-12">
             <div className="flex flex-col lg:flex-row justify-between items-center gap-6">
               <div className="text-center lg:text-left">
-                <h1 className="font-heading text-4xl sm:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-temple-gold via-temple-ember to-temple-flame mb-2">
+                <h1 className="font-heading text-4xl sm:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-temple-gold via-temple-ember to-temple-flame mb-2 relative"
+                    style={{ filter: 'drop-shadow(0 0 20px rgba(212, 175, 55, 0.5)) drop-shadow(0 0 40px rgba(255, 107, 53, 0.3))' }}>
                   {ADVENTURE_TEXT.header.title}
                 </h1>
-                <p className="text-temple-parchment text-lg opacity-90">
+                <p className="text-temple-parchment text-lg opacity-90" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.7)' }}>
                   {ADVENTURE_TEXT.header.subtitle}
                 </p>
               </div>
@@ -110,17 +111,24 @@ function AdventureApp() {
             ) : (
               <div className="py-20">
                 <div className="max-w-2xl mx-auto text-center">
-                  <div className="bg-gradient-to-br from-temple-mystic via-temple-seal to-temple-dusk text-white rounded-lg p-12 shadow-2xl border-2 border-temple-bronze/50">
-                    <div className="text-7xl mb-6">⛩️</div>
-                    <h2 className="font-heading text-3xl font-bold mb-4">
-                      {ADVENTURE_TEXT.welcome.title}
-                    </h2>
-                    <p className="text-temple-parchment/90 text-lg mb-8">
-                      {ADVENTURE_TEXT.welcome.subtitle}
-                    </p>
-                    <div className="bg-temple-shadow/50 border-2 border-temple-bronze/40 rounded-lg p-6 text-left">
-                      <h3 className="font-semibold mb-3 text-temple-gold">{ADVENTURE_TEXT.welcome.pathTitle}</h3>
-                      <ul className="space-y-2 text-temple-parchment/80">
+                  <div className="bg-gradient-to-br from-temple-mystic via-temple-seal to-temple-dusk text-white rounded-lg p-12 shadow-2xl border-2 border-temple-bronze/50 texture-parchment effect-embossed texture-grain relative overflow-hidden">
+                    {/* Decorative corner ornaments */}
+                    <div className="absolute top-3 left-3 w-12 h-12 border-l-2 border-t-2 border-temple-gold/30 rounded-tl"></div>
+                    <div className="absolute top-3 right-3 w-12 h-12 border-r-2 border-t-2 border-temple-gold/30 rounded-tr"></div>
+                    <div className="absolute bottom-3 left-3 w-12 h-12 border-l-2 border-b-2 border-temple-gold/30 rounded-bl"></div>
+                    <div className="absolute bottom-3 right-3 w-12 h-12 border-r-2 border-b-2 border-temple-gold/30 rounded-br"></div>
+
+                    <div className="relative">
+                      <div className="text-7xl mb-6">⛩️</div>
+                      <h2 className="font-heading text-3xl font-bold mb-4" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8), 0 0 20px rgba(212, 175, 55, 0.3)' }}>
+                        {ADVENTURE_TEXT.welcome.title}
+                      </h2>
+                      <p className="text-temple-parchment/90 text-lg mb-8" style={{ textShadow: '1px 1px 2px rgba(0, 0, 0, 0.6)' }}>
+                        {ADVENTURE_TEXT.welcome.subtitle}
+                      </p>
+                      <div className="bg-temple-shadow/50 border-2 border-temple-bronze/40 rounded-lg p-6 text-left effect-carved">
+                        <h3 className="font-semibold mb-3 text-temple-gold" style={{ textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)' }}>{ADVENTURE_TEXT.welcome.pathTitle}</h3>
+                        <ul className="space-y-2 text-temple-parchment/80">
                         <li className="flex items-start gap-2">
                           <span>🗺️</span>
                           <span>{ADVENTURE_TEXT.welcome.steps[0]}</span>
@@ -138,6 +146,7 @@ function AdventureApp() {
                           <span>{ADVENTURE_TEXT.welcome.steps[3]}</span>
                         </li>
                       </ul>
+                      </div>
                     </div>
                   </div>
                 </div>

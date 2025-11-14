@@ -66,6 +66,15 @@ export const ADVENTURE_LEVELS: Level[] = allLevelNumbers.map((levelNum) => {
 });
 
 // ============================================================================
+// LEVEL ICONS
+// ============================================================================
+
+export const LEVEL_ICONS = {
+  challenge: '⚔️',  // Sword for game challenges
+  quest: '🔮',      // Crystal ball for puzzle quests
+} as const;
+
+// ============================================================================
 // CONFIGURATION HELPERS
 // ============================================================================
 
@@ -147,7 +156,7 @@ export const ADVENTURE_TEXT = {
   },
   map: {
     title: 'Adventure Map',
-    completedTitle: 'The Temple is Discovered!',
+    completedTitle: 'The Temple is Found!',
     shareButton: 'Share Your Victory',
     shareMessage: (completed: number, total: number) =>
       `⛩️ I've revealed the Lost Temple! ${completed}/${total} waypoints discovered! Join the journey at #LostTempleAdventure #DevConnect #Starknet`,

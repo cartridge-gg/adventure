@@ -7,7 +7,7 @@
 
 import { useState } from 'react';
 import { QuestLevelProps } from '../lib/adventureTypes';
-import { ADVENTURE_TEXT } from '../lib/adventureConfig';
+import { ADVENTURE_TEXT, LEVEL_ICONS } from '../lib/adventureConfig';
 import { usePuzzleSigning } from '../hooks/usePuzzleSigning';
 import { useAdventureContract } from '../hooks/useAdventureContract';
 
@@ -40,7 +40,7 @@ export function QuestLevel({ level, status, tokenId, onComplete }: QuestLevelPro
       <div className="bg-temple-jade/20 border-2 border-temple-jade rounded-lg p-6 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-temple-jade/10 to-transparent"></div>
         <div className="relative text-center text-temple-jade">
-          <div className="text-4xl mb-2">📯</div>
+          <div className="text-4xl mb-2">{LEVEL_ICONS.quest}</div>
           <p className="font-semibold text-lg font-heading">{level.name}</p>
           <p className="text-sm text-temple-moss mt-1">{ADVENTURE_TEXT.levelCard.waypointDiscovered}</p>
         </div>
@@ -109,7 +109,7 @@ export function QuestLevel({ level, status, tokenId, onComplete }: QuestLevelPro
       <div className="bg-temple-jade/20 border-2 border-temple-gold rounded-lg p-6 animate-pulse relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-temple-gold/20 to-transparent"></div>
         <div className="relative text-center text-temple-gold">
-          <div className="text-5xl mb-3">🔮</div>
+          <div className="text-5xl mb-3">{LEVEL_ICONS.quest}</div>
           <p className="font-bold text-xl font-heading">{ADVENTURE_TEXT.questLevel.success}</p>
         </div>
       </div>
@@ -117,22 +117,28 @@ export function QuestLevel({ level, status, tokenId, onComplete }: QuestLevelPro
   }
 
   return (
-    <div className="bg-temple-dusk/40 border-2 border-temple-bronze rounded-lg p-6 shadow-xl relative overflow-hidden backdrop-blur-sm">
+    <div className="bg-temple-dusk/40 border-2 border-temple-bronze rounded-lg p-6 shadow-xl relative overflow-hidden backdrop-blur-sm texture-parchment effect-embossed texture-grain">
       {/* Mystical background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-temple-seal/20 to-transparent pointer-events-none"></div>
+
+      {/* Decorative corner ornaments */}
+      <div className="absolute top-2 left-2 w-8 h-8 border-l-2 border-t-2 border-temple-gold/30 rounded-tl"></div>
+      <div className="absolute top-2 right-2 w-8 h-8 border-r-2 border-t-2 border-temple-gold/30 rounded-tr"></div>
+      <div className="absolute bottom-2 left-2 w-8 h-8 border-l-2 border-b-2 border-temple-gold/30 rounded-bl"></div>
+      <div className="absolute bottom-2 right-2 w-8 h-8 border-r-2 border-b-2 border-temple-gold/30 rounded-br"></div>
 
       <div className="relative">
         {/* Header */}
         <div className="mb-4">
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-3xl">🔮</span>
-            <h3 className="text-xl font-bold text-temple-gold font-heading">{level.name}</h3>
+            <span className="text-3xl glow-mystical">{LEVEL_ICONS.quest}</span>
+            <h3 className="text-xl font-bold text-temple-gold font-heading" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8), 0 0 20px rgba(212, 175, 55, 0.4)' }}>{level.name}</h3>
           </div>
-          <p className="text-temple-parchment/80">{level.description}</p>
+          <p className="text-temple-parchment/80" style={{ textShadow: '1px 1px 2px rgba(0, 0, 0, 0.6)' }}>{level.description}</p>
         </div>
 
         {/* Location */}
-        <div className="bg-temple-shadow/60 border-2 border-temple-seal/30 rounded-lg p-4 mb-4">
+        <div className="bg-temple-shadow/60 border-2 border-temple-seal/30 rounded-lg p-4 mb-4 effect-carved texture-stone">
           <h4 className="font-semibold text-temple-ember mb-2 flex items-center gap-2">
             <span>📍</span>
             <span>{ADVENTURE_TEXT.questLevel.locationHeader}</span>
@@ -175,9 +181,10 @@ export function QuestLevel({ level, status, tokenId, onComplete }: QuestLevelPro
           <button
             type="submit"
             disabled={isVerifying || !codeword.trim()}
-            className="w-full bg-gradient-to-r from-temple-seal to-temple-mystic hover:from-temple-mystic hover:to-temple-seal disabled:from-temple-shadow disabled:to-temple-shadow text-white font-ui font-semibold py-3 px-4 rounded-lg transition-all border-2 border-temple-bronze/50 hover:border-temple-gold disabled:border-temple-dusk shadow-lg uppercase tracking-wide"
+            className="w-full bg-gradient-to-r from-temple-seal to-temple-mystic hover:from-temple-mystic hover:to-temple-seal disabled:from-temple-shadow disabled:to-temple-shadow text-white font-ui font-semibold py-3 px-4 rounded-lg transition-all border-2 border-temple-bronze/50 hover:border-temple-gold disabled:border-temple-dusk shadow-lg uppercase tracking-wide effect-raised relative overflow-hidden"
           >
-            {isVerifying ? ADVENTURE_TEXT.questLevel.verifying : ADVENTURE_TEXT.questLevel.submitButton}
+            <span className="relative z-10">{isVerifying ? ADVENTURE_TEXT.questLevel.verifying : ADVENTURE_TEXT.questLevel.submitButton}</span>
+            <div className="absolute inset-0 effect-metallic pointer-events-none"></div>
           </button>
         </form>
 
