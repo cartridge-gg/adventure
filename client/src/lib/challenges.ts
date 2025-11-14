@@ -152,9 +152,3 @@ export function getDojoConfigForChallenge(challenge: Challenge): DojoGameConfig 
   return challenge.dojo[env];
 }
 
-/**
- * Get all challenge levels
- */
-export function getAllChallengeLevels(): number[] {
-  return CHALLENGES.challenges.map((c) => c.level).sort((a, b) => a - b);
-}

@@ -214,8 +214,5 @@ export function useAdventureContract() {
     completePuzzleLevel,
     completeOnchainLevel,
     isLevelComplete,
-    isConnected: !!account,
-    adventureContract,
-    mapContract,
   };
 }

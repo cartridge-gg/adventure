@@ -80,18 +80,6 @@ export const LEVEL_ICONS = {
 
 export const TOTAL_LEVELS = ADVENTURE_LEVELS.length;
 
-export function getLevelByNumber(levelNumber: number): Level | undefined {
-  return ADVENTURE_LEVELS.find(l => l.levelNumber === levelNumber);
-}
-
-export function getGameLevels(): ChallengeLevel[] {
-  return ADVENTURE_LEVELS.filter(l => l.type === 'game') as ChallengeLevel[];
-}
-
-export function getQuestLevels(): QuestLevel[] {
-  return ADVENTURE_LEVELS.filter(l => l.type === 'quest') as QuestLevel[];
-}
-
 // ============================================================================
 // APP TEXT
 // ============================================================================

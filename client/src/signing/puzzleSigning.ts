@@ -16,11 +16,12 @@ import { ec, hash, num } from 'starknet';
 
 /**
  * Derives a Starknet private key from a codeword solution
+ * (Internal function - not exported)
  *
  * @param solution - The plaintext codeword (will be normalized: trimmed and lowercased)
  * @returns Private key as a hex string
  */
-export function privateKeyFromSolution(solution: string): string {
+function privateKeyFromSolution(solution: string): string {
   const normalized = solution.trim().toLowerCase();
 
   // Use TextEncoder for browser compatibility (instead of Buffer)
@@ -94,31 +95,6 @@ export function signatureFromSolution(
 }
 
 /**
- * Verifies a signature (for testing purposes)
- *
- * @param signature - The signature components [r, s]
- * @param playerAddress - The player's address that was signed
- * @param solutionAddress - The expected solution address
- * @returns True if signature is valid
- */
-export function verifySignature(
-  signature: { r: string; s: string },
-  playerAddress: string,
-  solutionAddress: string
-): boolean {
-  const messageHash = createMessageHash(playerAddress);
-
-  // The solution address should be the public key that signed the message
-  // Convert signature to the format expected by verify
-  const sigArray = [signature.r, signature.s];
-  return ec.starkCurve.verify(
-    sigArray as any,
-    messageHash,
-    solutionAddress
-  );
-}
-
-/**
  * Formats signature for contract call
  *
  * @param signature - Signature components {r, s}
@@ -128,43 +104,3 @@ export function formatSignatureForContract(signature: { r: string; s: string }):
   return [signature.r, signature.s];
 }
 
-/**
- * Example usage and testing utility
- */
-export function testPuzzleSigning() {
-  const codeword = "Testing Hard Cases";
-  const playerAddress = "0x197970E48082CD46f277ABDb8afe492bCCd78300";
-
-  console.log("\n=== Puzzle Signing Test ===\n");
-
-  // Step 1: Derive solution address from codeword
-  const solutionAddress = addressFromSolution(codeword);
-  console.log(`Codeword: "${codeword}"`);
-  console.log(`Solution Address: ${solutionAddress}`);
-
-  // Step 2: Player signs their address with solution-derived key
-  const signature = signatureFromSolution(codeword, playerAddress);
-  console.log(`\nPlayer Address: ${playerAddress}`);
-  console.log(`Signature r: ${signature.r}`);
-  console.log(`Signature s: ${signature.s}`);
-
-  // Step 3: Verify signature
-  const isValid = verifySignature(signature, playerAddress, solutionAddress);
-  console.log(`\nSignature Valid: ${isValid}`);
-
-  // Step 4: Show contract call format
-  const contractParams = formatSignatureForContract(signature);
-  console.log(`\nContract Call Format: [${contractParams.join(', ')}]`);
-
-  console.log("\n=== Test Complete ===\n");
-}
-
-// Export all functions
-export default {
-  privateKeyFromSolution,
-  addressFromSolution,
-  signatureFromSolution,
-  verifySignature,
-  formatSignatureForContract,
-  testPuzzleSigning,
-};

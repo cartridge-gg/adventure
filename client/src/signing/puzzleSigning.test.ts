@@ -7,9 +7,36 @@
 import {
   addressFromSolution,
   signatureFromSolution,
-  verifySignature,
   formatSignatureForContract,
 } from './puzzleSigning';
+import { ec, hash, num } from 'starknet';
+
+/**
+ * Helper: Creates a typed data hash of the player's address
+ * (Duplicated from puzzleSigning.ts for test isolation)
+ */
+function createMessageHash(playerAddress: string): string {
+  const addressFelt = num.toBigInt(playerAddress);
+  const messageHash = hash.computePoseidonHashOnElements([addressFelt]);
+  return num.toHex(messageHash);
+}
+
+/**
+ * Test utility: Verifies a signature
+ */
+function verifySignature(
+  signature: { r: string; s: string },
+  playerAddress: string,
+  solutionAddress: string
+): boolean {
+  const messageHash = createMessageHash(playerAddress);
+  const sigArray = [signature.r, signature.s];
+  return ec.starkCurve.verify(
+    sigArray as any,
+    messageHash,
+    solutionAddress
+  );
+}
 
 function assert(condition: boolean, message: string) {
   if (!condition) {

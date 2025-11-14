@@ -64,10 +64,6 @@ export interface BaseLevelProps {
   onComplete: (levelNumber: number) => void;
 }
 
-export interface ChallengeLevelProps extends BaseLevelProps {
-  level: ChallengeLevel;
-}
-
 export interface QuestLevelProps extends BaseLevelProps {
   level: QuestLevel;
 }
