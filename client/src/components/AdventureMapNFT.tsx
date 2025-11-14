@@ -7,6 +7,7 @@
 
 import React from 'react';
 import { AdventureProgress } from '../lib/adventureTypes';
+import { ADVENTURE_TEXT } from '../lib/adventureConfig';
 
 // Import SVG assets (in Cairo, these would be stored as ByteArrays or felt252 arrays)
 import RiverSvg from '../../assets/River.svg?raw';
@@ -32,8 +33,6 @@ const PATH_STROKE_WIDTH = 3;
 const BG_COLOR = '#fef3c7';
 const BORDER_COLOR = '#92400e';
 const PATH_COLOR = '#8B4513';
-const COMPLETE_CIRCLE_COLOR = '#e8f5e8';
-const INCOMPLETE_CIRCLE_COLOR = '#f5e8d8';
 const COMPLETE_ICON_COLOR = '#5a8a5a';
 const INCOMPLETE_ICON_COLOR = '#8b6f47';
 const COMPLETE_BADGE_COLOR = '#15803d';
@@ -55,7 +54,7 @@ export function AdventureMapNFT({ progress }: AdventureMapNFTProps) {
       <div className="relative">
         <div className="mb-4 text-center">
           <h3 className="text-xl font-bold text-temple-gold font-heading">
-            Adventure Map #{progress.tokenId}
+            {ADVENTURE_TEXT.map.title} #{progress.tokenId}
           </h3>
         </div>
 
@@ -97,36 +96,7 @@ export function AdventureMapNFT({ progress }: AdventureMapNFTProps) {
           />
 
           {/* Map path - draws waypoints and connections */}
-          {renderMapPath(progress.levelsCompleted, progress.totalLevels, parseInt(progress.tokenId) || 1)}
-
-          {/* Treasure chest at the end */}
-          {isComplete && (
-            <g transform="translate(200, 440)">
-              {/* Treasure chest */}
-              <rect x="-30" y="-20" width="60" height="40" fill="#92400e" stroke="#451a03" strokeWidth="2" rx="5" />
-              <rect x="-25" y="-15" width="50" height="10" fill="#fbbf24" />
-              <circle cx="0" cy="-5" r="5" fill="#fbbf24" />
-              {/* Sparkles */}
-              <text x="-40" y="-30" fontSize="20">✨</text>
-              <text x="25" y="-30" fontSize="20">✨</text>
-              <text x="-15" y="-40" fontSize="20">⭐</text>
-            </g>
-          )}
-
-          {/* Completion text */}
-          {isComplete && (
-            <text
-              x="200"
-              y="475"
-              textAnchor="middle"
-              fill="#78350f"
-              fontSize="16"
-              fontWeight="bold"
-              fontFamily="serif"
-            >
-              Journey Complete!
-            </text>
-          )}
+          {renderMapPath(progress.levelsCompleted, progress.totalLevels, parseInt(progress.tokenId) || 1, isComplete)}
 
           {/* Username in lower-right corner */}
           <text
@@ -148,7 +118,7 @@ export function AdventureMapNFT({ progress }: AdventureMapNFTProps) {
           <div className="mt-4 pt-4 border-t border-temple-bronze/50">
             <div className="text-center">
               <div className="text-5xl mb-3">⛩️</div>
-              <h3 className="text-xl font-bold text-temple-gold mb-2 font-heading">The Temple Revealed!</h3>
+              <h3 className="text-xl font-bold text-temple-gold mb-2 font-heading">{ADVENTURE_TEXT.map.completedTitle}</h3>
               <ShareButton progress={progress} />
             </div>
           </div>
@@ -163,7 +133,7 @@ export function AdventureMapNFT({ progress }: AdventureMapNFTProps) {
  */
 function ShareButton({ progress }: { progress: AdventureProgress }) {
   const handleShare = () => {
-    const message = `⛩️ I've revealed the Lost Temple! ${progress.levelsCompleted.length}/${progress.totalLevels} waypoints discovered! Join the journey at #LostTempleAdventure #DevConnect #Starknet`;
+    const message = ADVENTURE_TEXT.map.shareMessage(progress.levelsCompleted.length, progress.totalLevels);
     const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
   };
@@ -173,8 +143,7 @@ function ShareButton({ progress }: { progress: AdventureProgress }) {
       onClick={handleShare}
       className="w-full bg-gradient-to-r from-temple-ember to-temple-flame hover:from-temple-flame hover:to-temple-ember text-white font-semibold py-2 px-4 rounded-lg transition-all border-2 border-temple-bronze/50 hover:border-temple-gold shadow-lg flex items-center justify-center gap-2"
     >
-      <span>Share Your Victory</span>
-      <span>🐦</span>
+      <span>{ADVENTURE_TEXT.map.shareButton}</span>
     </button>
   );
 }
@@ -221,17 +190,16 @@ function renderWaypoint(
   check: { content: string; viewBox: string },
   questionMark: { content: string; viewBox: string }
 ): React.ReactElement {
-  // Select colors based on completion status
-  const circleColor = isComplete ? COMPLETE_CIRCLE_COLOR : INCOMPLETE_CIRCLE_COLOR;
+  // Select colors based on completion status - circles use icon colors with opacity
   const iconColor = isComplete ? COMPLETE_ICON_COLOR : INCOMPLETE_ICON_COLOR;
 
   return (
     <g key={`waypoint-${level}`} transform={`translate(${pos.x}, ${pos.y})`}>
       {/* Background circle to cover lines - matches the SVG background color */}
-      <circle r="20" fill="#fef3c7" />
+      {/* <circle r="22" fill="#fef3c7" /> */}
 
-      {/* Circle.svg as background - soft green for completed, warm brown for incomplete */}
-      <g fill={circleColor}>
+      {/* Circle.svg as background - uses icon color with lower opacity */}
+      <g fill={iconColor} opacity="0.4">
         <svg
           x="-25"
           y="-25"
@@ -391,10 +359,11 @@ function getLevelPosition(
  * - completed_levels: Array<u8> of completed level numbers (1-indexed)
  * - total_levels: u8 (typically 3-10)
  * - token_id: u256 (for deterministic positioning)
+ * - is_complete: bool (whether all levels are completed)
  *
  * Output: ByteArray containing complete SVG string
  */
-function renderMapPath(completedLevels: number[], totalLevels: number, tokenId: number) {
+function renderMapPath(completedLevels: number[], totalLevels: number, tokenId: number, isComplete: boolean) {
   // Waypoint layout parameters (Cairo: use constants)
   const centerX = 200;  // SVG_WIDTH / 2
   const centerY = 310;  // Slightly below center for visual balance
@@ -429,9 +398,32 @@ function renderMapPath(completedLevels: number[], totalLevels: number, tokenId: 
   // ========== LAYER 2: Top Decorative Elements (static) ==========
   // Cairo: These positions are constants
 
-  // Dojo at top center
+  // Dojo at top center with yellow glow (only when complete)
   elements.push(
     <g key="dojo-decoration">
+      {/* Yellow glow behind Dojo - only shown when adventure is complete */}
+      {isComplete && (
+        <>
+          <defs>
+            <radialGradient id="dojo-glow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#fbbf24" stopOpacity="0.9" />
+              <stop offset="40%" stopColor="#f59e0b" stopOpacity="0.6" />
+              <stop offset="70%" stopColor="#d97706" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="#d97706" stopOpacity="0" />
+            </radialGradient>
+          </defs>
+
+          {/* Glow circle - larger and brighter */}
+          <circle
+            cx="200"
+            cy="70"
+            r="80"
+            fill="url(#dojo-glow)"
+          />
+        </>
+      )}
+
+      {/* Dojo SVG */}
       <svg
         x="150"
         y="20"

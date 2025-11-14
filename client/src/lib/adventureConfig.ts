@@ -89,30 +89,71 @@ export function getQuestLevels(): QuestLevel[] {
 
 export const ADVENTURE_TEXT = {
   header: {
-    title: 'The Lost Temple Adventure',
+    title: 'The Lost Temple',
     subtitle: 'Break seals and navigate waypoints to unlock ancient mysteries.',
   },
   mint: {
     title: 'Begin Your Journey',
-    buttonText: 'Claim Your Wayfinder\'s Map',
+    buttonText: 'Mint Your Adventure Map',
+    nftDescription: 'is a dynamic NFT that updates as you complete levels.',
+    whatAwaitsTitle: 'What Awaits:',
+    trials: {
+      title: 'Ancient Trials',
+      description: 'Break seals by completing challenges',
+    },
+    waypoints: {
+      title: 'Hidden Waypoints',
+      description: 'Discover codes in secret locations',
+    },
+  },
+  welcome: {
+    title: 'The Lost Temple Awaits',
+    subtitle: 'Connect your wallet to claim an Adventure Map and begin the journey.',
+    pathTitle: 'Your Path:',
+    steps: [
+      'Claim your Adventure Map NFT',
+      'Overcome trials in the ancient games',
+      'Discover hidden waypoints and secret words',
+      'Reveal the Lost Temple\'s mysteries',
+    ],
   },
   levelCard: {
     locked: 'Previous waypoint must be discovered',
+    sealBroken: 'Seal Broken',
+    waypointDiscovered: 'Waypoint Navigated',
   },
   gameLevel: {
     playButton: 'Enter the Challenge',
+    continueButton: 'Return to Trial',
     completeButton: 'Claim Victory',
     verifying: 'Verifying your trial...',
-    success: 'Waypoint discovered!',
+    verifyingGuardian: 'The Guardian Judges...',
+    success: 'Waypoint navigated!',
     error: 'The guardian rejects your proof. Try again.',
+    trialHeader: 'The Trial:',
+    trialInstructions: [
+      'Complete the ancient challenge',
+      'Return to claim your victory',
+    ],
   },
   questLevel: {
+    locationHeader: 'The Hidden Place:',
     codewordLabel: 'Speak the Ancient Word',
     codewordPlaceholder: 'Enter the secret word...',
     submitButton: 'Submit to the Guardian',
     verifying: 'The guardian tests your knowledge...',
     success: 'The seal is broken!',
     error: 'The word is false. Seek the truth.',
+  },
+  map: {
+    title: 'Adventure Map',
+    completedTitle: 'The Temple is Discovered!',
+    shareButton: 'Share Your Victory',
+    shareMessage: (completed: number, total: number) =>
+      `⛩️ I've revealed the Lost Temple! ${completed}/${total} waypoints discovered! Join the journey at #LostTempleAdventure #DevConnect #Starknet`,
+  },
+  loading: {
+    adventure: 'Consulting the ancient maps...',
   },
   errors: {
     generic: 'The path grows dark. Seek the way again.',

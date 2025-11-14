@@ -80,68 +80,64 @@ export function AdventureMintButton({ onMintSuccess }: AdventureMintButtonProps)
 
   return (
     <div className="max-w-2xl mx-auto">
-      <div className="bg-gradient-to-br from-purple-600 to-blue-600 text-white rounded-lg p-8 shadow-xl">
-        <div className="text-center mb-8">
-          <div className="text-6xl mb-4">🗺️</div>
-          <h2 className="text-3xl font-bold mb-2">{ADVENTURE_TEXT.mint.title}</h2>
-        </div>
+      <div className="bg-temple-dusk/40 border-2 border-temple-bronze rounded-lg p-8 shadow-xl backdrop-blur-sm relative overflow-hidden">
+        {/* Mystical background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-temple-mystic/20 to-transparent pointer-events-none"></div>
 
-        <form onSubmit={handleMint} className="space-y-6">
-          {error && (
-            <div className="bg-red-500/20 border-2 border-red-300 rounded-lg p-3">
-              <p className="text-white text-sm">{error}</p>
-            </div>
-          )}
+        <div className="relative">
+          <div className="text-center mb-8">
+            <div className="text-6xl mb-4">🗺️</div>
+            <h2 className="text-3xl font-bold mb-2 text-temple-gold font-heading">{ADVENTURE_TEXT.mint.title}</h2>
+          </div>
 
-          <button
-            type="submit"
-            disabled={isMinting || isLoadingUsername}
-            className="w-full bg-white text-purple-600 font-bold py-4 px-6 rounded-lg hover:bg-gray-100 disabled:bg-gray-400 disabled:text-gray-600 transition-colors text-lg"
-          >
-            {isMinting ? 'Minting...' : isLoadingUsername ? 'Loading...' : ADVENTURE_TEXT.mint.buttonText}
-          </button>
-        </form>
+          <form onSubmit={handleMint} className="space-y-6">
+            {error && (
+              <div className="bg-temple-ember/20 border-2 border-temple-flame/50 rounded-lg p-3">
+                <p className="text-temple-flame text-sm font-semibold">{error}</p>
+              </div>
+            )}
 
-        {/* Info Box */}
-        <div className="mt-6 bg-white/10 border border-white/30 rounded-lg p-4">
-          <div className="flex items-start gap-3">
-            <span className="text-2xl">ℹ️</span>
-            <div className="text-sm text-blue-100">
-              <p className="mb-2">
-                <strong>Your Adventure Map</strong> is a dynamic NFT that updates as you complete levels.
-              </p>
-              <ul className="list-disc list-inside space-y-1">
-                <li>One NFT per wallet</li>
-                <li>Uses your Controller username</li>
-                <li>Tracks your progress onchain</li>
-                <li>Visual treasure map updates automatically</li>
-                <li>Free to mint (only gas fees)</li>
-              </ul>
-            </div>
+            <button
+              type="submit"
+              disabled={isMinting || isLoadingUsername}
+              className="w-full bg-gradient-to-r from-temple-ember to-temple-flame hover:from-temple-flame hover:to-temple-ember disabled:from-temple-shadow disabled:to-temple-shadow text-white font-bold py-4 px-6 rounded-lg transition-all border-2 border-temple-bronze/50 hover:border-temple-gold disabled:border-temple-dusk shadow-lg text-lg"
+            >
+              {isMinting ? 'Minting...' : isLoadingUsername ? 'Loading...' : ADVENTURE_TEXT.mint.buttonText}
+            </button>
+          </form>
+
+          {/* Info Box */}
+          <div className="mt-6 bg-temple-shadow/60 border-2 border-temple-bronze/40 rounded-lg p-4 text-center text-sm text-temple-parchment/80">
+            <strong className="text-temple-gold">Your Adventure Map</strong> {ADVENTURE_TEXT.mint.nftDescription}
           </div>
         </div>
       </div>
 
       {/* Preview of the adventure */}
-      <div className="mt-8 bg-white rounded-lg p-6 shadow-md">
-        <h3 className="font-bold text-gray-900 mb-4">What's ahead:</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="flex items-start gap-3">
-            <span className="text-3xl">🎮</span>
-            <div>
-              <h4 className="font-semibold text-gray-900">Onchain Games</h4>
-              <p className="text-sm text-gray-600">
-                Complete challenges in browser-based fully onchain games
-              </p>
+      <div className="mt-8 bg-temple-dusk/40 border-2 border-temple-bronze rounded-lg p-6 shadow-xl backdrop-blur-sm relative overflow-hidden">
+        {/* Mystical background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-temple-seal/20 to-transparent pointer-events-none"></div>
+
+        <div className="relative">
+          <h3 className="font-bold text-temple-gold mb-4 font-heading text-center">{ADVENTURE_TEXT.mint.whatAwaitsTitle}</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex items-start gap-3">
+              <span className="text-3xl">⚔️</span>
+              <div>
+                <h4 className="font-semibold text-temple-ember">{ADVENTURE_TEXT.mint.trials.title}</h4>
+                <p className="text-sm text-temple-parchment/70">
+                  {ADVENTURE_TEXT.mint.trials.description}
+                </p>
+              </div>
             </div>
-          </div>
-          <div className="flex items-start gap-3">
-            <span className="text-3xl">🗺️</span>
-            <div>
-              <h4 className="font-semibold text-gray-900">IRL Quests</h4>
-              <p className="text-sm text-gray-600">
-                Visit community hubs and solve puzzles to find codewords
-              </p>
+            <div className="flex items-start gap-3">
+              <span className="text-3xl">🔮</span>
+              <div>
+                <h4 className="font-semibold text-temple-ember">{ADVENTURE_TEXT.mint.waypoints.title}</h4>
+                <p className="text-sm text-temple-parchment/70">
+                  {ADVENTURE_TEXT.mint.waypoints.description}
+                </p>
+              </div>
             </div>
           </div>
         </div>

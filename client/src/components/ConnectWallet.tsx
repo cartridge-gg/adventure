@@ -104,19 +104,16 @@ export function ConnectWallet() {
       <button
         onClick={handleConnect}
         className="
-          w-full px-6 py-3 font-semibold
+          w-full px-6 py-3 font-semibold rounded-lg
           transition-all duration-200
-          bg-ronin-primary hover:bg-red-600 text-white border-2 border-ronin-secondary/30 hover:border-ronin-secondary
+          bg-gradient-to-r from-temple-ember to-temple-flame
+          hover:from-temple-flame hover:to-temple-ember
+          text-white border-2 border-temple-bronze/50 hover:border-temple-gold
           md:px-8 md:py-3 text-sm md:text-base
-          relative
+          shadow-lg
         "
       >
-        <span className="relative z-10">{WALLET_TEXT.connect}</span>
-        {/* Corner accents */}
-        <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-white/50"></div>
-        <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-white/50"></div>
-        <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-white/50"></div>
-        <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-white/50"></div>
+        {WALLET_TEXT.connect}
       </button>
     );
   }
@@ -127,17 +124,17 @@ export function ConnectWallet() {
       <button
         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         className="
-          w-full py-4 px-6
-          bg-ronin-dark hover:bg-ronin-light
-          border-2 border-ronin-accent
+          w-full py-3 px-6 rounded-lg
+          bg-temple-dusk/60 hover:bg-temple-mystic/60
+          border-2 border-temple-bronze hover:border-temple-gold
           font-semibold
-          text-ronin-secondary
+          text-temple-gold
           transition-all duration-300
           flex items-center justify-center gap-2
-          relative
+          backdrop-blur-sm
         "
       >
-        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+        <div className="w-2 h-2 bg-temple-jade rounded-full animate-pulse" />
         <span>{username || formatAddress(address)}</span>
         <svg
           className={`w-4 h-4 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
@@ -153,8 +150,9 @@ export function ConnectWallet() {
       {isDropdownOpen && (
         <div className="
           absolute right-0 mt-2 w-48 md:w-56
-          bg-ronin-dark border-2 border-ronin-accent
-          z-50
+          bg-temple-shadow border-2 border-temple-bronze
+          rounded-lg overflow-hidden
+          z-50 shadow-xl
         ">
           <div className="py-1">
             {/* Profile Option */}
@@ -162,7 +160,7 @@ export function ConnectWallet() {
               onClick={handleOpenProfile}
               className="
                 w-full px-4 py-3 text-left
-                text-ronin-secondary hover:bg-ronin-light
+                text-temple-parchment hover:bg-temple-dusk
                 transition-colors duration-150
                 flex items-center gap-3
                 text-sm md:text-base
@@ -179,7 +177,7 @@ export function ConnectWallet() {
               onClick={handleOpenSettings}
               className="
                 w-full px-4 py-3 text-left
-                text-ronin-secondary hover:bg-ronin-light
+                text-temple-parchment hover:bg-temple-dusk
                 transition-colors duration-150
                 flex items-center gap-3
                 text-sm md:text-base
@@ -193,14 +191,14 @@ export function ConnectWallet() {
             </button>
 
             {/* Divider */}
-            <div className="border-t border-ronin-accent my-1" />
+            <div className="border-t border-temple-bronze/50 my-1" />
 
             {/* Disconnect Option */}
             <button
               onClick={handleDisconnect}
               className="
                 w-full px-4 py-3 text-left
-                text-ronin-primary hover:bg-red-900/20
+                text-temple-flame hover:bg-temple-ember/20
                 transition-colors duration-150
                 flex items-center gap-3
                 text-sm md:text-base

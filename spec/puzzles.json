@@ -2,21 +2,21 @@
   "puzzles": [
     {
       "level": 2,
-      "name": "Discover the Hub",
+      "name": "Crack the Code",
       "description": "Find the first community hub and solve the puzzle.",
       "location": "Located in the downtown district near the main conference center.",
       "codeword": "DEVCONNECT"
     },
     {
       "level": 4,
-      "name": "The Hidden Message",
+      "name": "Just My Type",
       "description": "Decode the message at the second community hub.",
       "location": "Look for the building with the distinctive architecture in the tech quarter.",
       "codeword": "STARKNET"
     },
     {
       "level": 6,
-      "name": "Journey's End",
+      "name": "The Tower of Battle",
       "description": "Complete the final puzzle and claim your treasure.",
       "location": "Return to where your journey began, but look closer this time.",
       "codeword": "CARTRIDGE"

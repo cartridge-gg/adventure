@@ -46,9 +46,9 @@ export function ChallengeLevel({ levelNumber, tokenId, status, onComplete }: Cha
       <div className="bg-temple-jade/20 border-2 border-temple-jade rounded-lg p-6 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-temple-jade/10 to-transparent"></div>
         <div className="relative text-center text-temple-jade">
-          <div className="text-4xl mb-2">✓</div>
+          <div className="text-4xl mb-2">🌀</div>
           <p className="font-semibold text-lg font-heading">{challenge?.game || 'Trial Overcome'}</p>
-          <p className="text-sm text-temple-moss mt-1">Seal Broken</p>
+          <p className="text-sm text-temple-moss mt-1">{ADVENTURE_TEXT.levelCard.sealBroken}</p>
         </div>
       </div>
     );
@@ -95,10 +95,11 @@ export function ChallengeLevel({ levelNumber, tokenId, status, onComplete }: Cha
 
         {/* Requirements */}
         <div className="bg-temple-shadow/60 border-2 border-temple-ember/30 rounded-lg p-4 mb-4">
-          <h4 className="font-semibold text-temple-ember mb-2">The Trial:</h4>
+          <h4 className="font-semibold text-temple-ember mb-2">{ADVENTURE_TEXT.gameLevel.trialHeader}</h4>
           <ul className="text-temple-parchment/70 text-sm space-y-1">
-            <li>• Complete the ancient challenge</li>
-            <li>• Return to claim your victory</li>
+            {ADVENTURE_TEXT.gameLevel.trialInstructions.map((instruction, i) => (
+              <li key={i}>• {instruction}</li>
+            ))}
           </ul>
         </div>
 
@@ -167,7 +168,7 @@ export function ChallengeLevel({ levelNumber, tokenId, status, onComplete }: Cha
           onClick={handlePlayGame}
           className="w-full bg-gradient-to-r from-temple-ember to-temple-flame hover:from-temple-flame hover:to-temple-ember text-white font-semibold py-3 px-4 rounded-lg transition-all border-2 border-temple-bronze/50 hover:border-temple-gold shadow-lg flex items-center justify-center gap-2"
         >
-          <span>{gameSessions.length > 0 ? 'Return to Trial' : 'Enter the Challenge'}</span>
+          <span>{gameSessions.length > 0 ? ADVENTURE_TEXT.gameLevel.continueButton : ADVENTURE_TEXT.gameLevel.playButton}</span>
           <span>⚔️</span>
         </button>
       )}
@@ -254,7 +255,7 @@ function GameSessionCard({
           disabled={isVerifying}
           className="w-full bg-temple-jade hover:bg-temple-moss disabled:bg-temple-shadow text-white text-sm font-semibold py-2 px-3 rounded transition-colors border border-temple-bronze/30"
         >
-          {isVerifying ? 'The Guardian Judges...' : 'Claim Victory'}
+          {isVerifying ? ADVENTURE_TEXT.gameLevel.verifyingGuardian : ADVENTURE_TEXT.gameLevel.completeButton}
         </button>
       )}
 

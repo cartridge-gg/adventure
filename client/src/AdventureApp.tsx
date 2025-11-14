@@ -76,7 +76,7 @@ function AdventureApp() {
               isLoading ? (
                 <div className="text-center py-20">
                   <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-temple-gold"></div>
-                  <p className="text-temple-parchment mt-4 text-lg">Consulting the ancient maps...</p>
+                  <p className="text-temple-parchment mt-4 text-lg">{ADVENTURE_TEXT.loading.adventure}</p>
                 </div>
               ) : !hasNFT ? (
                 <div className="py-8">
@@ -113,29 +113,29 @@ function AdventureApp() {
                   <div className="bg-gradient-to-br from-temple-mystic via-temple-seal to-temple-dusk text-white rounded-lg p-12 shadow-2xl border-2 border-temple-bronze/50">
                     <div className="text-7xl mb-6">⛩️</div>
                     <h2 className="font-heading text-3xl font-bold mb-4">
-                      The Lost Temple Awaits
+                      {ADVENTURE_TEXT.welcome.title}
                     </h2>
                     <p className="text-temple-parchment/90 text-lg mb-8">
-                      Connect your wallet to claim your Adventure Map and begin the journey through trials and mysteries
+                      {ADVENTURE_TEXT.welcome.subtitle}
                     </p>
                     <div className="bg-temple-shadow/50 border-2 border-temple-bronze/40 rounded-lg p-6 text-left">
-                      <h3 className="font-semibold mb-3 text-temple-gold">Your Path:</h3>
+                      <h3 className="font-semibold mb-3 text-temple-gold">{ADVENTURE_TEXT.welcome.pathTitle}</h3>
                       <ul className="space-y-2 text-temple-parchment/80">
                         <li className="flex items-start gap-2">
                           <span>🗺️</span>
-                          <span>Claim your Adventure Map (evolving NFT)</span>
+                          <span>{ADVENTURE_TEXT.welcome.steps[0]}</span>
                         </li>
                         <li className="flex items-start gap-2">
                           <span>⚔️</span>
-                          <span>Overcome trials in the ancient games</span>
+                          <span>{ADVENTURE_TEXT.welcome.steps[1]}</span>
                         </li>
                         <li className="flex items-start gap-2">
                           <span>🔮</span>
-                          <span>Discover hidden waypoints and secret words</span>
+                          <span>{ADVENTURE_TEXT.welcome.steps[2]}</span>
                         </li>
                         <li className="flex items-start gap-2">
                           <span>⛩️</span>
-                          <span>Reveal the Lost Temple's mysteries</span>
+                          <span>{ADVENTURE_TEXT.welcome.steps[3]}</span>
                         </li>
                       </ul>
                     </div>

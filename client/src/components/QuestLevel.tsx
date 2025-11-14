@@ -40,9 +40,9 @@ export function QuestLevel({ level, status, tokenId, onComplete }: QuestLevelPro
       <div className="bg-temple-jade/20 border-2 border-temple-jade rounded-lg p-6 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-temple-jade/10 to-transparent"></div>
         <div className="relative text-center text-temple-jade">
-          <div className="text-4xl mb-2">🔮</div>
+          <div className="text-4xl mb-2">📯</div>
           <p className="font-semibold text-lg font-heading">{level.name}</p>
-          <p className="text-sm text-temple-moss mt-1">Waypoint Discovered</p>
+          <p className="text-sm text-temple-moss mt-1">{ADVENTURE_TEXT.levelCard.waypointDiscovered}</p>
         </div>
       </div>
     );
@@ -135,7 +135,7 @@ export function QuestLevel({ level, status, tokenId, onComplete }: QuestLevelPro
         <div className="bg-temple-shadow/60 border-2 border-temple-seal/30 rounded-lg p-4 mb-4">
           <h4 className="font-semibold text-temple-ember mb-2 flex items-center gap-2">
             <span>📍</span>
-            <span>The Hidden Place:</span>
+            <span>{ADVENTURE_TEXT.questLevel.locationHeader}</span>
           </h4>
           <p className="text-temple-parchment/70 text-sm italic">{level.location}</p>
         </div>
