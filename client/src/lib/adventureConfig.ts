@@ -117,7 +117,7 @@ export const ADVENTURE_TEXT = {
   },
   welcome: {
     title: 'The Lost Temple Awaits',
-    subtitle: 'Connect your wallet to begin the journey.',
+    subtitle: 'Connect your wallet to begin the journey',
     pathTitle: 'Your Path:',
     steps: [
       'Claim your Adventure Map NFT',
@@ -132,13 +132,12 @@ export const ADVENTURE_TEXT = {
     waypointDiscovered: 'Waypoint Navigated',
   },
   gameLevel: {
-    playButton: 'Complete Trial',
+    playButton: 'Attempt Trial',
     continueButton: 'Return to Trial',
     completeButton: 'Claim Victory',
-    verifying: 'Verifying your trial...',
-    verifyingGuardian: 'The Guardian Judges...',
+    verifying: 'The Guardian judges...',
     success: 'The seal is broken!',
-    error: 'The guardian rejects your proof. Try again.',
+    error: 'The guardian rejects your attempt. Try again.',
     trialHeader: 'The Trial:',
     trialInstructions: [
       'Complete an ancient trial',
@@ -149,8 +148,8 @@ export const ADVENTURE_TEXT = {
     locationHeader: 'Waypoint Location:',
     codewordLabel: 'Discover the Hidden Code',
     codewordPlaceholder: 'Enter the secret code...',
-    submitButton: 'Submit to the Guardian',
-    verifying: 'The guardian tests your knowledge...',
+    submitButton: 'Submit the Code',
+    verifying: 'The Guardian judges...',
     success: 'Waypoint navigated!',
     error: 'The word is false. Seek the truth.',
   },
@@ -159,6 +158,10 @@ export const ADVENTURE_TEXT = {
     completedTitle: 'The Temple is Found!',
     shareButton: 'Share Your Discovery',
     shareMessage: `⛩️ I've discovered the Lost Temple! Begin your journey at temple.cartridge.gg`,
+  },
+  support: {
+    text: 'Need help? Join our Telegram channel',
+    url: 'https://t.me/+f6C1Q4eo0HM0M2Vh',
   },
   loading: {
     adventure: 'Consulting the ancient maps...',

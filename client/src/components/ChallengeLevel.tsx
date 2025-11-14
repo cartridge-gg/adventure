@@ -171,7 +171,7 @@ export function ChallengeLevel({ levelNumber, tokenId, status, onComplete }: Cha
           className="flex-1 bg-gradient-to-r from-temple-seal to-temple-mystic hover:from-temple-mystic hover:to-temple-seal disabled:from-temple-shadow disabled:to-temple-shadow text-white font-ui font-semibold py-3 px-4 rounded-lg transition-all border-2 border-temple-bronze/50 hover:border-temple-gold disabled:border-temple-dusk shadow-lg flex items-center justify-center gap-2 uppercase tracking-wide effect-raised relative overflow-hidden"
         >
           <span className="relative z-10">
-            {isVerifying ? ADVENTURE_TEXT.gameLevel.verifyingGuardian : 'Break Seal'}
+            {isVerifying ? ADVENTURE_TEXT.gameLevel.verifying : 'Break Seal'}
           </span>
           <div className="absolute inset-0 effect-metallic pointer-events-none"></div>
         </button>

@@ -62,7 +62,7 @@ export function AdventureMapNFT({ progress }: AdventureMapNFTProps) {
   const explorerUrl = getExplorerUrl();
 
   return (
-    <div className="bg-temple-dusk/40 rounded-lg p-6 shadow-xl border-2 border-temple-bronze backdrop-blur-sm relative overflow-hidden texture-parchment effect-embossed texture-grain effect-weathered">
+    <div className="bg-temple-dusk/40 rounded-lg p-6 shadow-xl border-2 border-temple-bronze backdrop-blur-sm relative overflow-hidden texture-stone effect-embossed texture-grain">
       {/* Mystical background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-temple-mystic/20 to-transparent pointer-events-none"></div>
 
@@ -139,6 +139,18 @@ export function AdventureMapNFT({ progress }: AdventureMapNFTProps) {
           </text>
         </svg>
       </div>
+
+        {/* Support Link */}
+        <div className="mt-4 text-center">
+          <a
+            href={ADVENTURE_TEXT.support.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-temple-gold hover:text-temple-ember transition-colors text-xs font-semibold underline"
+          >
+            {ADVENTURE_TEXT.support.text}
+          </a>
+        </div>
 
         {/* Journey Complete Section */}
         {isComplete && (

@@ -132,7 +132,7 @@ export function AdventureMintButton({ onMintSuccess }: AdventureMintButtonProps)
         <div className="absolute bottom-2 right-2 w-10 h-10 border-r-2 border-b-2 border-temple-bronze/30 rounded-br"></div>
 
         <div className="relative">
-          <h3 className="font-bold text-temple-gold mb-4 font-heading text-center">{ADVENTURE_TEXT.mint.whatAwaitsTitle}</h3>
+          <h3 className="font-bold text-temple-gold mb-4 font-heading">{ADVENTURE_TEXT.mint.whatAwaitsTitle}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex items-start gap-3">
               <span className="text-3xl">⚔️</span>
