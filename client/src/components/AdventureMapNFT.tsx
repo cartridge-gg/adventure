@@ -8,6 +8,7 @@
 import React from 'react';
 import { AdventureProgress } from '../lib/adventureTypes';
 import { ADVENTURE_TEXT } from '../lib/adventureConfig';
+import { MAP_ADDRESS, CHAIN_ENV } from '../lib/config';
 
 // Import SVG assets (in Cairo, these would be stored as ByteArrays or felt252 arrays)
 import RiverSvg from '../../assets/River.svg?raw';
@@ -46,6 +47,20 @@ export function AdventureMapNFT({ progress }: AdventureMapNFTProps) {
   const completionPercentage = (progress.levelsCompleted.length / progress.totalLevels) * 100;
   const isComplete = progress.levelsCompleted.length === progress.totalLevels;
 
+  // Generate explorer URL based on environment
+  const getExplorerUrl = () => {
+    if (CHAIN_ENV === 'mainnet') {
+      return `https://starkscan.co/contract/${MAP_ADDRESS}`;
+    } else if (CHAIN_ENV === 'sepolia') {
+      return `https://sepolia.starkscan.co/contract/${MAP_ADDRESS}`;
+    } else {
+      // Dev/Katana - link to local explorer
+      return `http://localhost:5050/explorer/contract/${MAP_ADDRESS}`;
+    }
+  };
+
+  const explorerUrl = getExplorerUrl();
+
   return (
     <div className="bg-temple-dusk/40 rounded-lg p-6 shadow-xl border-2 border-temple-bronze backdrop-blur-sm relative overflow-hidden texture-parchment effect-embossed texture-grain effect-weathered">
       {/* Mystical background gradient */}
@@ -59,9 +74,15 @@ export function AdventureMapNFT({ progress }: AdventureMapNFTProps) {
 
       <div className="relative">
         <div className="mb-4 text-center">
-          <h3 className="text-xl font-bold text-temple-gold font-heading" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8), 0 0 20px rgba(212, 175, 55, 0.4)' }}>
+          <a
+            href={explorerUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xl font-bold text-temple-gold font-heading hover:text-temple-ember transition-colors underline"
+            style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8), 0 0 20px rgba(212, 175, 55, 0.4)' }}
+          >
             {ADVENTURE_TEXT.map.title} #{progress.tokenId}
-          </h3>
+          </a>
         </div>
 
         {/* Mock SVG Treasure Map */}
@@ -121,11 +142,11 @@ export function AdventureMapNFT({ progress }: AdventureMapNFTProps) {
 
         {/* Journey Complete Section */}
         {isComplete && (
-          <div className="mt-4 pt-4 border-t border-temple-bronze/50">
+          <div className="mt-8 pt-8 border-t border-temple-bronze/50">
             <div className="text-center">
               <div className="text-5xl mb-3">⛩️</div>
               <h3 className="text-xl font-bold text-temple-gold mb-2 font-heading">{ADVENTURE_TEXT.map.completedTitle}</h3>
-              <ShareButton progress={progress} />
+              <ShareButton />
             </div>
           </div>
         )}
@@ -137,9 +158,9 @@ export function AdventureMapNFT({ progress }: AdventureMapNFTProps) {
 /**
  * Share Button Component
  */
-function ShareButton({ progress }: { progress: AdventureProgress }) {
+function ShareButton() {
   const handleShare = () => {
-    const message = ADVENTURE_TEXT.map.shareMessage(progress.levelsCompleted.length, progress.totalLevels);
+    const message = ADVENTURE_TEXT.map.shareMessage;
     const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
   };
@@ -147,7 +168,7 @@ function ShareButton({ progress }: { progress: AdventureProgress }) {
   return (
     <button
       onClick={handleShare}
-      className="w-full bg-gradient-to-r from-temple-ember to-temple-flame hover:from-temple-flame hover:to-temple-ember text-white font-ui font-semibold py-2 px-4 rounded-lg transition-all border-2 border-temple-bronze/50 hover:border-temple-gold shadow-lg flex items-center justify-center gap-2 uppercase tracking-wide"
+      className="w-full md:w-4/5 md:mx-auto lg:w-4/5 lg:mx-auto mb-4 bg-gradient-to-r from-temple-ember to-temple-flame hover:from-temple-flame hover:to-temple-ember text-white font-ui font-semibold py-2 px-4 rounded-lg transition-all border-2 border-temple-bronze/50 hover:border-temple-gold shadow-lg flex items-center justify-center gap-2 uppercase tracking-wide"
     >
       <span>{ADVENTURE_TEXT.map.shareButton}</span>
     </button>

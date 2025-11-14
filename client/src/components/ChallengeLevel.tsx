@@ -19,6 +19,8 @@ interface ChallengeLevelProps {
 
 export function ChallengeLevel({ levelNumber, tokenId, status, onComplete }: ChallengeLevelProps) {
   const [showSuccess, setShowSuccess] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { completeOnchainLevel } = useAdventureContract();
 
   const {
@@ -28,6 +30,9 @@ export function ChallengeLevel({ levelNumber, tokenId, status, onComplete }: Cha
     challenge,
     dojoConfig,
   } = useGameSessions(levelNumber);
+
+  // Find first completed game session
+  const completedSession = gameSessions.find(s => s.game_over);
 
   if (status === 'locked') {
     return (
@@ -78,6 +83,33 @@ export function ChallengeLevel({ levelNumber, tokenId, status, onComplete }: Cha
     window.open(challenge.location, '_blank');
   };
 
+  const handleBreakSeal = async () => {
+    setIsVerifying(true);
+    setError(null);
+
+    try {
+      // Use test session in dev mode, otherwise use first completed session
+      const gameId = dojoConfig ? parseInt(completedSession!.token_id) : 1;
+
+      const result = await completeOnchainLevel(
+        tokenId,
+        levelNumber,
+        { game_id: gameId }
+      );
+
+      if (result.success) {
+        setShowSuccess(true);
+        setTimeout(() => onComplete(levelNumber), 1500);
+      } else {
+        setError(result.error || 'Failed to verify completion');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Verification failed');
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
   return (
     <div className="bg-temple-dusk/40 border-2 border-temple-bronze rounded-lg p-6 shadow-xl relative overflow-hidden backdrop-blur-sm texture-stone effect-embossed texture-grain">
       {/* Mystical background gradient */}
@@ -99,178 +131,59 @@ export function ChallengeLevel({ levelNumber, tokenId, status, onComplete }: Cha
           <p className="text-temple-parchment/80" style={{ textShadow: '1px 1px 2px rgba(0, 0, 0, 0.6)' }}>{challenge.description}</p>
         </div>
 
-        {/* Requirements */}
-        <div className="bg-temple-shadow/60 border-2 border-temple-ember/30 rounded-lg p-4 mb-4 effect-carved texture-parchment">
-          <h4 className="font-semibold text-temple-ember mb-2">{ADVENTURE_TEXT.gameLevel.trialHeader}</h4>
-          <ul className="text-temple-parchment/70 text-sm space-y-1">
-            {ADVENTURE_TEXT.gameLevel.trialInstructions.map((instruction, i) => (
-              <li key={i}>• {instruction}</li>
-            ))}
-          </ul>
-        </div>
-
-      {/* Game Sessions */}
-      {!dojoConfig ? (
-        <div className="mb-4">
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-            <p className="text-blue-800 text-sm text-center">
-              <strong>Dev Mode:</strong> Playing external games is not available locally.
-              Testing with pre-configured game_id=1 from deploy_katana.
-            </p>
-          </div>
-          <h4 className="font-semibold text-gray-900 mb-2">Test Game Session:</h4>
-          <GameSessionCard
-            session={{
-              token_id: '1',
-              score: 0,
-              game_over: true,
-            }}
-            adventureTokenId={tokenId}
-            levelNumber={levelNumber}
-            onSuccess={() => {
-              setShowSuccess(true);
-              setTimeout(() => onComplete(levelNumber), 1500);
-            }}
-          />
-        </div>
-      ) : isLoadingTokens ? (
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
-          <p className="text-gray-600 text-center">Loading your game sessions...</p>
-        </div>
-      ) : tokensError ? (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-          <p className="text-red-800 text-sm">Error loading games: {tokensError}</p>
-        </div>
-      ) : gameSessions.length > 0 ? (
-        <div className="mb-4">
-          <h4 className="font-semibold text-gray-900 mb-2">Your Game Sessions:</h4>
-          <div className="space-y-2">
-            {gameSessions.map((session) => (
-              <GameSessionCard
-                key={session.token_id}
-                session={session}
-                adventureTokenId={tokenId}
-                levelNumber={levelNumber}
-                onSuccess={() => {
-                  setShowSuccess(true);
-                  setTimeout(() => onComplete(levelNumber), 1500);
-                }}
-              />
-            ))}
-          </div>
-        </div>
-      ) : (
+      {/* Status Messages */}
+      {!dojoConfig && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
           <p className="text-blue-800 text-sm text-center">
-            <strong>Ready to start?</strong> Click "Start New Game" below to play <strong>{challenge.game}</strong>.
-            Complete a game session, then return here to verify and unlock the next level!
+            <strong>Dev Mode:</strong> Playing external games is not available locally.
+            Testing with pre-configured game_id=1 from deploy_katana.
           </p>
         </div>
       )}
 
-      {/* Play Button - only shown when not in dev mode */}
-      {dojoConfig && (
+      {isLoadingTokens && dojoConfig && (
+        <div className="bg-temple-shadow/60 border border-temple-bronze rounded-lg p-4 mb-4">
+          <p className="text-temple-parchment text-center">Loading your game sessions...</p>
+        </div>
+      )}
+
+      {tokensError && dojoConfig && (
+        <div className="bg-temple-ember/20 border-2 border-temple-flame/50 rounded-lg p-4 mb-4">
+          <p className="text-temple-flame text-sm text-center">Error loading games: {tokensError}</p>
+        </div>
+      )}
+
+      {/* Action Buttons */}
+      <div className="flex gap-3">
+        {/* Play Game Button */}
         <button
           onClick={handlePlayGame}
-          className="w-full bg-gradient-to-r from-temple-ember to-temple-flame hover:from-temple-flame hover:to-temple-ember text-white font-ui font-semibold py-3 px-4 rounded-lg transition-all border-2 border-temple-bronze/50 hover:border-temple-gold shadow-lg flex items-center justify-center gap-2 uppercase tracking-wide effect-raised relative overflow-hidden"
+          className="flex-1 bg-gradient-to-r from-temple-ember to-temple-flame hover:from-temple-flame hover:to-temple-ember text-white font-ui font-semibold py-3 px-4 rounded-lg transition-all border-2 border-temple-bronze/50 hover:border-temple-gold shadow-lg flex items-center justify-center gap-2 uppercase tracking-wide effect-raised relative overflow-hidden"
         >
-          <span className="relative z-10">{gameSessions.length > 0 ? ADVENTURE_TEXT.gameLevel.continueButton : ADVENTURE_TEXT.gameLevel.playButton}</span>
-          <span className="relative z-10">{LEVEL_ICONS.challenge}</span>
+          <span className="relative z-10">{ADVENTURE_TEXT.gameLevel.playButton}</span>
           <div className="absolute inset-0 effect-metallic pointer-events-none"></div>
         </button>
-      )}
-      </div>
-    </div>
-  );
-}
 
-/**
- * Individual Game Session Card (OPTIMIZED)
- *
- * Displays game session with state already fetched from Torii.
- * No additional contract calls needed!
- */
-interface GameSessionCardProps {
-  session: {
-    token_id: string;
-    score: number;
-    game_over: boolean;
-  };
-  adventureTokenId: string;
-  levelNumber: number;
-  onSuccess: () => void;
-}
-
-function GameSessionCard({
-  session,
-  adventureTokenId,
-  levelNumber,
-  onSuccess,
-}: GameSessionCardProps) {
-  const [isVerifying, setIsVerifying] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const { completeOnchainLevel } = useAdventureContract();
-
-  const { token_id, score, game_over: gameOver } = session;
-
-  const handleVerify = async () => {
-    setIsVerifying(true);
-    setError(null);
-
-    try {
-      const result = await completeOnchainLevel(
-        adventureTokenId,
-        levelNumber,
-        { game_id: parseInt(token_id) }
-      );
-
-      if (result.success) {
-        onSuccess();
-      } else {
-        setError(result.error || 'Failed to verify completion');
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Verification failed');
-    } finally {
-      setIsVerifying(false);
-    }
-  };
-
-  return (
-    <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-mono text-gray-600">Game #{token_id.slice(0, 8)}...</span>
-        </div>
-        {gameOver && (
-          <span className="text-xs px-2 py-1 rounded bg-green-100 text-green-700">
-            ✓ Complete
-          </span>
-        )}
-      </div>
-
-      <div className="text-sm text-gray-700 mb-2">
-        <div>Score: <span className="font-semibold">{score.toLocaleString()}</span></div>
-        <div>Status: <span className={gameOver ? 'text-green-600' : 'text-blue-600'}>
-          {gameOver ? 'Complete' : 'In Progress'}
-        </span></div>
-      </div>
-
-      {gameOver && (
+        {/* Break Seal Button - enabled only when there's a completed session */}
         <button
-          onClick={handleVerify}
-          disabled={isVerifying}
-          className="w-full bg-temple-jade hover:bg-temple-moss disabled:bg-temple-shadow text-white text-sm font-ui font-semibold py-2 px-3 rounded transition-colors border border-temple-bronze/30 uppercase tracking-wide"
+          onClick={handleBreakSeal}
+          disabled={isVerifying || (dojoConfig && !completedSession)}
+          className="flex-1 bg-gradient-to-r from-temple-seal to-temple-mystic hover:from-temple-mystic hover:to-temple-seal disabled:from-temple-shadow disabled:to-temple-shadow text-white font-ui font-semibold py-3 px-4 rounded-lg transition-all border-2 border-temple-bronze/50 hover:border-temple-gold disabled:border-temple-dusk shadow-lg flex items-center justify-center gap-2 uppercase tracking-wide effect-raised relative overflow-hidden"
         >
-          {isVerifying ? ADVENTURE_TEXT.gameLevel.verifyingGuardian : ADVENTURE_TEXT.gameLevel.completeButton}
+          <span className="relative z-10">
+            {isVerifying ? ADVENTURE_TEXT.gameLevel.verifyingGuardian : 'Break Seal'}
+          </span>
+          <div className="absolute inset-0 effect-metallic pointer-events-none"></div>
         </button>
-      )}
+      </div>
 
+      {/* Error Message */}
       {error && (
-        <div className="mt-2 text-xs text-red-600">
-          {error}
+        <div className="mt-4 bg-temple-ember/20 border-2 border-temple-flame/50 rounded-lg p-3">
+          <p className="text-temple-flame text-sm font-semibold text-center">{error}</p>
         </div>
       )}
+      </div>
     </div>
   );
 }

@@ -163,9 +163,6 @@ export function QuestLevel({ level, status, tokenId, onComplete }: QuestLevelPro
         {/* Codeword Input Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="codeword" className="block text-sm font-semibold text-temple-gold mb-2 font-heading">
-              {ADVENTURE_TEXT.questLevel.codewordLabel}
-            </label>
             <input
               id="codeword"
               type="text"

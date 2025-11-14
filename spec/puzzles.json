@@ -3,22 +3,22 @@
     {
       "level": 2,
       "name": "Crack the Code",
-      "description": "Find the first community hub and solve the puzzle.",
-      "location": "Located in the downtown district near the main conference center.",
+      "description": "An ancient shrine preserves a lost technology. Interpret the clues to discover the hidden code.",
+      "location": "The hub for those who govern",
       "codeword": "DEVCONNECT"
     },
     {
       "level": 4,
       "name": "Just My Type",
-      "description": "Decode the message at the second community hub.",
-      "location": "Look for the building with the distinctive architecture in the tech quarter.",
+      "description": "A children's game contains a subtle secret. The strongest type will point the way.",
+      "location": "The hub for those who communicate in secret",
       "codeword": "STARKNET"
     },
     {
       "level": 6,
       "name": "The Tower of Battle",
-      "description": "Complete the final puzzle and claim your treasure.",
-      "location": "Return to where your journey began, but look closer this time.",
+      "description": "Prove yourself by building a tower to the sky. Through victory alone shall you pass.",
+      "location": "The hub for those who live to play and play to live",
       "codeword": "CARTRIDGE"
     }
   ]
