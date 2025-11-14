@@ -100,7 +100,7 @@ export function AdventureMintButton({ onMintSuccess }: AdventureMintButtonProps)
             <button
               type="submit"
               disabled={isMinting || isLoadingUsername}
-              className="w-full bg-gradient-to-r from-temple-ember to-temple-flame hover:from-temple-flame hover:to-temple-ember disabled:from-temple-shadow disabled:to-temple-shadow text-white font-bold py-4 px-6 rounded-lg transition-all border-2 border-temple-bronze/50 hover:border-temple-gold disabled:border-temple-dusk shadow-lg text-lg"
+              className="w-full bg-gradient-to-r from-temple-ember to-temple-flame hover:from-temple-flame hover:to-temple-ember disabled:from-temple-shadow disabled:to-temple-shadow text-white font-ui font-bold py-4 px-6 rounded-lg transition-all border-2 border-temple-bronze/50 hover:border-temple-gold disabled:border-temple-dusk shadow-lg text-lg uppercase tracking-wide"
             >
               {isMinting ? 'Minting...' : isLoadingUsername ? 'Loading...' : ADVENTURE_TEXT.mint.buttonText}
             </button>

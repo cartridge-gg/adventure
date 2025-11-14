@@ -166,7 +166,7 @@ export function ChallengeLevel({ levelNumber, tokenId, status, onComplete }: Cha
       {dojoConfig && (
         <button
           onClick={handlePlayGame}
-          className="w-full bg-gradient-to-r from-temple-ember to-temple-flame hover:from-temple-flame hover:to-temple-ember text-white font-semibold py-3 px-4 rounded-lg transition-all border-2 border-temple-bronze/50 hover:border-temple-gold shadow-lg flex items-center justify-center gap-2"
+          className="w-full bg-gradient-to-r from-temple-ember to-temple-flame hover:from-temple-flame hover:to-temple-ember text-white font-ui font-semibold py-3 px-4 rounded-lg transition-all border-2 border-temple-bronze/50 hover:border-temple-gold shadow-lg flex items-center justify-center gap-2 uppercase tracking-wide"
         >
           <span>{gameSessions.length > 0 ? ADVENTURE_TEXT.gameLevel.continueButton : ADVENTURE_TEXT.gameLevel.playButton}</span>
           <span>⚔️</span>
@@ -253,7 +253,7 @@ function GameSessionCard({
         <button
           onClick={handleVerify}
           disabled={isVerifying}
-          className="w-full bg-temple-jade hover:bg-temple-moss disabled:bg-temple-shadow text-white text-sm font-semibold py-2 px-3 rounded transition-colors border border-temple-bronze/30"
+          className="w-full bg-temple-jade hover:bg-temple-moss disabled:bg-temple-shadow text-white text-sm font-ui font-semibold py-2 px-3 rounded transition-colors border border-temple-bronze/30 uppercase tracking-wide"
         >
           {isVerifying ? ADVENTURE_TEXT.gameLevel.verifyingGuardian : ADVENTURE_TEXT.gameLevel.completeButton}
         </button>

@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Crimson Pro", Georgia, serif;
-  --font-heading: "Cinzel", serif;
+  --font-sans: "Lora", Georgia, serif;
+  --font-heading: "Fraunces", serif;
+  --font-ui: "Lexend", sans-serif;
 
   /* Ronin colors (preserved for NFT rendering) */
   --color-ronin-primary: #E63946;
@@ -37,7 +38,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  font-family: "Crimson Pro", Georgia, serif;
+  font-family: "Lora", Georgia, serif;
 }
 
 #root {

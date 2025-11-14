@@ -100,7 +100,7 @@ function AdventureApp() {
                     </p>
                     <button
                       onClick={() => window.location.reload()}
-                      className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors"
+                      className="bg-red-600 hover:bg-red-700 text-white font-ui font-semibold py-2 px-6 rounded-lg transition-colors uppercase tracking-wide"
                     >
                       Retry
                     </button>

@@ -104,16 +104,18 @@ export function ConnectWallet() {
       <button
         onClick={handleConnect}
         className="
-          w-full px-6 py-3 font-semibold rounded-lg
+          w-full px-6 py-3 font-ui font-semibold rounded-lg
           transition-all duration-200
           bg-gradient-to-r from-temple-ember to-temple-flame
           hover:from-temple-flame hover:to-temple-ember
           text-white border-2 border-temple-bronze/50 hover:border-temple-gold
           md:px-8 md:py-3 text-sm md:text-base
-          shadow-lg
+          shadow-lg uppercase tracking-wide
+          flex items-center justify-center gap-2
         "
       >
-        {WALLET_TEXT.connect}
+        <span>🎮</span>
+        <span>{WALLET_TEXT.connect}</span>
       </button>
     );
   }
@@ -127,13 +129,14 @@ export function ConnectWallet() {
           w-full py-3 px-6 rounded-lg
           bg-temple-dusk/60 hover:bg-temple-mystic/60
           border-2 border-temple-bronze hover:border-temple-gold
-          font-semibold
+          font-ui font-semibold
           text-temple-gold
           transition-all duration-300
           flex items-center justify-center gap-2
           backdrop-blur-sm
         "
       >
+        <span>🎮</span>
         <div className="w-2 h-2 bg-temple-jade rounded-full animate-pulse" />
         <span>{username || formatAddress(address)}</span>
         <svg

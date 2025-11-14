@@ -14,9 +14,9 @@ export function LevelCard({ level, status, tokenId, onComplete, completedAt }: L
     <div className="relative">
       {/* Level Number Badge - Dark Fantasy Waypoint Marker */}
       <div className="absolute -top-3 -left-3 z-10">
-        <div className="bg-gradient-to-br from-temple-bronze to-temple-gold text-temple-void w-12 h-12 rounded-full flex items-center justify-center shadow-xl border-2 border-temple-ember relative">
+        <div className="bg-gradient-to-br from-temple-bronze to-temple-gold text-temple-void w-8 h-8 rounded-full flex items-center justify-center shadow-xl border-2 border-temple-ember relative">
           <div className="absolute inset-0 rounded-full bg-temple-gold/20 animate-pulse"></div>
-          <span className="font-bold text-lg font-heading relative z-10">{level.levelNumber}</span>
+          <span className="font-bold text-sm font-heading relative z-10">{level.levelNumber}</span>
         </div>
       </div>
 

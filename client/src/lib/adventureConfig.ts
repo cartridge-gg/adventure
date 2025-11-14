@@ -89,14 +89,14 @@ export function getQuestLevels(): QuestLevel[] {
 
 export const ADVENTURE_TEXT = {
   header: {
-    title: 'The Lost Temple',
+    title: 'The Lost Temple ⛩️',
     subtitle: 'Break seals and navigate waypoints to unlock ancient mysteries.',
   },
   mint: {
     title: 'Begin Your Journey',
     buttonText: 'Mint Your Adventure Map',
     nftDescription: 'is a dynamic NFT that updates as you complete levels.',
-    whatAwaitsTitle: 'What Awaits:',
+    whatAwaitsTitle: 'What Awaits',
     trials: {
       title: 'Ancient Trials',
       description: 'Break seals by completing challenges',
