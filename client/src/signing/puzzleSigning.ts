@@ -12,7 +12,7 @@
  * This prevents players from copying solutions by observing transactions.
  */
 
-import { ec, hash, CallData, num, Account, RpcProvider, constants } from 'starknet';
+import { ec, hash, num } from 'starknet';
 
 /**
  * Derives a Starknet private key from a codeword solution
@@ -109,8 +109,10 @@ export function verifySignature(
   const messageHash = createMessageHash(playerAddress);
 
   // The solution address should be the public key that signed the message
+  // Convert signature to the format expected by verify
+  const sigArray = [signature.r, signature.s];
   return ec.starkCurve.verify(
-    signature,
+    sigArray as any,
     messageHash,
     solutionAddress
   );

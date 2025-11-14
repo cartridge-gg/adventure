@@ -81,7 +81,7 @@ function AdventureApp() {
                 </div>
               ) : !hasNFT ? (
                 <div className="py-8">
-                  <AdventureMintButton onMintSuccess={() => {}} />
+                  <AdventureMintButton />
                 </div>
               ) : progress ? (
                 <AdventureQuestDashboard

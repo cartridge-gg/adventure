@@ -10,11 +10,7 @@ import { ControllerConnector } from '@cartridge/connector';
 import { ADVENTURE_TEXT } from '../lib/adventureConfig';
 import { useAdventureContract } from '../hooks/useAdventureContract';
 
-interface AdventureMintButtonProps {
-  onMintSuccess: () => void;
-}
-
-export function AdventureMintButton({ onMintSuccess }: AdventureMintButtonProps) {
+export function AdventureMintButton() {
   const { address } = useAccount();
   const { connectors } = useConnect();
   const { mintAdventureMap } = useAdventureContract();

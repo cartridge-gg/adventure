@@ -51,8 +51,8 @@ function testSignatureGeneration() {
 
   const sig = signatureFromSolution(solution, playerAddress);
 
-  assert(sig.r && sig.r.startsWith('0x'), "Signature r component should be hex");
-  assert(sig.s && sig.s.startsWith('0x'), "Signature s component should be hex");
+  assert(!!sig.r && sig.r.startsWith('0x'), "Signature r component should be hex");
+  assert(!!sig.s && sig.s.startsWith('0x'), "Signature s component should be hex");
   console.log(`✓ Generated signature: r=${sig.r.slice(0, 10)}..., s=${sig.s.slice(0, 10)}...`);
 
   // Test that same inputs produce same signature
@@ -187,9 +187,10 @@ function runAllTests() {
 }
 
 // Run tests if this file is executed directly
-if (require.main === module) {
-  const success = runAllTests();
-  process.exit(success ? 0 : 1);
-}
+// Note: This is disabled for browser environments
+// if (require.main === module) {
+//   const success = runAllTests();
+//   process.exit(success ? 0 : 1);
+// }
 
 export { runAllTests };

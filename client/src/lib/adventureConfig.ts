@@ -132,7 +132,7 @@ export const ADVENTURE_TEXT = {
     waypointDiscovered: 'Waypoint Navigated',
   },
   gameLevel: {
-    playButton: 'Attempt Trial',
+    playButton: 'Begin Trial',
     continueButton: 'Return to Trial',
     completeButton: 'Claim Victory',
     verifying: 'The Guardian judges...',

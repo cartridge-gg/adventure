@@ -13,7 +13,7 @@ import { ADVENTURE_TEXT, LEVEL_ICONS } from '../lib/adventureConfig';
 interface ChallengeLevelProps {
   levelNumber: number;
   tokenId: string;
-  status: 'locked' | 'active' | 'completed';
+  status: 'locked' | 'available' | 'completed';
   onComplete: (levelNumber: number) => void;
 }
 
@@ -167,7 +167,7 @@ export function ChallengeLevel({ levelNumber, tokenId, status, onComplete }: Cha
         {/* Break Seal Button - enabled only when there's a completed session */}
         <button
           onClick={handleBreakSeal}
-          disabled={isVerifying || (dojoConfig && !completedSession)}
+          disabled={isVerifying || (!!dojoConfig && !completedSession)}
           className="flex-1 bg-gradient-to-r from-temple-seal to-temple-mystic hover:from-temple-mystic hover:to-temple-seal disabled:from-temple-shadow disabled:to-temple-shadow text-white font-ui font-semibold py-3 px-4 rounded-lg transition-all border-2 border-temple-bronze/50 hover:border-temple-gold disabled:border-temple-dusk shadow-lg flex items-center justify-center gap-2 uppercase tracking-wide effect-raised relative overflow-hidden"
         >
           <span className="relative z-10">

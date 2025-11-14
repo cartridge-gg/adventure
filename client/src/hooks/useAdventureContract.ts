@@ -15,13 +15,13 @@ export function useAdventureContract() {
   // Adventure contract (Dojo game logic)
   const { contract: adventureContract } = useContract({
     address: ADVENTURE_ADDRESS as `0x${string}`,
-    abi: ADVENTURE_ABI,
+    abi: ADVENTURE_ABI as any,
   });
 
   // Map NFT contract (state storage)
   const { contract: mapContract } = useContract({
     address: MAP_ADDRESS as `0x${string}`,
-    abi: MAP_ABI,
+    abi: MAP_ABI as any,
   });
 
   /**
@@ -178,41 +178,6 @@ export function useAdventureContract() {
   };
 
   /**
-   * Get player's token ID (if they have minted)
-   */
-  const getPlayerTokenId = async (playerAddress: string): Promise<{
-    success: boolean;
-    tokenId?: string;
-    error?: string;
-  }> => {
-    if (!mapContract) {
-      return { success: false, error: 'Contract not loaded' };
-    }
-
-    try {
-      // This depends on your NFT contract implementation
-      // You might need to:
-      // 1. Query a mapping of player -> token ID
-      // 2. Check balance and enumerate tokens
-      // 3. Use an indexer/events
-
-      // Placeholder - implement based on your contract
-      console.log('[Contract] Get player token ID not yet implemented');
-
-      return {
-        success: false,
-        error: 'Not implemented - use indexer or events',
-      };
-    } catch (error: any) {
-      console.error('[Contract] Error getting token ID:', error);
-      return {
-        success: false,
-        error: error.message || 'Failed to get token ID',
-      };
-    }
-  };
-
-  /**
    * Check if a level is complete
    */
   const isLevelComplete = async (
@@ -248,7 +213,6 @@ export function useAdventureContract() {
     mintAdventureMap,
     completePuzzleLevel,
     completeOnchainLevel,
-    getPlayerTokenId,
     isLevelComplete,
     isConnected: !!account,
     adventureContract,

@@ -23,10 +23,10 @@ import QuestionMarkSvg from '../../assets/Question Mark.svg?raw';
 // CONSTANTS - Can be easily translated to Cairo constants
 // ============================================================================
 
-const SVG_WIDTH = 400;
-const SVG_HEIGHT = 500;
-const WAYPOINT_CIRCLE_RADIUS = 25;
-const WAYPOINT_SIZE = 50;
+// const SVG_WIDTH = 400;
+// const SVG_HEIGHT = 500;
+// const WAYPOINT_CIRCLE_RADIUS = 25;
+// const WAYPOINT_SIZE = 50;
 const LEVEL_BADGE_RADIUS = 10;
 const PATH_STROKE_WIDTH = 3;
 
@@ -44,7 +44,7 @@ interface AdventureMapNFTProps {
 }
 
 export function AdventureMapNFT({ progress }: AdventureMapNFTProps) {
-  const completionPercentage = (progress.levelsCompleted.length / progress.totalLevels) * 100;
+  // const completionPercentage = (progress.levelsCompleted.length / progress.totalLevels) * 100;
   const isComplete = progress.levelsCompleted.length === progress.totalLevels;
 
   // Generate explorer URL based on environment
@@ -102,7 +102,7 @@ export function AdventureMapNFT({ progress }: AdventureMapNFTProps) {
               height="100"
               patternUnits="userSpaceOnUse"
             >
-              <rect width="100" height="100" fill="#fef3c7" />
+              <rect width="100" height="100" fill={BG_COLOR} />
               <circle cx="10" cy="10" r="1" fill="#d97706" opacity="0.1" />
               <circle cx="50" cy="50" r="1" fill="#d97706" opacity="0.1" />
               <circle cx="90" cy="30" r="1" fill="#d97706" opacity="0.1" />
@@ -118,8 +118,8 @@ export function AdventureMapNFT({ progress }: AdventureMapNFTProps) {
             width="380"
             height="480"
             fill="none"
-            stroke="#92400e"
-            strokeWidth="3"
+            stroke={BORDER_COLOR}
+            strokeWidth={PATH_STROKE_WIDTH}
           />
 
           {/* Map path - draws waypoints and connections */}
@@ -130,7 +130,7 @@ export function AdventureMapNFT({ progress }: AdventureMapNFTProps) {
             x="375"
             y="475"
             textAnchor="end"
-            fill="#92400e"
+            fill={BORDER_COLOR}
             fontSize="14"
             fontFamily="serif"
             fontStyle="italic"
@@ -274,7 +274,7 @@ function renderWaypoint(
 
       {/* Level number badge */}
       <g transform="translate(20, -20)">
-        <circle r="10" fill={isComplete ? "#15803d" : "#78350f"} stroke="#fff" strokeWidth="2" />
+        <circle r={LEVEL_BADGE_RADIUS} fill={isComplete ? COMPLETE_BADGE_COLOR : INCOMPLETE_BADGE_COLOR} stroke="#fff" strokeWidth="2" />
         <text
           textAnchor="middle"
           y="3.5"
@@ -362,7 +362,6 @@ function generateLevelAssignments(tokenId: number, totalLevels: number): Map<num
  * - Return Point { x: center_x + radius * cos(angle), y: center_y + radius * sin(angle) }
  */
 function getLevelPosition(
-  level: number,
   vertexIndex: number,
   totalLevels: number,
   centerX: number,
@@ -550,7 +549,7 @@ function renderMapPath(completedLevels: number[], totalLevels: number, tokenId: 
   const levelPositions = new Map<number, Point>();
   for (let level = 0; level < totalLevels; level++) {
     const vertexIndex = levelAssignments.get(level)!;
-    const pos = getLevelPosition(level, vertexIndex, totalLevels, centerX, centerY, radius);
+    const pos = getLevelPosition(vertexIndex, totalLevels, centerX, centerY, radius);
     levelPositions.set(level, pos);
   }
 
@@ -574,8 +573,8 @@ function renderMapPath(completedLevels: number[], totalLevels: number, tokenId: 
           y1={start.y}
           x2={end.x}
           y2={end.y}
-          stroke="#8B4513"
-          strokeWidth="3"
+          stroke={PATH_COLOR}
+          strokeWidth={PATH_STROKE_WIDTH}
           strokeDasharray="5,5"
           opacity="0.7"
         />
