@@ -4,9 +4,10 @@
  * Main dashboard that displays all levels, progress, and the NFT preview.
  */
 
-import { QuestDashboardProps, LevelStatus } from '../lib/adventureTypes';
 import { LevelCard } from './LevelCard';
 import { AdventureMapNFT } from './AdventureMapNFT';
+import { QuestDashboardProps, LevelStatus } from '../lib/adventureTypes';
+import { USE_ONCHAIN_MAP } from '../lib/adventureConfig';
 
 export function AdventureQuestDashboard({ progress, levels, onLevelComplete, onMapRefresh, onRefetchReady }: QuestDashboardProps) {
   // Determine status for each level
@@ -27,7 +28,7 @@ export function AdventureQuestDashboard({ progress, levels, onLevelComplete, onM
         {/* Left Column: NFT Preview (5/12 width) */}
         <div className="lg:col-span-5">
           <div className="sticky top-4">
-            <AdventureMapNFT progress={progress} useOnChainMap={true} onRefetchReady={onRefetchReady} />
+            <AdventureMapNFT progress={progress} useOnChainMap={USE_ONCHAIN_MAP} onRefetchReady={onRefetchReady} />
           </div>
         </div>
 

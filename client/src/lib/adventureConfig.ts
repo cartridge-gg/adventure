@@ -79,6 +79,7 @@ export const LEVEL_ICONS = {
 // ============================================================================
 
 export const TOTAL_LEVELS = ADVENTURE_LEVELS.length;
+export const USE_ONCHAIN_MAP = true;
 
 // ============================================================================
 // APP TEXT
@@ -105,14 +106,8 @@ export const ADVENTURE_TEXT = {
   },
   welcome: {
     title: 'The Lost Temple Awaits',
+    description: 'Break seals through trials of skill. Find hidden waypoints with secret codes. Your Adventure Map reveals the path forward.',
     subtitle: 'Connect your wallet to begin the journey',
-    pathTitle: 'Your Path:',
-    steps: [
-      'Claim your Adventure Map NFT',
-      'Overcome trials in the ancient games',
-      'Discover hidden waypoints and secret codes',
-      'Reveal the Lost Temple\'s mysteries',
-    ],
   },
   levelCard: {
     locked: 'Locked',

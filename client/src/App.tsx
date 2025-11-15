@@ -131,30 +131,12 @@ function AdventureApp() {
                       <h2 className="font-heading text-3xl font-bold mb-4" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8), 0 0 20px rgba(212, 175, 55, 0.3)' }}>
                         {ADVENTURE_TEXT.welcome.title}
                       </h2>
-                      <p className="text-temple-parchment/90 text-lg mb-8" style={{ textShadow: '1px 1px 2px rgba(0, 0, 0, 0.6)' }}>
+                      <p className="text-temple-parchment/90 text-lg mb-6 leading-relaxed" style={{ textShadow: '1px 1px 2px rgba(0, 0, 0, 0.6)' }}>
+                        {ADVENTURE_TEXT.welcome.description}
+                      </p>
+                      <p className="text-temple-gold/90 text-base font-semibold" style={{ textShadow: '1px 1px 2px rgba(0, 0, 0, 0.6)' }}>
                         {ADVENTURE_TEXT.welcome.subtitle}
                       </p>
-                      <div className="bg-temple-shadow/50 border-2 border-temple-bronze/40 rounded-lg p-6 text-left effect-carved">
-                        <h3 className="font-semibold mb-3 text-temple-gold" style={{ textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)' }}>{ADVENTURE_TEXT.welcome.pathTitle}</h3>
-                        <ul className="space-y-2 text-temple-parchment/80">
-                        <li className="flex items-start gap-2">
-                          <span>🗺️</span>
-                          <span>{ADVENTURE_TEXT.welcome.steps[0]}</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <span>⚔️</span>
-                          <span>{ADVENTURE_TEXT.welcome.steps[1]}</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <span>🔮</span>
-                          <span>{ADVENTURE_TEXT.welcome.steps[2]}</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <span>⛩️</span>
-                          <span>{ADVENTURE_TEXT.welcome.steps[3]}</span>
-                        </li>
-                      </ul>
-                      </div>
                     </div>
                   </div>
                 </div>
