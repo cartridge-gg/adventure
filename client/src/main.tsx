@@ -3,13 +3,14 @@ import { createRoot } from 'react-dom/client'
 
 import { StarknetProvider } from '@/components/StarknetProvider'
 
-import AdventureApp from '@/AdventureApp'
+import App from '@/App'
+// import MapTest from '@/pages/MapTest'
 import '@/index.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <StarknetProvider>
-      <AdventureApp />
+      <App />
     </StarknetProvider>
   </StrictMode>,
 )
