@@ -9,7 +9,7 @@ import { LevelCardProps } from '../lib/adventureTypes';
 import { ChallengeLevel } from './ChallengeLevel';
 import { QuestLevel } from './QuestLevel';
 
-export function LevelCard({ level, status, tokenId, onComplete, completedAt }: LevelCardProps) {
+export function LevelCard({ level, status, tokenId, onComplete, onMapRefresh, completedAt }: LevelCardProps) {
   return (
     <div className="relative">
       {/* Level Number Badge - Dark Fantasy Waypoint Marker */}
@@ -28,6 +28,7 @@ export function LevelCard({ level, status, tokenId, onComplete, completedAt }: L
           tokenId={tokenId}
           status={status}
           onComplete={onComplete}
+          onMapRefresh={onMapRefresh}
         />
       ) : (
         <QuestLevel
@@ -35,6 +36,7 @@ export function LevelCard({ level, status, tokenId, onComplete, completedAt }: L
           status={status}
           tokenId={tokenId}
           onComplete={onComplete}
+          onMapRefresh={onMapRefresh}
         />
       )}
 

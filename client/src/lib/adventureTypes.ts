@@ -62,6 +62,7 @@ export interface BaseLevelProps {
   status: LevelStatus;
   tokenId: string;
   onComplete: (levelNumber: number) => void;
+  onMapRefresh?: () => void;
 }
 
 export interface QuestLevelProps extends BaseLevelProps {
@@ -73,6 +74,7 @@ export interface LevelCardProps {
   status: LevelStatus;
   tokenId: string;
   onComplete: (levelNumber: number) => void;
+  onMapRefresh?: () => void;
   completedAt?: Date;
 }
 
@@ -80,6 +82,8 @@ export interface QuestDashboardProps {
   progress: AdventureProgress;
   levels: Level[];
   onLevelComplete: (levelNumber: number) => void;
+  onMapRefresh?: () => void;
+  onRefetchReady?: (refetch: () => void) => void;
 }
 
 // ============================================================================

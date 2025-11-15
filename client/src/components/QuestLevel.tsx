@@ -11,7 +11,7 @@ import { ADVENTURE_TEXT, LEVEL_ICONS } from '../lib/adventureConfig';
 import { usePuzzleSigning } from '../hooks/usePuzzleSigning';
 import { useAdventureContract } from '../hooks/useAdventureContract';
 
-export function QuestLevel({ level, status, tokenId, onComplete }: QuestLevelProps) {
+export function QuestLevel({ level, status, tokenId, onComplete, onMapRefresh }: QuestLevelProps) {
   const [codeword, setCodeword] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -88,6 +88,11 @@ export function QuestLevel({ level, status, tokenId, onComplete }: QuestLevelPro
       );
 
       if (result.success) {
+        // Trigger map refresh to update the on-chain SVG
+        if (onMapRefresh) {
+          onMapRefresh();
+        }
+
         setShowSuccess(true);
         setTimeout(() => {
           onComplete(level.levelNumber);

@@ -7,6 +7,8 @@ pub mod models;
 pub mod token {
     pub mod map;
     pub mod svg;
+    pub mod geo;
+    pub mod art;
 }
 
 pub mod denshokan {
@@ -18,4 +20,5 @@ pub mod denshokan {
 mod tests {
     mod actions;
     mod svg;
+    mod geo;
 }

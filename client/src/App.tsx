@@ -18,6 +18,7 @@ function AdventureApp() {
   const { address } = useAccount();
   const { progress: initialProgress, isLoading, hasNFT } = useAdventureProgress();
   const [progress, setProgress] = useState<AdventureProgress | null>(initialProgress);
+  const [mapRefresh, setMapRefresh] = useState<(() => void) | null>(null);
 
   // Sync local state with hook progress
   useEffect(() => {
@@ -25,6 +26,11 @@ function AdventureApp() {
       setProgress(initialProgress);
     }
   }, [initialProgress]);
+
+  // Receive refetch function from OnChainMapNFT
+  const handleRefetchReady = useCallback((refetch: () => void) => {
+    setMapRefresh(() => refetch);
+  }, []);
 
   // Handle level completion with optimistic update
   const handleLevelComplete = useCallback((levelNumber: number) => {
@@ -88,6 +94,8 @@ function AdventureApp() {
                   progress={progress}
                   levels={ADVENTURE_LEVELS}
                   onLevelComplete={handleLevelComplete}
+                  onMapRefresh={mapRefresh || undefined}
+                  onRefetchReady={handleRefetchReady}
                 />
               ) : (
                 <div className="text-center py-20">

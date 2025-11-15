@@ -21,7 +21,7 @@ pub trait IAdventureActions<T> {
     // View Functions
     // ========================================================================
     fn get_player_token_id(self: @T, player: ContractAddress) -> u256;
-    fn get_progress(self: @T, token_id: u256) -> u256;
+    fn get_progress(self: @T, token_id: u256) -> u64;
     fn get_level_config(self: @T, level_number: u8) -> (felt252, ContractAddress, ContractAddress); // (type, game_contract, solution_address)
 
     // ========================================================================
@@ -128,12 +128,12 @@ pub mod actions {
             let progress = nft.get_progress(map_id);
 
             if level_number > 1 {
-                let prev_level_mask: u256 = self.compute_level_mask(level_number - 1);
+                let prev_level_mask: u64 = self.compute_level_mask(level_number - 1);
                 assert((progress & prev_level_mask) != 0, 'Must complete previous level');
             }
 
             // 4. Check if already complete (idempotency)
-            let level_mask: u256 = self.compute_level_mask(level_number);
+            let level_mask: u64 = self.compute_level_mask(level_number);
             if (progress & level_mask) != 0 {
                 return; // Already complete, no-op
             }
@@ -175,12 +175,12 @@ pub mod actions {
             let progress = nft.get_progress(map_id);
 
             if level_number > 1 {
-                let prev_level_mask: u256 = self.compute_level_mask(level_number - 1);
+                let prev_level_mask: u64 = self.compute_level_mask(level_number - 1);
                 assert((progress & prev_level_mask) != 0, 'Must complete previous level');
             }
 
             // 4. Check if already complete (idempotency)
-            let level_mask: u256 = self.compute_level_mask(level_number);
+            let level_mask: u64 = self.compute_level_mask(level_number);
             if (progress & level_mask) != 0 {
                 return; // Already complete, no-op
             }
@@ -210,7 +210,7 @@ pub mod actions {
             player_token.token_id
         }
 
-        fn get_progress(self: @ContractState, token_id: u256) -> u256 {
+        fn get_progress(self: @ContractState, token_id: u256) -> u64 {
             let world = self.world_default();
             let config: AdventureConfig = world.read_model(CONFIG_KEY);
             let nft = IAdventureMapDispatcher { contract_address: config.nft_contract };
@@ -275,24 +275,25 @@ pub mod actions {
         }
 
         // Compute the bitmap mask for a given level number
-        fn compute_level_mask(self: @ContractState, level_number: u8) -> u256 {
-            let mask: u256 = 1_u256;
-            let level_u256: u256 = level_number.into();
-            mask * Self::pow2(level_u256)
+        // Level N maps to bit N (simpler convention, bit 0 unused)
+        fn compute_level_mask(self: @ContractState, level_number: u8) -> u64 {
+            let mask: u64 = 1_u64;
+            let level_u64: u64 = level_number.into();
+            mask * Self::pow2(level_u64)
         }
 
         // Helper function to compute 2^n
-        fn pow2(n: u256) -> u256 {
+        fn pow2(n: u64) -> u64 {
             if n == 0 {
-                return 1_u256;
+                return 1_u64;
             }
-            let mut result: u256 = 1_u256;
-            let mut i: u256 = 0;
+            let mut result: u64 = 1_u64;
+            let mut i: u64 = 0;
             loop {
                 if i >= n {
                     break;
                 }
-                result = result * 2_u256;
+                result = result * 2_u64;
                 i += 1;
             };
             result

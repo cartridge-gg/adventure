@@ -15,9 +15,10 @@ interface ChallengeLevelProps {
   tokenId: string;
   status: 'locked' | 'available' | 'completed';
   onComplete: (levelNumber: number) => void;
+  onMapRefresh?: () => void;
 }
 
-export function ChallengeLevel({ levelNumber, tokenId, status, onComplete }: ChallengeLevelProps) {
+export function ChallengeLevel({ levelNumber, tokenId, status, onComplete, onMapRefresh }: ChallengeLevelProps) {
   const [showSuccess, setShowSuccess] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -98,6 +99,11 @@ export function ChallengeLevel({ levelNumber, tokenId, status, onComplete }: Cha
       );
 
       if (result.success) {
+        // Trigger map refresh to update the on-chain SVG
+        if (onMapRefresh) {
+          onMapRefresh();
+        }
+
         setShowSuccess(true);
         setTimeout(() => onComplete(levelNumber), 1500);
       } else {

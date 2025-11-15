@@ -46,7 +46,7 @@ pub trait IAdventureMap<TContractState> {
     fn complete_level(ref self: TContractState, token_id: u256, level_number: u8);
 
     // View functions
-    fn get_progress(self: @TContractState, token_id: u256) -> u256; // Returns bitmap
+    fn get_progress(self: @TContractState, token_id: u256) -> u64; // Returns bitmap
     fn get_username(self: @TContractState, token_id: u256) -> felt252;
     fn get_timestamp(self: @TContractState, token_id: u256) -> u64;
 
@@ -84,16 +84,16 @@ pub mod AdventureMap {
         src5: SRC5Component::Storage,
 
         owner: ContractAddress,
-        minter: ContractAddress,            // Adventure Actions contract
+        minter: ContractAddress,
         token_count: u256,
 
         // Per-token data
         mint_timestamps: Map<u256, u64>,
         usernames: Map<u256, felt252>,
-        progress_bitmaps: Map<u256, u256>,  // Bitmap: bit N = level N complete
+        progress_bitmaps: Map<u256, u64>,
 
         // Configuration
-        total_levels: u8,                    // e.g., 6
+        total_levels: u8,
     }
 
     #[event]
@@ -209,10 +209,10 @@ pub mod AdventureMap {
             let progress = self.progress_bitmaps.read(token_id);
 
             // Set bit for this level (using 1-indexed levels)
-            // Shift 1 left by level_number positions
-            let mask: u256 = 1_u256;
-            let level_u256: u256 = level_number.into();
-            let shifted_mask = mask * InternalImpl::pow2(level_u256);
+            // Level N maps to bit N
+            let mask: u64 = 1_u64;
+            let level_u64: u64 = level_number.into();
+            let shifted_mask = mask * InternalImpl::pow2(level_u64);
 
             let new_progress = progress | shifted_mask;
 
@@ -220,7 +220,7 @@ pub mod AdventureMap {
             self.progress_bitmaps.write(token_id, new_progress);
         }
 
-        fn get_progress(self: @ContractState, token_id: u256) -> u256 {
+        fn get_progress(self: @ContractState, token_id: u256) -> u64 {
             self.progress_bitmaps.read(token_id)
         }
 
@@ -270,17 +270,17 @@ pub mod AdventureMap {
         }
 
         // Helper function to compute 2^n for bitmap shifting
-        fn pow2(n: u256) -> u256 {
+        fn pow2(n: u64) -> u64 {
             if n == 0 {
-                return 1_u256;
+                return 1_u64;
             }
-            let mut result: u256 = 1_u256;
-            let mut i: u256 = 0;
+            let mut result: u64 = 1_u64;
+            let mut i: u64 = 0;
             loop {
                 if i >= n {
                     break;
                 }
-                result = result * 2_u256;
+                result = result * 2_u64;
                 i += 1;
             };
             result

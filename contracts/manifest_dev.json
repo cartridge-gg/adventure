@@ -33,8 +33,8 @@
   },
   "contracts": [
     {
-      "address": "0x12a705dcafe6512944b7b2f284ef7c1ca5474fb148b419db994e010285b213d",
-      "class_hash": "0x6f75fc8c7239ade2447047e7d46899e2781711b39d50d471119bad5a062a298",
+      "address": "0x78017e616b93df94b3870bb1905dae137e0150c7947b7b09772af194c98cec5",
+      "class_hash": "0x41db70f97ee17eb7cb2215e8b4714582a3832db18527faef145c8ee51a56704",
       "init_calldata": [],
       "tag": "focg_adventure-actions",
       "selector": "0x45c87c63d9eb923e47da69456442cdb7124f20fa646081b3cead2a1526ae89e",
@@ -167,10 +167,10 @@
   ],
   "external_contracts": [
     {
-      "class_hash": "0x5f71bdd92c9c64b6afac1e992bffbffe32b80fc2f5f31e5130e057bc1370ea4",
+      "class_hash": "0xbf38f0185fab201b569c269aa4f361bc692397ee99099b8ac0ee28587c4194",
       "contract_name": "AdventureMap",
       "tag": "focg_adventure-adventure_map",
-      "address": "0x6ea7c57d28c622227f1b2c43922cde62d49f5bc399ba644a044e1dea3bc41b3",
+      "address": "0x585c1a77a8b298fceea7639fb95c5a777cd8767b0b1b6cdd9c852c789a8634c",
       "constructor_calldata": [
         "0x13d9ee239f33fea4f8785b9e3870ade909e20a9599ae7cd62c1c292b73af1b7",
         "6"
@@ -2352,7 +2352,7 @@
           ],
           "outputs": [
             {
-              "type": "core::integer::u256"
+              "type": "core::integer::u64"
             }
           ],
           "state_mutability": "view"
@@ -2766,7 +2766,7 @@
           ],
           "outputs": [
             {
-              "type": "core::integer::u256"
+              "type": "core::integer::u64"
             }
           ],
           "state_mutability": "view"

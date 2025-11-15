@@ -6,9 +6,9 @@
 
 import { QuestDashboardProps, LevelStatus } from '../lib/adventureTypes';
 import { LevelCard } from './LevelCard';
-import { AdventureMapNFT } from './AdventureMapNFT';
+import { OnChainMapNFT } from './OnChainMapNFT';
 
-export function AdventureQuestDashboard({ progress, levels, onLevelComplete }: QuestDashboardProps) {
+export function AdventureQuestDashboard({ progress, levels, onLevelComplete, onMapRefresh, onRefetchReady }: QuestDashboardProps) {
   // Determine status for each level
   const getLevelStatus = (levelNumber: number): LevelStatus => {
     if (progress.levelsCompleted.includes(levelNumber)) {
@@ -27,7 +27,7 @@ export function AdventureQuestDashboard({ progress, levels, onLevelComplete }: Q
         {/* Left Column: NFT Preview (5/12 width) */}
         <div className="lg:col-span-5">
           <div className="sticky top-4">
-            <AdventureMapNFT progress={progress} />
+            <OnChainMapNFT progress={progress} onRefetchReady={onRefetchReady} />
           </div>
         </div>
 
@@ -43,6 +43,7 @@ export function AdventureQuestDashboard({ progress, levels, onLevelComplete }: Q
                   status={status}
                   tokenId={progress.tokenId}
                   onComplete={onLevelComplete}
+                  onMapRefresh={onMapRefresh}
                 />
               );
             })}

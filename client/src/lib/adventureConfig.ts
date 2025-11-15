@@ -87,7 +87,7 @@ export const TOTAL_LEVELS = ADVENTURE_LEVELS.length;
 export const ADVENTURE_TEXT = {
   header: {
     title: 'The Lost Temple ⛩️',
-    subtitle: 'Break seals and navigate waypoints to unlock ancient mysteries.',
+    subtitle: 'Break seals and navigate waypoints to unlock ancient mysteries',
   },
   mint: {
     title: 'Begin Your Journey',
