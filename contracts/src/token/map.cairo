@@ -67,6 +67,7 @@ pub mod AdventureMap {
         StoragePointerReadAccess, StoragePointerWriteAccess
     };
     use focg_adventure::token::svg;
+    use focg_adventure::token::geo;
 
     component!(path: ERC721Component, storage: erc721, event: ERC721Event);
     component!(path: SRC5Component, storage: src5, event: SRC5Event);
@@ -87,13 +88,14 @@ pub mod AdventureMap {
         minter: ContractAddress,
         token_count: u256,
 
+        // Configuration
+        total_levels: u8,
+
         // Per-token data
         mint_timestamps: Map<u256, u64>,
         usernames: Map<u256, felt252>,
         progress_bitmaps: Map<u256, u64>,
-
-        // Configuration
-        total_levels: u8,
+        level_assignments: Map<(u256, u8), u8>, // (token_id, level) -> vertex
     }
 
     #[event]
@@ -131,8 +133,15 @@ pub mod AdventureMap {
         fn token_uri(self: @ContractState, token_id: u256) -> ByteArray {
             let progress = self.get_progress(token_id);
             let username = self.get_username(token_id);
-            let total_levels = self.total_levels.read();
-            svg::generate_adventure_map_svg(progress, username, total_levels, token_id)
+
+            // Retrieve cached level assignments
+            let mut assignments: Array<u8> = ArrayTrait::new();
+            for i in 0..self.total_levels.read() {
+                let vertex = self.level_assignments.read((token_id, i));
+                assignments.append(vertex);
+            };
+
+            svg::generate_adventure_map_svg(progress, username, assignments.span())
         }
 
         fn balance_of(self: @ContractState, account: ContractAddress) -> u256 {
@@ -199,6 +208,10 @@ pub mod AdventureMap {
             self.mint_timestamps.write(token_id, mint_timestamp);
             self.usernames.write(token_id, username);
 
+            // Generate and cache level assignments for this token
+            let total_levels = self.total_levels.read();
+            self.save_level_assignments(token_id, total_levels);
+
             token_id
         }
 
@@ -212,7 +225,7 @@ pub mod AdventureMap {
             // Level N maps to bit N
             let mask: u64 = 1_u64;
             let level_u64: u64 = level_number.into();
-            let shifted_mask = mask * InternalImpl::pow2(level_u64);
+            let shifted_mask = mask * geo::pow2(level_u64);
 
             let new_progress = progress | shifted_mask;
 
@@ -269,21 +282,16 @@ pub mod AdventureMap {
             assert(caller == minter, 'Caller is not minter');
         }
 
-        // Helper function to compute 2^n for bitmap shifting
-        fn pow2(n: u64) -> u64 {
-            if n == 0 {
-                return 1_u64;
+        /// Generate and store level assignments
+        fn save_level_assignments(ref self: ContractState, token_id: u256, total_levels: u8) {
+            let assignments = geo::generate_level_assignments(token_id, total_levels);
+
+            // Store each assignment indexed by level
+            let mut level: u8 = 0;
+            for vertex in assignments {
+                self.level_assignments.write((token_id, level), vertex);
+                level += 1;
             }
-            let mut result: u64 = 1_u64;
-            let mut i: u64 = 0;
-            loop {
-                if i >= n {
-                    break;
-                }
-                result = result * 2_u64;
-                i += 1;
-            };
-            result
         }
     }
 }

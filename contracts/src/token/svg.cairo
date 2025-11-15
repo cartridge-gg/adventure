@@ -133,22 +133,21 @@ fn render_path(x1: u32, y1: u32, x2: u32, y2: u32) -> ByteArray {
 // MAIN SVG GENERATION
 // ============================================================================
 
-/// Generate the complete Adventure Map SVG
+/// Generate the complete Adventure Map SVG with cached assignments
 ///
 /// # Arguments
 /// * `progress` - Bitmap of completed levels (bit N = level N complete)
 /// * `username` - Player's username (felt252)
-/// * `total_levels` - Total number of levels in the adventure
-/// * `token_id` - NFT token ID for deterministic generation
+/// * `assignments` - Level assignments (as Span)
 ///
 /// # Returns
 /// * `ByteArray` - Complete SVG string with data URI prefix
 pub fn generate_adventure_map_svg(
     progress: u64,
     username: felt252,
-    total_levels: u8,
-    token_id: u256
+    assignments: Span<u8>
 ) -> ByteArray {
+    let total_levels: u8 = assignments.len().try_into().unwrap();
     let mut svg: ByteArray = "";
 
     // Data URI prefix
@@ -217,59 +216,38 @@ pub fn generate_adventure_map_svg(
     svg.append(@"</svg></g>");
 
     // LAYER 3: Map path (waypoints and connections)
+    // OPTIMIZATION: Single-pass rendering - calculate positions, draw paths, and render waypoints
+    // in one loop instead of three separate loops (3*O(n) -> O(n))
     let center_x: u32 = 200;
     let center_y: u32 = 310;
     let radius: u32 = 130;
 
-    // Generate level assignments
-    let level_assignments = geo::generate_level_assignments(token_id, total_levels);
+    // Single-pass: calculate position, draw path (if applicable), render waypoint
+    let mut prev_x: u32 = 0;
+    let mut prev_y: u32 = 0;
+    let mut prev_complete: bool = false;
 
-    // Calculate all waypoint positions
-    let mut positions: Array<(u32, u32)> = ArrayTrait::new();
-    let mut level: u8 = 0;
-    loop {
-        if level >= total_levels {
-            break;
-        }
-        let vertex_idx = *level_assignments.at(level.into());
+    for level in 0..total_levels {
+        // 1. Calculate position for this level (use cached assignments)
+        let vertex_idx = *assignments.at(level.into());
         let (x, y) = geo::get_vertex_position(vertex_idx, total_levels, center_x, center_y, radius);
-        positions.append((x, y));
-        level += 1;
-    };
 
-    // Draw connection paths between consecutive completed levels
-    let mut i: u8 = 0;
-    loop {
-        if i >= total_levels - 1 {
-            break;
-        }
-
-        let current_level = i + 1;
-        let next_level = i + 2;
-
-        // Only draw if BOTH current and next are complete
-        if geo::is_level_complete(progress, current_level) && geo::is_level_complete(progress, next_level) {
-            let (x1, y1) = *positions.at(i.into());
-            let (x2, y2) = *positions.at((i + 1).into());
-            svg.append(@render_path(x1, y1, x2, y2));
-        }
-
-        i += 1;
-    };
-
-    // Draw waypoint markers
-    let mut level = 0;
-    loop {
-        if level >= total_levels {
-            break;
-        }
+        // 2. Check completion status
         let level_num = level + 1;
         let is_complete = geo::is_level_complete(progress, level_num);
-        let (x, y) = *positions.at(level.into());
 
+        // 3. Draw connection path from previous level (if both are complete)
+        if level > 0 && prev_complete && is_complete {
+            svg.append(@render_path(prev_x, prev_y, x, y));
+        }
+
+        // 4. Render waypoint marker
         svg.append(@render_waypoint(level_num, is_complete, x, y));
 
-        level += 1;
+        // Store current position and completion for next iteration
+        prev_x = x;
+        prev_y = y;
+        prev_complete = is_complete;
     };
 
     // Username in lower-right corner

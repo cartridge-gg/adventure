@@ -15,10 +15,7 @@ pub fn felt252_to_bytearray(value: felt252) -> ByteArray {
     let mut len: usize = 0;
     let mut temp = value_u256;
 
-    loop {
-        if temp == 0 {
-            break;
-        }
+    while temp != 0 {
         len += 1;
         temp = temp / 256;
     };
@@ -41,20 +38,14 @@ pub fn u32_to_bytearray(mut value: u32) -> ByteArray {
     let mut result: ByteArray = "";
     let mut digits: Array<u8> = ArrayTrait::new();
 
-    loop {
-        if value == 0 {
-            break;
-        }
+    while value != 0 {
         let digit = (value % 10).try_into().unwrap();
         digits.append(digit + 48); // ASCII offset
         value = value / 10;
     };
 
     let mut i = digits.len();
-    loop {
-        if i == 0 {
-            break;
-        }
+    while i > 0 {
         i -= 1;
         let mut single_digit: ByteArray = "";
         single_digit.append_byte(*digits.at(i));
@@ -68,35 +59,55 @@ pub fn u32_to_bytearray(mut value: u32) -> ByteArray {
 // TRIGONOMETRY (FIXED-POINT)
 // ============================================================================
 
+// Pre-computed sine lookup table (constant, 0-90 degrees)
+// Values scaled by 1000 for fixed-point precision
+const SIN_TABLE_0_9: [i32; 10] = [0, 17, 35, 52, 70, 87, 105, 122, 139, 156];
+const SIN_TABLE_10_19: [i32; 10] = [174, 191, 208, 225, 242, 259, 276, 292, 309, 326];
+const SIN_TABLE_20_29: [i32; 10] = [342, 358, 375, 391, 407, 423, 438, 454, 469, 485];
+const SIN_TABLE_30_39: [i32; 10] = [500, 515, 530, 545, 559, 574, 588, 602, 616, 629];
+const SIN_TABLE_40_49: [i32; 10] = [643, 656, 669, 682, 695, 707, 719, 731, 743, 755];
+const SIN_TABLE_50_59: [i32; 10] = [766, 777, 788, 799, 809, 819, 829, 839, 848, 857];
+const SIN_TABLE_60_69: [i32; 10] = [866, 875, 883, 891, 899, 906, 914, 921, 927, 934];
+const SIN_TABLE_70_79: [i32; 10] = [940, 946, 951, 956, 961, 966, 970, 974, 978, 982];
+const SIN_TABLE_80_90: [i32; 11] = [985, 988, 990, 993, 995, 996, 998, 999, 999, 1000, 1000];
+
+/// Helper to get sin value from constant lookup tables
+fn get_sin_value(angle: u32) -> i32 {
+    if angle < 10 {
+        return *SIN_TABLE_0_9.span().at(angle);
+    } else if angle < 20 {
+        return *SIN_TABLE_10_19.span().at(angle - 10);
+    } else if angle < 30 {
+        return *SIN_TABLE_20_29.span().at(angle - 20);
+    } else if angle < 40 {
+        return *SIN_TABLE_30_39.span().at(angle - 30);
+    } else if angle < 50 {
+        return *SIN_TABLE_40_49.span().at(angle - 40);
+    } else if angle < 60 {
+        return *SIN_TABLE_50_59.span().at(angle - 50);
+    } else if angle < 70 {
+        return *SIN_TABLE_60_69.span().at(angle - 60);
+    } else if angle < 80 {
+        return *SIN_TABLE_70_79.span().at(angle - 70);
+    } else {
+        return *SIN_TABLE_80_90.span().at(angle - 80);
+    }
+}
+
 /// Fixed-point math for sine (scaled by 1000 for precision)
 /// Returns values in range [-1000, 1000] representing [-1.0, 1.0]
 pub fn sin_fixed(angle_deg: u32) -> i32 {
     // Normalize angle to 0-359
     let angle = angle_deg % 360;
 
-    // Lookup table for sine values (scaled by 1000)
-    // Only need 0-90 degrees, rest can be derived
-    let sin_table: Array<i32> = array![
-        0, 17, 35, 52, 70, 87, 105, 122, 139, 156, // 0-9
-        174, 191, 208, 225, 242, 259, 276, 292, 309, 326, // 10-19
-        342, 358, 375, 391, 407, 423, 438, 454, 469, 485, // 20-29
-        500, 515, 530, 545, 559, 574, 588, 602, 616, 629, // 30-39
-        643, 656, 669, 682, 695, 707, 719, 731, 743, 755, // 40-49
-        766, 777, 788, 799, 809, 819, 829, 839, 848, 857, // 50-59
-        866, 875, 883, 891, 899, 906, 914, 921, 927, 934, // 60-69
-        940, 946, 951, 956, 961, 966, 970, 974, 978, 982, // 70-79
-        985, 988, 990, 993, 995, 996, 998, 999, 999, 1000, // 80-89
-        1000 // 90
-    ];
-
     if angle <= 90 {
-        return *sin_table.at(angle);
+        return get_sin_value(angle);
     } else if angle <= 180 {
-        return *sin_table.at(180 - angle);
+        return get_sin_value(180 - angle);
     } else if angle <= 270 {
-        return -*sin_table.at(angle - 180);
+        return -get_sin_value(angle - 180);
     } else {
-        return -*sin_table.at(360 - angle);
+        return -get_sin_value(360 - angle);
     }
 }
 
@@ -130,63 +141,45 @@ pub fn random_in_range(seed: u256, max: u32) -> u32 {
 // POLYGON LAYOUT & LEVEL ASSIGNMENT
 // ============================================================================
 
-/// Generate deterministic level-to-vertex assignments using Fisher-Yates shuffle
+/// Generate deterministic level-to-vertex assignments using direct calculation
 /// Returns array where index is level (0-indexed), value is vertex position
+///
+/// OPTIMIZATION: Instead of O(n²) Fisher-Yates shuffle with array rebuilding,
+/// we use a direct seeded calculation for each level. This is O(n) and avoids
+/// expensive array operations while maintaining deterministic randomness.
 pub fn generate_level_assignments(token_id: u256, total_levels: u8) -> Array<u8> {
-    let mut vertices: Array<u8> = ArrayTrait::new();
-
-    // Initialize vertices array [0, 1, 2, ..., total_levels-1]
-    let mut i: u8 = 0;
-    loop {
-        if i >= total_levels {
-            break;
-        }
-        vertices.append(i);
-        i += 1;
-    };
-
-    // Fisher-Yates shuffle with seeded random
-    // Since Cairo arrays are immutable, we rebuild the array after each swap
+    let mut assignments: Array<u8> = ArrayTrait::new();
     let base_seed = token_id * 12345;
-    let mut shuffle_idx = total_levels - 1;
 
-    loop {
-        if shuffle_idx == 0 {
-            break;
-        }
+    // Track which vertices have been assigned (used as a bitmask for small total_levels)
+    // For total_levels <= 64, we can use a u64 bitmap
+    let mut used_bitmap: u64 = 0;
 
-        // Get random index in range [0, shuffle_idx]
-        let seed = base_seed + shuffle_idx.into();
-        let j_u32 = random_in_range(seed, shuffle_idx.into() + 1);
-        let j: u8 = j_u32.try_into().unwrap();
-
-        // Rebuild array with swapped elements
-        // Swap vertices[shuffle_idx] with vertices[j]
-        // IMPORTANT: Must copy ALL elements to maintain array size
-        let mut new_vertices: Array<u8> = ArrayTrait::new();
-        let mut k: u8 = 0;
+    for level in 0..total_levels {
+        // Generate a deterministic vertex for this level
+        // Keep generating until we find an unused one
+        let mut attempt: u32 = 0;
+        let mut vertex: u8 = 0;
         loop {
-            if k >= total_levels {
+            let seed = base_seed + level.into() + attempt.into() * 1000;
+            let candidate = random_in_range(seed, total_levels.into());
+            vertex = candidate.try_into().unwrap();
+
+            // Check if this vertex is already used
+            let bit_mask: u64 = pow2(vertex.into());
+            if (used_bitmap & bit_mask) == 0 {
+                // Vertex is available, break
+                used_bitmap = used_bitmap | bit_mask;
                 break;
             }
 
-            let val = if k == shuffle_idx {
-                *vertices.at(j.into())
-            } else if k == j {
-                *vertices.at(shuffle_idx.into())
-            } else {
-                *vertices.at(k.into())
-            };
-
-            new_vertices.append(val);
-            k += 1;
+            attempt += 1;
         };
 
-        vertices = new_vertices;
-        shuffle_idx -= 1;
+        assignments.append(vertex);
     };
 
-    vertices
+    assignments
 }
 
 /// Calculate X,Y coordinates for a vertex on the polygon
@@ -265,13 +258,8 @@ pub fn pow2(n: u64) -> u64 {
         return 1_u64;
     }
     let mut result: u64 = 1_u64;
-    let mut i: u64 = 0;
-    loop {
-        if i >= n {
-            break;
-        }
+    for _ in 0..n {
         result = result * 2_u64;
-        i += 1;
     };
     result
 }
