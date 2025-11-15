@@ -167,10 +167,10 @@
   ],
   "external_contracts": [
     {
-      "class_hash": "0x5798b18fe532f885be31cee30b7b474cb1dce8e2576309bf2790d95a4f76d76",
+      "class_hash": "0x5f71bdd92c9c64b6afac1e992bffbffe32b80fc2f5f31e5130e057bc1370ea4",
       "contract_name": "AdventureMap",
       "tag": "focg_adventure-adventure_map",
-      "address": "0x7785c426e4a49559498f83c3dc26af339b72fb01f1cccc9f28adc9dc3aeb0c5",
+      "address": "0x6ea7c57d28c622227f1b2c43922cde62d49f5bc399ba644a044e1dea3bc41b3",
       "constructor_calldata": [
         "0x13d9ee239f33fea4f8785b9e3870ade909e20a9599ae7cd62c1c292b73af1b7",
         "6"

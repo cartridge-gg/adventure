@@ -132,7 +132,7 @@ pub mod AdventureMap {
             let progress = self.get_progress(token_id);
             let username = self.get_username(token_id);
             let total_levels = self.total_levels.read();
-            svg::generate_adventure_map_svg(progress, username, total_levels)
+            svg::generate_adventure_map_svg(progress, username, total_levels, token_id)
         }
 
         fn balance_of(self: @ContractState, account: ContractAddress) -> u256 {
@@ -270,7 +270,6 @@ pub mod AdventureMap {
         }
 
         // Helper function to compute 2^n for bitmap shifting
-        // Since Cairo doesn't have a built-in shift operator for large shifts
         fn pow2(n: u256) -> u256 {
             if n == 0 {
                 return 1_u256;
