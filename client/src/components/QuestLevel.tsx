@@ -166,8 +166,8 @@ export function QuestLevel({ level, status, tokenId, onComplete, onMapRefresh }:
         )}
 
         {/* Codeword Input Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
+        <form onSubmit={handleSubmit}>
+          <div className="flex flex-col sm:flex-row gap-3">
             <input
               id="codeword"
               type="text"
@@ -175,19 +175,19 @@ export function QuestLevel({ level, status, tokenId, onComplete, onMapRefresh }:
               onChange={(e) => setCodeword(e.target.value)}
               placeholder={ADVENTURE_TEXT.questLevel.codewordPlaceholder}
               disabled={isVerifying}
-              className="w-full px-4 py-3 border-2 border-temple-bronze bg-temple-shadow/50 text-temple-parchment rounded-lg focus:border-temple-gold focus:outline-none disabled:opacity-50 text-lg font-mono uppercase placeholder:text-temple-bronze/50"
+              className="w-full sm:flex-1 px-4 py-3 border-2 border-temple-bronze bg-temple-shadow/50 text-temple-parchment rounded-lg focus:border-temple-gold focus:outline-none disabled:opacity-50 text-lg font-mono uppercase placeholder:text-temple-bronze/50"
               autoComplete="off"
             />
-          </div>
 
-          <button
-            type="submit"
-            disabled={isVerifying || !codeword.trim()}
-            className="w-full bg-gradient-to-r from-temple-seal to-temple-mystic hover:from-temple-mystic hover:to-temple-seal disabled:from-temple-shadow disabled:to-temple-shadow text-white font-ui font-semibold py-3 px-4 rounded-lg transition-all border-2 border-temple-bronze/50 hover:border-temple-gold disabled:border-temple-dusk shadow-lg uppercase tracking-wide effect-raised relative overflow-hidden"
-          >
-            <span className="relative z-10">{isVerifying ? ADVENTURE_TEXT.questLevel.verifying : ADVENTURE_TEXT.questLevel.submitButton}</span>
-            <div className="absolute inset-0 effect-metallic pointer-events-none"></div>
-          </button>
+            <button
+              type="submit"
+              disabled={isVerifying || !codeword.trim()}
+              className="w-full sm:flex-1 bg-gradient-to-r from-temple-seal to-temple-mystic hover:from-temple-mystic hover:to-temple-seal disabled:from-temple-shadow disabled:to-temple-shadow text-white font-ui font-semibold py-3 px-4 rounded-lg transition-all border-2 border-temple-bronze/50 hover:border-temple-gold disabled:border-temple-dusk shadow-lg uppercase tracking-wide effect-raised relative overflow-hidden"
+            >
+              <span className="relative z-10">{isVerifying ? ADVENTURE_TEXT.questLevel.verifying : ADVENTURE_TEXT.questLevel.submitButton}</span>
+              <div className="absolute inset-0 effect-metallic pointer-events-none"></div>
+            </button>
+          </div>
         </form>
 
         {/* Error Message */}

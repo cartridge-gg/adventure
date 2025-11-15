@@ -6,7 +6,7 @@
 
 import { QuestDashboardProps, LevelStatus } from '../lib/adventureTypes';
 import { LevelCard } from './LevelCard';
-import { OnChainMapNFT } from './OnChainMapNFT';
+import { AdventureMapNFT } from './AdventureMapNFT';
 
 export function AdventureQuestDashboard({ progress, levels, onLevelComplete, onMapRefresh, onRefetchReady }: QuestDashboardProps) {
   // Determine status for each level
@@ -27,7 +27,7 @@ export function AdventureQuestDashboard({ progress, levels, onLevelComplete, onM
         {/* Left Column: NFT Preview (5/12 width) */}
         <div className="lg:col-span-5">
           <div className="sticky top-4">
-            <OnChainMapNFT progress={progress} onRefetchReady={onRefetchReady} />
+            <AdventureMapNFT progress={progress} useOnChainMap={true} onRefetchReady={onRefetchReady} />
           </div>
         </div>
 

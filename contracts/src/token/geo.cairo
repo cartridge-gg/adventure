@@ -251,6 +251,14 @@ pub fn is_level_complete(progress: u64, level_num: u8) -> bool {
     (progress & bit_mask) != 0
 }
 
+/// Check if all levels are completed
+/// Returns true if bits 1 through total_levels are all set
+/// Formula: 2^(total_levels+1) - 2
+pub fn is_map_complete(progress: u64, total_levels: u8) -> bool {
+    let expected: u64 = pow2((total_levels + 1).into()) - 2;
+    progress == expected
+}
+
 /// Helper to compute 2^n (for bit operations)
 pub fn pow2(n: u64) -> u64 {
     if n == 0 {

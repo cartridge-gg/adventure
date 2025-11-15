@@ -514,6 +514,31 @@ fn test_is_level_complete_large_levels() {
     assert(!geo::is_level_complete(progress_63, 62), 'Level 62 not set');
 }
 
+#[test]
+fn test_is_map_complete_partial_progress() {
+    // Bitmap: bits 1,2 = 0b000110 = 6 (levels 1, 2 complete)
+    let progress: u64 = 6;
+    assert(!geo::is_map_complete(progress, 3), '2/3 not complete');
+    assert(!geo::is_map_complete(progress, 6), '2/6 not complete');
+}
+
+#[test]
+fn test_is_map_complete_all_levels() {
+    // Bitmap: bits 1,2,3 = 0b001110 = 14 (all 3 levels complete)
+    let progress: u64 = 14;
+    assert(geo::is_map_complete(progress, 3), '3/3 complete');
+    assert(!geo::is_map_complete(progress, 4), 'Not all 4 levels');
+    assert(!geo::is_map_complete(progress, 6), 'Not all 6 levels');
+}
+
+#[test]
+fn test_is_map_complete_extra_bit_set() {
+    // Bitmap: bits 1,2,3,7 = 0b10001110 = 142 (levels 1,2,3,7 complete)
+    // Should fail for 3 levels because bit 7 is also set
+    let progress: u64 = 142;
+    assert(!geo::is_map_complete(progress, 3), 'Extra bit set');
+}
+
 // ============================================================================
 // UTILITY FUNCTION TESTS
 // ============================================================================

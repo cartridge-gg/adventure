@@ -160,7 +160,7 @@ export function ChallengeLevel({ levelNumber, tokenId, status, onComplete, onMap
       )}
 
       {/* Action Buttons */}
-      <div className="flex gap-3">
+      <div className="flex flex-col sm:flex-row gap-3">
         {/* Play Game Button */}
         <button
           onClick={handlePlayGame}

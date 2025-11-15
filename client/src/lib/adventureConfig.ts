@@ -135,7 +135,7 @@ export const ADVENTURE_TEXT = {
   questLevel: {
     locationHeader: 'Waypoint Location:',
     codewordLabel: 'Discover the Hidden Code',
-    codewordPlaceholder: 'Enter the secret code...',
+    codewordPlaceholder: 'Enter the code...',
     submitButton: 'Submit the Code',
     verifying: 'The Guardian judges...',
     success: 'Waypoint navigated!',
@@ -143,9 +143,9 @@ export const ADVENTURE_TEXT = {
   },
   map: {
     title: 'Adventure Map',
-    completedTitle: 'The Temple is Found!',
+    completedTitle: 'You Found the Temple!',
     shareButton: 'Share Your Discovery',
-    shareMessage: `⛩️ I've discovered the Lost Temple! Begin your journey at temple.cartridge.gg`,
+    shareMessage: `⛩️ I've found the Lost Temple!\n\nBegin your own journey at temple.cartridge.gg\n\n@cartridge_gg @ohayo_dojo @EFDevcon`,
   },
   support: {
     text: 'Need help? Join our Telegram channel',

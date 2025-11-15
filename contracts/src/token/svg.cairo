@@ -180,7 +180,13 @@ pub fn generate_adventure_map_svg(
     svg.append(@"</svg></g>");
 
     // LAYER 2: Top decorations
-    // Dojo at top
+    // Dojo at top with yellow glow when complete
+    if geo::is_map_complete(progress, total_levels) {
+        svg.append(@"<svg x='120' y='-10' width='160' height='160' viewBox='0 0 160 160'>");
+        svg.append(@art::get_glow_svg());
+        svg.append(@"</svg>");
+    }
+
     svg.append(@"<g transform='translate(150, 20)'><svg width='100' height='100' viewBox='0 0 370 418'>");
     svg.append(@art::get_dojo_svg());
     svg.append(@"</svg></g>");
