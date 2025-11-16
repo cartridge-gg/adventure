@@ -141,45 +141,50 @@ pub fn random_in_range(seed: u256, max: u32) -> u32 {
 // POLYGON LAYOUT & LEVEL ASSIGNMENT
 // ============================================================================
 
-/// Generate deterministic level-to-vertex assignments using direct calculation
+/// Generate deterministic level-to-vertex assignments using Fisher-Yates shuffle
 /// Returns array where index is level (0-indexed), value is vertex position
 ///
-/// OPTIMIZATION: Instead of O(n²) Fisher-Yates shuffle with array rebuilding,
-/// we use a direct seeded calculation for each level. This is O(n) and avoids
-/// expensive array operations while maintaining deterministic randomness.
+/// Uses token_id as the shuffle seed to create unique paths for each NFT.
+/// Fisher-Yates ensures each permutation has equal probability.
 pub fn generate_level_assignments(token_id: u256, total_levels: u8) -> Array<u8> {
-    let mut assignments: Array<u8> = ArrayTrait::new();
-    let base_seed = token_id * 12345;
-
-    // Track which vertices have been assigned (used as a bitmask for small total_levels)
-    // For total_levels <= 64, we can use a u64 bitmap
-    let mut used_bitmap: u64 = 0;
-
-    for level in 0..total_levels {
-        // Generate a deterministic vertex for this level
-        // Keep generating until we find an unused one
-        let mut attempt: u32 = 0;
-        let mut vertex: u8 = 0;
-        loop {
-            let seed = base_seed + level.into() + attempt.into() * 1000;
-            let candidate = random_in_range(seed, total_levels.into());
-            vertex = candidate.try_into().unwrap();
-
-            // Check if this vertex is already used
-            let bit_mask: u64 = pow2(vertex.into());
-            if (used_bitmap & bit_mask) == 0 {
-                // Vertex is available, break
-                used_bitmap = used_bitmap | bit_mask;
-                break;
-            }
-
-            attempt += 1;
-        };
-
-        assignments.append(vertex);
+    // Start with identity permutation [0, 1, 2, ..., n-1]
+    let mut vertices: Array<u8> = ArrayTrait::new();
+    for i in 0..total_levels {
+        vertices.append(i);
     };
 
-    assignments
+    // Fisher-Yates shuffle using token_id as seed
+    let mut seed = token_id * 5786;
+
+    // Shuffle from end to start
+    let mut i = total_levels;
+    while i > 1 {
+        i -= 1;
+
+        // Generate random index in range [0, i]
+        seed = lcg_next(seed);
+        let j = (seed % (i + 1).into()).try_into().unwrap();
+
+        // Swap vertices[i] and vertices[j]
+        // Since we can't modify Array elements directly, rebuild the array
+        let mut new_vertices: Array<u8> = ArrayTrait::new();
+        let mut k: u8 = 0;
+        while k < total_levels {
+            let idx = k.into();
+            let val = if k == i {
+                *vertices.at(j.into())
+            } else if k == j {
+                *vertices.at(i.into())
+            } else {
+                *vertices.at(idx)
+            };
+            new_vertices.append(val);
+            k += 1;
+        };
+        vertices = new_vertices;
+    };
+
+    vertices
 }
 
 /// Calculate X,Y coordinates for a vertex on the polygon
