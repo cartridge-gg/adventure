@@ -13,8 +13,8 @@
 [submodule "refs/death-mountain"]
 	path = refs/death-mountain
 	url = https://github.com/Provable-Games/death-mountain
-[submodule "contracts/refs/ronins-pact"]
-	path = contracts/refs/ronins-pact
+[submodule "refs/ronins-pact"]
+	path = refs/ronins-pact
 	url = https://github.com/cartridge-gg/ronins-pact
 [submodule "refs/dopewars"]
 	path = refs/dopewars
