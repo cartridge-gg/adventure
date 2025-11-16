@@ -216,38 +216,50 @@ pub fn generate_adventure_map_svg(
     svg.append(@"</svg></g>");
 
     // LAYER 3: Map path (waypoints and connections)
-    // OPTIMIZATION: Single-pass rendering - calculate positions, draw paths, and render waypoints
-    // in one loop instead of three separate loops (3*O(n) -> O(n))
+    // Two-pass rendering required for proper SVG layering:
+    // - Pass 1: Draw all paths (background layer)
+    // - Pass 2: Draw all waypoints (foreground layer)
     let center_x: u32 = 200;
     let center_y: u32 = 310;
     let radius: u32 = 130;
 
-    // Single-pass: calculate position, draw path (if applicable), render waypoint
+    // Pass 1: Draw all connection paths (must be rendered BEFORE waypoints for correct layering)
     let mut prev_x: u32 = 0;
     let mut prev_y: u32 = 0;
     let mut prev_complete: bool = false;
 
     for level in 0..total_levels {
-        // 1. Calculate position for this level (use cached assignments)
+        // Calculate position for this level (use cached assignments)
         let vertex_idx = *assignments.at(level.into());
         let (x, y) = geo::get_vertex_position(vertex_idx, total_levels, center_x, center_y, radius);
 
-        // 2. Check completion status
+        // Check completion status
         let level_num = level + 1;
         let is_complete = geo::is_level_complete(progress, level_num);
 
-        // 3. Draw connection path from previous level (if both are complete)
+        // Draw connection path from previous level (if both are complete)
         if level > 0 && prev_complete && is_complete {
             svg.append(@render_path(prev_x, prev_y, x, y));
         }
-
-        // 4. Render waypoint marker
-        svg.append(@render_waypoint(level_num, is_complete, x, y));
 
         // Store current position and completion for next iteration
         prev_x = x;
         prev_y = y;
         prev_complete = is_complete;
+    };
+
+    // Pass 2: Draw all waypoint markers (rendered AFTER paths so they appear on top)
+    for level in 0..total_levels {
+        // Calculate position for this level (use cached assignments)
+        let vertex_idx = *assignments.at(level.into());
+        let (x, y) = geo::get_vertex_position(vertex_idx, total_levels, center_x, center_y, radius);
+
+        // Check completion status
+        let level_num = level + 1;
+        let is_complete = geo::is_level_complete(progress, level_num);
+
+        // Render waypoint marker
+        svg.append(@render_waypoint(level_num, is_complete, x, y));
     };
 
     // Username in lower-right corner
