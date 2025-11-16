@@ -40,8 +40,8 @@ export function useGameSessions(challengeLevel: number) {
   const dojoConfig = challenge ? getDojoConfigForChallenge(challenge) : null;
 
   // Query Torii SQL endpoint for player's tokens
-  // NOTE: In dev mode (Katana), dojoConfig will be undefined and we skip Torii queries
-  // Dev mode uses MockGame contracts which are verified directly via contract calls
+  // NOTE: In testnet mode (dev/sepolia), dojoConfig will be undefined and we skip Torii queries
+  // Testnet mode uses MockGame contracts which are verified directly via contract calls
   useEffect(() => {
     async function fetchSessions() {
       if (!address || !challenge || !provider) {
@@ -49,9 +49,9 @@ export function useGameSessions(challengeLevel: number) {
         return;
       }
 
-      // Skip Torii query in dev mode (no dojoConfig means local MockGame)
+      // Skip Torii query in testnet mode (no dojoConfig means MockGame contracts)
       if (!dojoConfig) {
-        console.log('[useGameSessions] Dev mode: skipping Torii query (using MockGame)');
+        console.log('[useGameSessions] Testnet mode: skipping Torii query (using MockGame)');
         setSessions([]);
         return;
       }

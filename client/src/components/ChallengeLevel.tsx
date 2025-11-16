@@ -141,8 +141,8 @@ export function ChallengeLevel({ levelNumber, tokenId, status, onComplete, onMap
       {!dojoConfig && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
           <p className="text-blue-800 text-sm text-center">
-            <strong>Dev Mode:</strong> Playing external games is not available locally.
-            Testing with pre-configured game_id=1 from deploy_katana.
+            <strong>Testnet Mode:</strong> Real games are available.
+            Testing with pre-configured mock.
           </p>
         </div>
       )}

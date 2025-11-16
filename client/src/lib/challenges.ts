@@ -142,13 +142,16 @@ export function getChallengeByLevel(level: number): Challenge | undefined {
 
 /**
  * Get the Dojo configuration for the current environment
- * Returns undefined for dev environment (uses local MockGame contracts instead)
+ * Returns undefined for dev/sepolia environments (uses MockGame contracts without Torii)
+ * Returns full config for mainnet (uses real game Denshokan contracts with Torii)
  */
 export function getDojoConfigForChallenge(challenge: Challenge): DojoGameConfig | undefined {
-  if (CHAIN_ENV === 'dev') {
-    return challenge.dojo.dev; // undefined for external games, uses MockGame locally
+  if (CHAIN_ENV === 'dev' || CHAIN_ENV === 'sepolia') {
+    // Dev and Sepolia use MockGame contracts without Torii indexers
+    // Return undefined to skip Torii queries and use hardcoded test game_id=1
+    return challenge.dojo.dev; // undefined for external games, uses MockGame
   }
-  const env = CHAIN_ENV === 'mainnet' ? 'mainnet' : 'sepolia';
-  return challenge.dojo[env];
+  // Mainnet uses real game contracts with Torii indexers
+  return challenge.dojo.mainnet;
 }
 

@@ -3,7 +3,7 @@
     {
       "level": 1,
       "game": "The Mage's Seal",
-      "description": "The trial of the mage. Complete a game session to break the seal.",
+      "description": "The trial of the mage. Complete a Nums game session to break the seal.",
       "location": "https://nums.gg/",
       "manifest_path": "nums",
       "minigame_tag": "NUMS-Minigame",
@@ -22,7 +22,7 @@
     {
       "level": 3,
       "game": "The Rogue's Seal",
-      "description": "The trial of the rogue. Complete a game session to break the seal.",
+      "description": "The trial of the rogue. Complete a Dope Wars game session to break the seal.",
       "location": "https://dopewars.game/",
       "manifest_path": "dopewars",
       "minigame_tag": "dopewars-game_token_system_v0",
@@ -41,7 +41,7 @@
     {
       "level": 5,
       "game": "The Warrior's Seal",
-      "description": "The trial of the warrior. Complete a game session to break the seal.",
+      "description": "The trial of the warrior. Complete a Loot Survivor 2 game session to break the seal.",
       "location": "https://lootsurvivor.io/",
       "manifest_path": "death-mountain/contracts",
       "minigame_tag": "ls_0_0_9-game_token_systems",

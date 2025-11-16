@@ -123,25 +123,50 @@ for i in $(seq 0 $((CHALLENGE_COUNT - 1))); do
     LEVEL=$(jq -r ".challenges[$i].level" "$CHALLENGE_FILE")
     GAME_NAME=$(jq -r ".challenges[$i].game" "$CHALLENGE_FILE")
 
-    # Get Denshokan contract address from spec file (this is the game's NFT contract)
-    GAME_CONTRACT=$(jq -r ".challenges[$i].dojo.$NETWORK.denshokan_address" "$CHALLENGE_FILE")
+    # Use mock contracts for Sepolia, real Denshokan contracts for Mainnet
+    if [ "$NETWORK" == "sepolia" ]; then
+        # Look up mock contract from manifest
+        GAME_CONTRACT=$(jq -r '.external_contracts[] | select(.tag == "focg_adventure-mock_'$LEVEL'") | .address' "$MANIFEST_FILE")
 
-    if [ -z "$GAME_CONTRACT" ] || [ "$GAME_CONTRACT" == "null" ]; then
-        echo -e "${YELLOW}Warning: No Denshokan address found for level $LEVEL in $NETWORK config${NC}"
-        continue
+        if [ -z "$GAME_CONTRACT" ] || [ "$GAME_CONTRACT" == "null" ]; then
+            echo -e "${YELLOW}Warning: No MockGame contract found for level $LEVEL${NC}"
+            continue
+        fi
+
+        echo -e "${YELLOW}Configuring challenge level $LEVEL ($GAME_NAME) with MockGame...${NC}"
+        echo -e "${BLUE}  Mock Contract: $GAME_CONTRACT${NC}"
+    else
+        # Get real Denshokan contract address from spec file for mainnet
+        GAME_CONTRACT=$(jq -r ".challenges[$i].dojo.$NETWORK.denshokan_address" "$CHALLENGE_FILE")
+
+        if [ -z "$GAME_CONTRACT" ] || [ "$GAME_CONTRACT" == "null" ]; then
+            echo -e "${YELLOW}Warning: No Denshokan address found for level $LEVEL in $NETWORK config${NC}"
+            continue
+        fi
+
+        echo -e "${YELLOW}Configuring challenge level $LEVEL ($GAME_NAME)...${NC}"
+        echo -e "${BLUE}  Denshokan Contract: $GAME_CONTRACT${NC}"
     fi
 
-    echo -e "${YELLOW}Configuring challenge level $LEVEL ($GAME_NAME)...${NC}"
-    echo -e "${BLUE}  Denshokan Contract: $GAME_CONTRACT${NC}"
-
     # set_challenge(level_number, game_contract)
-    # Note: game_contract is the Denshokan NFT contract that implements IMinigameTokenData
+    # Note: game_contract is either MockGame (sepolia) or Denshokan NFT contract (mainnet)
     sozo execute --profile $NETWORK --wait focg_adventure-actions set_challenge \
         "$LEVEL" \
         "$GAME_CONTRACT"
 
     if [ $? -eq 0 ]; then
         echo -e "${GREEN}✓ Challenge level $LEVEL configured${NC}"
+
+        # For Sepolia, pre-configure test game in MockGame
+        if [ "$NETWORK" == "sepolia" ]; then
+            echo -e "${BLUE}  Configuring test game in MockGame...${NC}"
+            sozo execute --profile $NETWORK --wait "$GAME_CONTRACT" set_game_over 1 1
+            if [ $? -eq 0 ]; then
+                echo -e "${GREEN}  ✓ Test game ready (game_id=1, game_over=true)${NC}"
+            else
+                echo -e "${YELLOW}  Warning: Could not configure test game${NC}"
+            fi
+        fi
     else
         echo -e "${RED}✗ Failed to configure challenge level $LEVEL${NC}"
     fi
@@ -213,10 +238,25 @@ echo -e "\n${BLUE}Configuration:${NC}"
 echo -e "  ✓ Owner permissions granted to deployer"
 echo -e "  ✓ NFT contract configured in Actions with 6 levels"
 echo -e "  ✓ Actions contract set as minter on NFT"
-echo -e "  ✓ Challenge levels configured from spec/challenges.json"
+
+if [ "$NETWORK" == "sepolia" ]; then
+    echo -e "  ✓ Challenge levels configured with MockGame contracts (testnet mode)"
+    echo -e "  ✓ MockGame contracts pre-configured with test game (game_id=1)"
+else
+    echo -e "  ✓ Challenge levels configured with real game Denshokan contracts"
+fi
+
 echo -e "  ✓ Puzzle levels configured from spec/puzzles.json"
 echo -e "  ✓ Initial NFT minted to deployer account"
+
 echo -e "\n${YELLOW}Next steps:${NC}"
-echo -e "  1. Verify game contract addresses in spec/challenges.json match deployed games"
-echo -e "  2. Test challenge completion with real game sessions"
+if [ "$NETWORK" == "sepolia" ]; then
+    echo -e "  1. Test challenge completion with: sozo execute focg_adventure-actions complete_challenge_level <map_id> <level> 1"
+    echo -e "  2. MockGame contracts can be controlled with: sozo execute <mock_address> set_game_over <token_id> <0|1>"
+    echo -e "  3. Game names and descriptions match mainnet for realistic testing"
+else
+    echo -e "  1. Verify game contract addresses in spec/challenges.json match deployed games"
+    echo -e "  2. Test challenge completion with real game sessions"
+fi
+
 echo -e "\nSee IMPL.md and spec/SPEC.md for details"

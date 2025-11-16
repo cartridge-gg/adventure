@@ -1,8 +1,8 @@
 {
   "world": {
     "class_hash": "0x6ffd143494a0fdb39b68dd76f5e2766d43265ae40987985a4c3d1fb0d0dd821",
-    "address": "0x4ecfc2a34d0f790e57a241b341a7186e1f9c39cf49e487000796e49e0b7e9e0",
-    "seed": "focg_adventure",
+    "address": "0x21c812d1851c3d0ac07a8537d6e9ca300eae5762ad4c34fa42110bdfc501642",
+    "seed": "adventure-v1",
     "name": "FOCG Adventure",
     "entrypoints": [
       "uuid",
@@ -33,7 +33,7 @@
   },
   "contracts": [
     {
-      "address": "0x78017e616b93df94b3870bb1905dae137e0150c7947b7b09772af194c98cec5",
+      "address": "0x62595f9d17d45c0aface59491e692ce07eabaf77f4ec99ba9962b556da04d0d",
       "class_hash": "0x41db70f97ee17eb7cb2215e8b4714582a3832db18527faef145c8ee51a56704",
       "init_calldata": [],
       "tag": "focg_adventure-actions",
@@ -170,7 +170,7 @@
       "class_hash": "0x46948525c986e3b90587111e92a3b8d59542f46886efee978b265a34d419663",
       "contract_name": "AdventureMap",
       "tag": "focg_adventure-adventure_map",
-      "address": "0x539dfef7179231f7099801ebcd02c6755ee3608b1008bbcb45c3907f61fdacd",
+      "address": "0x479ed0ab82f97e1b422de4082879c83c969a100370fee3b6830ecb781fdefcf",
       "constructor_calldata": [
         "0x13d9ee239f33fea4f8785b9e3870ade909e20a9599ae7cd62c1c292b73af1b7",
         "6"
@@ -195,7 +195,7 @@
       "class_hash": "0x3f007497d3e4d9f7b0d3aff67e23ced399840c03c61bbe9838466ee6b079d55",
       "contract_name": "MockGame",
       "tag": "focg_adventure-mock_1",
-      "address": "0x4f0fb3b172f559022e0b9e851871818eb5d24a413eb14e460ccf79a27e760a0",
+      "address": "0x596e341ba368d743250b57af6e0bede1e5fbec8115eced40687f0000ee7b0ac",
       "constructor_calldata": [],
       "encoded_constructor_calldata": [],
       "entrypoints": [
@@ -207,7 +207,7 @@
       "class_hash": "0x3f007497d3e4d9f7b0d3aff67e23ced399840c03c61bbe9838466ee6b079d55",
       "contract_name": "MockGame",
       "tag": "focg_adventure-mock_3",
-      "address": "0x2a27d2fc2a1b3dbe0d8290f7fe0a95cc0b5b47f9e5492b18e8ffbf92342d579",
+      "address": "0x3bbea207f6a6e2cfdb3260bebf2da6963c3c029394b216763d7a8a12638db6f",
       "constructor_calldata": [],
       "encoded_constructor_calldata": [],
       "entrypoints": [
@@ -219,7 +219,7 @@
       "class_hash": "0x3f007497d3e4d9f7b0d3aff67e23ced399840c03c61bbe9838466ee6b079d55",
       "contract_name": "MockGame",
       "tag": "focg_adventure-mock_5",
-      "address": "0x1f88c8877957ad1519b221f986f0f063421bb981900388f835d40b059cb1def",
+      "address": "0x324a5aa8a6300c8aecc7c2c3fcded091a5c3a246f02d98cd87023ab63e1f0db",
       "constructor_calldata": [],
       "encoded_constructor_calldata": [],
       "entrypoints": [
