@@ -8,10 +8,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useReadContract } from '@starknet-react/core';
 import { Abi } from 'starknet';
-import { MAP_ADDRESS } from '../lib/config';
-
-// Import the ABI for the AdventureMap contract
-import adventureMapAbi from '../../../contracts/target/dev/focg_adventure_AdventureMap.contract_class.json';
+import { MAP_ADDRESS, MAP_ABI } from '../lib/config';
 
 interface OnChainMapNFTProps {
   tokenId: string;
@@ -23,7 +20,7 @@ export function OnChainMapNFT({ tokenId, onRefetchReady }: OnChainMapNFTProps) {
 
   // Read token_uri from the contract
   const { data: tokenUriData, error: readError, isPending: isReading, refetch } = useReadContract({
-    abi: adventureMapAbi.abi as Abi,
+    abi: MAP_ABI as Abi,
     address: MAP_ADDRESS as `0x${string}`,
     functionName: 'token_uri',
     args: [BigInt(tokenId)],
