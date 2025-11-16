@@ -17,6 +17,16 @@ These games are actively integrated into FOCG Adventure as playable challenge le
 - **Repository**: https://github.com/cartridge-gg/nums
 - **Play Online**: https://nums.gg/
 
+**Denshokan addressess:**
+
+```
+Mainnet
+0x473a834b65e8129652dec5788c5d9427fe1ea7e2e79fbe0493e38df816259d9
+
+Sepolia
+0x02334dc9c950c74c3228e2a343d495ae36f0b4edf06767a679569e9f9de08776
+```
+
 #### **dopewars/** - Dope Wars
 - **Purpose**: Level 3 challenge "The Rogue's Seal"
 - **Description**: Onchain adaptation of the classic Drug Wars game - arbitrage drugs across NYC neighborhoods in a competitive multiplayer economy
@@ -27,6 +37,16 @@ These games are actively integrated into FOCG Adventure as playable challenge le
 - **Manifest Tag**: `dopewars-game_token_system_v0`
 - **Repository**: https://github.com/cartridge-gg/dopewars
 - **Play Online**: https://dopewars.game/
+
+**Denshokan addressess:**
+
+```
+Mainnet
+0x0000000000000000000000000000000000000000000000000000000000000000
+
+Sepolia
+0x0000000000000000000000000000000000000000000000000000000000000000
+```
 
 #### **death-mountain/** - Loot Survivor (Death Mountain)
 - **Purpose**: Level 5 challenge "The Warrior's Seal"
@@ -43,6 +63,16 @@ These games are actively integrated into FOCG Adventure as playable challenge le
 - **Repository**: https://github.com/Provable-Games/death-mountain
 - **Play Online**: https://lootsurvivor.io/
 - **Manifest Location**: `death-mountain/contracts/manifest_*.json`
+
+**Denshokan addressess:**
+
+```
+Mainnet
+0x036017e69d21d6d8c13e266eabb73ef1f1d02722d86bdcabe5f168f8e549d3cd
+
+Sepolia
+0x0000000000000000000000000000000000000000000000000000000000000000
+```
 
 #### **ronins-pact/** - Ronin's Pact
 - **Purpose**: Reference implementation for game integration architecture

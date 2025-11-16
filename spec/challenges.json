@@ -15,7 +15,7 @@
         },
         "sepolia": {
           "torii_url": "https://api.cartridge.gg/x/nums-bal/torii",
-          "denshokan_address": "0x02334dc9c950c74c3228e2a343d495ae36f0b4edf06767a679569e9f9de08776"
+          "denshokan_address": "0x6220bf9258fe51f5e6ffb0e3249fd5ddb9ab18b0d3969e6f0a9902851d80bba"
         }
       }
     },
@@ -34,7 +34,7 @@
         },
         "sepolia": {
           "torii_url": "https://api.cartridge.gg/x/provable-dw/torii",
-          "denshokan_address": "0x02334dc9c950c74c3228e2a343d495ae36f0b4edf06767a679569e9f9de08776"
+          "denshokan_address": "0x4d9fb995f34458b42882fe417716a4f55fcc24c58e460cfc2b1223e70659e7f"
         }
       }
     },
@@ -53,7 +53,7 @@
         },
         "sepolia": {
           "torii_url": "https://api.cartridge.gg/x/pg-sepolia/torii",
-          "denshokan_address": "0x02334dc9c950c74c3228e2a343d495ae36f0b4edf06767a679569e9f9de08776"
+          "denshokan_address": "0x1c97b6812871ed11430178c508f5dc4e464d52669cbdad03dad8a284b8fb14e"
         }
       }
     }
