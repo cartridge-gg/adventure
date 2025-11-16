@@ -79,7 +79,6 @@ export const LEVEL_ICONS = {
 // ============================================================================
 
 export const TOTAL_LEVELS = ADVENTURE_LEVELS.length;
-export const USE_ONCHAIN_MAP = true;
 
 // ============================================================================
 // APP TEXT

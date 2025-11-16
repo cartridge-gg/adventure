@@ -9,15 +9,14 @@ import { AdventureProgress } from '../lib/adventureTypes';
 import { ADVENTURE_TEXT } from '../lib/adventureConfig';
 import { MAP_ADDRESS, CHAIN_ENV } from '../lib/config';
 import { OnChainMapNFT } from './OnChainMapNFT';
-import { OffChainMap } from './OffChainMap';
+// import { OffChainMap } from './OffChainMap';
 
 interface AdventureMapNFTProps {
   progress: AdventureProgress;
-  useOnChainMap?: boolean;
   onRefetchReady?: (refetch: () => void) => void;
 }
 
-export function AdventureMapNFT({ progress, useOnChainMap = false, onRefetchReady }: AdventureMapNFTProps) {
+export function AdventureMapNFT({ progress, onRefetchReady }: AdventureMapNFTProps) {
   const isComplete = progress.levelsCompleted.length === progress.totalLevels;
 
   // Generate explorer URL based on environment
@@ -61,11 +60,8 @@ export function AdventureMapNFT({ progress, useOnChainMap = false, onRefetchRead
 
         {/* Map SVG - render on-chain or off-chain based on prop */}
         <div className="mb-4">
-          {useOnChainMap ? (
-            <OnChainMapNFT tokenId={progress.tokenId} onRefetchReady={onRefetchReady} />
-          ) : (
-            <OffChainMap progress={progress} />
-          )}
+          <OnChainMapNFT tokenId={progress.tokenId} onRefetchReady={onRefetchReady} />
+          {/* <OffChainMap progress={progress} /> */}
         </div>
 
         {/* Support Link */}
