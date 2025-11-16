@@ -142,8 +142,8 @@ export const ADVENTURE_TEXT = {
     shareMessage: `⛩️ I've found the Lost Temple!\n\nBegin your own journey at temple.cartridge.gg\n\n@cartridge_gg @ohayo_dojo @EFDevcon`,
   },
   support: {
-    text: 'Need help? Join our Telegram channel',
-    url: 'https://t.me/+f6C1Q4eo0HM0M2Vh',
+    text: 'Need help? Reach out on Telegram',
+    url: 'https://t.me/kronosapiens',
   },
   loading: {
     adventure: 'Consulting the ancient maps...',

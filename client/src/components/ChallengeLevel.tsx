@@ -141,8 +141,7 @@ export function ChallengeLevel({ levelNumber, tokenId, status, onComplete, onMap
       {!dojoConfig && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
           <p className="text-blue-800 text-sm text-center">
-            <strong>Testnet Mode:</strong> Real games not available.
-            Testing with pre-configured mock.
+            <strong>Testnet Mode:</strong> Using pre-configured mock.
           </p>
         </div>
       )}
