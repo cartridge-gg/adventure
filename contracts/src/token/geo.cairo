@@ -154,7 +154,7 @@ pub fn generate_level_assignments(token_id: u256, total_levels: u8) -> Array<u8>
     };
 
     // Fisher-Yates shuffle using token_id as seed
-    let mut seed = token_id * 5786;
+    let mut seed = token_id;
 
     // Shuffle from end to start
     let mut i = total_levels;

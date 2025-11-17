@@ -10,6 +10,7 @@ default = "focg_adventure"
 rpc_url = "https://api.cartridge.gg/x/starknet/sepolia"
 account_address = "0x05cb4ea8cc45dd51505a7e585b4a73d87d2f9448ed6a380155006229170e4819"
 keystore_path = "~/.starkli-wallets/deployer-sepolia.json"
+world_address = "0x32d42ba3ea398ab214201871f845ee2072229697a14036ea474f11279772080"
 
 [writers]
 "focg_adventure" = ["focg_adventure-actions"]

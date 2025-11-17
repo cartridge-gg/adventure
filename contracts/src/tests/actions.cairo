@@ -2,6 +2,7 @@
 // Tests admin functions, level completion, and full lifecycle
 
 use starknet::ContractAddress;
+use core::poseidon::poseidon_hash_span;
 use dojo::world::{WorldStorage, WorldStorageTrait};
 use dojo::model::ModelStorage;
 use dojo_snf_test::{
@@ -10,7 +11,8 @@ use dojo_snf_test::{
 };
 use snforge_std::{
     start_cheat_caller_address, stop_cheat_caller_address,
-    declare, ContractClassTrait, DeclareResultTrait
+    declare, ContractClassTrait, DeclareResultTrait,
+    signature::{KeyPairTrait, stark_curve::{StarkCurveKeyPairImpl, StarkCurveSignerImpl}}
 };
 use openzeppelin::token::erc721::interface::{IERC721Dispatcher, IERC721DispatcherTrait};
 
@@ -303,6 +305,100 @@ fn test_complete_puzzle_level_invalid_signature() {
     // This will fail ECDSA verification
     let signature = array![1, 2].span(); // Invalid signature
     actions.complete_puzzle_level(0, 1, signature);
+    stop_cheat_caller_address(actions_address);
+}
+
+#[test]
+#[available_gas(l1_gas: 0, l1_data_gas: 10000, l2_gas: 20000000)]
+fn test_complete_puzzle_level_valid_signature() {
+    let (_world, actions, actions_address) = setup_world();
+
+    // Deploy and configure contracts
+    let nft_address = deploy_adventure_map(owner(), TOTAL_LEVELS);
+    let nft = IAdventureMapDispatcher { contract_address: nft_address };
+
+    // Generate a keypair to simulate a codeword-derived key
+    let keypair = KeyPairTrait::<felt252, felt252>::generate();
+    let solution_public_key = keypair.public_key;
+
+    start_cheat_caller_address(actions_address, owner());
+    actions.set_nft_contract(nft_address, TOTAL_LEVELS);
+    // Set puzzle level 1 with the solution public key
+    actions.set_puzzle(1, solution_public_key.try_into().unwrap());
+    stop_cheat_caller_address(actions_address);
+
+    start_cheat_caller_address(nft_address, owner());
+    nft.set_minter(actions_address);
+    stop_cheat_caller_address(nft_address);
+
+    // Mint NFT
+    let player_addr = player();
+    start_cheat_caller_address(actions_address, player_addr);
+    actions.mint('testuser');
+
+    // Create message hash: hash(player_address)
+    let mut message_data = array![player_addr.into()];
+    let message_hash = poseidon_hash_span(message_data.span());
+
+    // Sign the message with the solution's private key
+    let (r, s) = keypair.sign(message_hash).unwrap();
+    let signature = array![r, s].span();
+
+    // Complete puzzle level 1 with valid signature - should succeed
+    actions.complete_puzzle_level(0, 1, signature);
+    stop_cheat_caller_address(actions_address);
+
+    // Verify level 1 is complete
+    let progress = nft.get_progress(0);
+    assert((progress & 2) != 0, 'Level 1 not complete'); // Bit 1 = level 1
+}
+
+#[test]
+#[available_gas(l1_gas: 0, l1_data_gas: 10000, l2_gas: 20000000)]
+#[should_panic(expected: ('Invalid solution',))]
+fn test_complete_puzzle_level_replay_protection() {
+    let (_world, actions, actions_address) = setup_world();
+
+    // Deploy and configure contracts
+    let nft_address = deploy_adventure_map(owner(), TOTAL_LEVELS);
+    let nft = IAdventureMapDispatcher { contract_address: nft_address };
+
+    // Generate a keypair to simulate a codeword-derived key
+    let keypair = KeyPairTrait::<felt252, felt252>::generate();
+    let solution_public_key = keypair.public_key;
+
+    start_cheat_caller_address(actions_address, owner());
+    actions.set_nft_contract(nft_address, TOTAL_LEVELS);
+    actions.set_puzzle(1, solution_public_key.try_into().unwrap());
+    stop_cheat_caller_address(actions_address);
+
+    start_cheat_caller_address(nft_address, owner());
+    nft.set_minter(actions_address);
+    stop_cheat_caller_address(nft_address);
+
+    // Player 1 mints NFT and completes puzzle
+    let player_addr = player();
+    start_cheat_caller_address(actions_address, player_addr);
+    actions.mint('player1');
+
+    // Player 1 creates valid signature for their own address
+    let mut message_data = array![player_addr.into()];
+    let message_hash = poseidon_hash_span(message_data.span());
+    let (r, s) = keypair.sign(message_hash).unwrap();
+    let signature = array![r, s].span();
+
+    // Player 1 completes puzzle - should succeed
+    actions.complete_puzzle_level(0, 1, signature);
+    stop_cheat_caller_address(actions_address);
+
+    // Player 2 mints NFT
+    let other_addr = other();
+    start_cheat_caller_address(actions_address, other_addr);
+    actions.mint('player2');
+
+    // Player 2 tries to reuse Player 1's signature - should fail
+    // This fails because the signature is for hash(player_addr), not hash(other_addr)
+    actions.complete_puzzle_level(1, 1, signature);
     stop_cheat_caller_address(actions_address);
 }
 
