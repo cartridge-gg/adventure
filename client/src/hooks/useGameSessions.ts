@@ -14,7 +14,8 @@
 import { useState, useEffect } from 'react';
 import { RpcProvider } from 'starknet';
 import { useAccount, useProvider } from '@starknet-react/core';
-import { getChallengeByLevel, getDojoConfigForChallenge } from '../lib/challenges';
+import challengesData from '../../../spec/challenges.json';
+import { CHAIN_ENV, MAINNET_DENSHOKAN_ADDRESS } from '../lib/config';
 import { queryPlayerGameTokenIds } from '../lib/toriiQueries';
 import { isGameComplete } from '../lib/denshokanCalls';
 
@@ -36,8 +37,11 @@ export function useGameSessions(challengeLevel: number) {
   const [isLoadingTokens, setIsLoadingTokens] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const challenge = getChallengeByLevel(challengeLevel);
-  const dojoConfig = challenge ? getDojoConfigForChallenge(challenge) : null;
+  // Find challenge configuration by level
+  const challenge = challengesData.challenges.find((c) => c.level === challengeLevel);
+
+  // Get deployment config (only mainnet exists, dev/sepolia return undefined)
+  const dojoConfig = challenge && CHAIN_ENV === 'mainnet' ? challenge.dojo.mainnet : null;
 
   // Query Torii SQL endpoint for player's tokens
   // NOTE: In testnet mode (dev/sepolia), dojoConfig will be undefined and we skip Torii queries
@@ -63,7 +67,12 @@ export function useGameSessions(challengeLevel: number) {
         console.log('[useGameSessions] Querying Torii for player tokens...');
 
         // Step 1: Query player's token IDs from Torii SQL endpoint
-        const tokenIds = await queryPlayerGameTokenIds(address, dojoConfig);
+        const tokenIds = await queryPlayerGameTokenIds(
+          address,
+          dojoConfig.torii_url,
+          MAINNET_DENSHOKAN_ADDRESS,
+          dojoConfig.game_name
+        );
 
         console.log(`[useGameSessions] Found ${tokenIds.length} tokens owned by player`);
 
@@ -77,7 +86,7 @@ export function useGameSessions(challengeLevel: number) {
 
           const batchResults = await Promise.all(
             batch.map((tokenId) =>
-              isGameComplete(provider as RpcProvider, dojoConfig.minigame_contract, tokenId)
+              isGameComplete(provider as RpcProvider, dojoConfig.minigame_address, tokenId)
             )
           );
 

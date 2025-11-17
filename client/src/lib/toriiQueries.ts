@@ -11,8 +11,6 @@
  * @see https://github.com/cartridge-gg/loot-survivor/blob/main/client/src/dojo/useGameTokens.ts
  */
 
-import { DojoGameConfig } from './challenges';
-
 /**
  * Add padding to StarkNet addresses (ensure 66 character format with 0x prefix)
  */
@@ -24,33 +22,41 @@ function addAddressPadding(address: string): string {
 /**
  * Query player's game session token IDs from Torii SQL endpoint
  *
- * Uses Torii's indexed token_balances table to find tokens owned by the player.
- * This is much more efficient than querying all tokens and checking ownership.
+ * Uses Torii's indexed token_balances table to find tokens owned by the player,
+ * filtered by game name using token attributes.
  *
  * @param playerAddress - The player's wallet address
- * @param dojoConfig - Dojo world configuration (Torii endpoints, Denshokan address, etc.)
+ * @param toriiUrl - Torii SQL endpoint URL
+ * @param denshokanAddress - Denshokan NFT contract address
+ * @param gameName - Game name to filter by (from token attributes)
  * @returns Array of token IDs owned by the player
  */
 export async function queryPlayerGameTokenIds(
   playerAddress: string,
-  dojoConfig: DojoGameConfig
+  toriiUrl: string,
+  denshokanAddress: string,
+  gameName: string
 ): Promise<string[]> {
-  console.log('[Torii] Querying player tokens from:', dojoConfig.torii_url);
+  console.log('[Torii] Querying player tokens from:', toriiUrl);
   console.log('[Torii] Player:', playerAddress);
-  console.log('[Torii] Denshokan:', dojoConfig.denshokan_address);
+  console.log('[Torii] Denshokan:', denshokanAddress);
+  console.log('[Torii] Game name:', gameName);
 
   try {
     const paddedPlayer = addAddressPadding(playerAddress);
-    const paddedContract = addAddressPadding(dojoConfig.denshokan_address);
+    const paddedContract = addAddressPadding(denshokanAddress);
 
     const query = `
-      SELECT token_id FROM token_balances
-      WHERE account_address = "${paddedPlayer}"
-      AND contract_address = "${paddedContract}"
-      LIMIT 10000
+      SELECT DISTINCT tb.token_id
+      FROM token_balances AS tb
+      JOIN token_attributes AS ta ON ta.token_id = tb.token_id
+      WHERE tb.account_address = "${paddedPlayer}"
+      AND tb.contract_address = "${paddedContract}"
+      AND ta.trait_name = "Game Name"
+      AND ta.trait_value = "${gameName}"
     `;
 
-    const url = `${dojoConfig.torii_url}/sql?query=${encodeURIComponent(query)}`;
+    const url = `${toriiUrl}/sql?query=${encodeURIComponent(query)}`;
 
     const response = await fetch(url, {
       method: 'GET',
@@ -78,4 +84,3 @@ export async function queryPlayerGameTokenIds(
     return [];
   }
 }
-

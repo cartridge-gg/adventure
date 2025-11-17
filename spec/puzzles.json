@@ -18,6 +18,7 @@
       "level": 5,
       "name": "The Tower of Battle",
       "description": "Prove yourself by building a tower to the sky. Through alone victory shall you pass.",
+      "tip": "After winning, ask a Dojo builder for the codeword.",
       "location": "The hub for the magistri ludorum",
       "codeword": "CARTRIDGE"
     }
