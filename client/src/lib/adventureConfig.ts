@@ -44,6 +44,7 @@ export const ADVENTURE_LEVELS: Level[] = allLevelNumbers.map((levelNum) => {
       gameUrl: challenge.location,
       gameInstructions: `Play ${challenge.game} and complete a game session. Once you succeed, return here to claim completion.`,
       verificationStrategy: 'score_threshold',
+      tip: challenge.tip, // Optional tip from spec file
     } as ChallengeLevel;
   }
 
@@ -58,6 +59,7 @@ export const ADVENTURE_LEVELS: Level[] = allLevelNumbers.map((levelNum) => {
       location: puzzle.location,
       puzzleDescription: puzzle.description,
       expectedCodeword: puzzle.codeword,
+      tip: puzzle.tip, // Optional tip from spec file
     } as QuestLevel;
   }
 
@@ -125,7 +127,6 @@ export const ADVENTURE_TEXT = {
       'Complete an ancient trial',
       'Return to claim your victory',
     ],
-    tip:'You can find free sessions in Cartridge booster packs. Check the Gaming District.',
   },
   questLevel: {
     locationHeader: 'Waypoint Location:',

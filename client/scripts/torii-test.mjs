@@ -11,6 +11,8 @@ import { RpcProvider, Contract } from 'starknet';
 import { getContractAddress } from '../src/lib/challengeContracts.mjs';
 import challengesData from '../../spec/challenges.json' with { type: 'json' };
 
+const MAINNET_DENSHOKAN_ADDRESS = "0x036017e69d21d6d8c13e266eabb73ef1f1d02722d86bdcabe5f168f8e549d3cd";
+
 // Import production code
 // Note: We inline the functions here since we're testing them directly
 // This ensures we're testing the exact same logic as production
@@ -26,17 +28,18 @@ function addAddressPadding(address) {
 async function queryPlayerGameTokenIds(playerAddress, dojoConfig) {
   console.log('[Torii] Querying player tokens from:', dojoConfig.torii_url);
   console.log('[Torii] Player:', playerAddress);
-  console.log('[Torii] Denshokan:', dojoConfig.denshokan_address);
 
   try {
     const paddedPlayer = addAddressPadding(playerAddress);
-    const paddedContract = addAddressPadding(dojoConfig.denshokan_address);
 
     const query = `
-      SELECT token_id FROM token_balances
-      WHERE account_address = "${paddedPlayer}"
-      AND contract_address = "${paddedContract}"
-      LIMIT 10000
+      SELECT DISTINCT tb.token_id
+      FROM token_balances AS tb
+      JOIN token_attributes AS ta ON ta.token_id = tb.token_id
+      WHERE tb.account_address = "${paddedPlayer}"
+      AND tb.contract_address = "${MAINNET_DENSHOKAN_ADDRESS}"
+      AND ta.trait_name = "Game Name"
+      AND ta.trait_value = "${dojoConfig.game_name}"
     `;
 
     const url = `${dojoConfig.torii_url}/sql?query=${encodeURIComponent(query)}`;
@@ -104,16 +107,15 @@ function buildTestConfigs() {
   const configs = [];
 
   for (const challenge of challengesData.challenges) {
-    // Test both networks for each challenge
-    for (const network of ['mainnet', 'sepolia']) {
+    // Test mainnet only
+    for (const network of ['mainnet']) {
       const deploymentConfig = challenge.dojo[network];
 
-      // Resolve minigame contract from manifest
-      const minigameContract = getContractAddress(
-        challenge.manifest_path,
-        network,
-        challenge.minigame_tag
-      );
+      // Skip if this network isn't configured for this challenge
+      if (!deploymentConfig) {
+        console.log(`Skipping ${challenge.game} on ${network} - not configured`);
+        continue;
+      }
 
       configs.push({
         name: `${challenge.game} (${network.charAt(0).toUpperCase() + network.slice(1)})`,
@@ -123,8 +125,8 @@ function buildTestConfigs() {
           torii_url: deploymentConfig.torii_url,
           torii_graphql: `${deploymentConfig.torii_url}/graphql`,
           namespace: challenge.namespace,
-          denshokan_address: deploymentConfig.denshokan_address,
-          minigame_contract: minigameContract,
+          game_name: deploymentConfig.game_name,
+          minigame_address: deploymentConfig.minigame_address,
         },
       });
     }
@@ -181,7 +183,7 @@ async function testGame(game, provider) {
 
     // Step 2: Use minigame contract for game_over calls
     console.log('\nStep 2: Using minigame contract for game_over calls...');
-    console.log(`✅ Minigame contract: ${game.dojoConfig.minigame_contract}`);
+    console.log(`✅ Minigame contract: ${game.dojoConfig.minigame_address}`);
 
     // Step 3: Check game_over status for tokens (sample first 5)
     console.log('\nStep 3: Check game_over status (sampling first 5 tokens)...');
@@ -190,7 +192,7 @@ async function testGame(game, provider) {
 
     let completedCount = 0;
     for (const tokenId of sampleTokens) {
-      const gameOver = await isGameComplete(provider, game.dojoConfig.minigame_contract, tokenId);
+      const gameOver = await isGameComplete(provider, game.dojoConfig.minigame_address, tokenId);
       console.log(`  Token ${formatTokenId(tokenId)}: ${gameOver ? '✅ Complete' : '⏳ In progress'}`);
       if (gameOver) completedCount++;
     }

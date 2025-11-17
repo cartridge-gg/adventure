@@ -1,59 +1,36 @@
 {
   "challenges": [
     {
-      "level": 1,
+      "level": 2,
       "game": "The Mage's Seal",
       "description": "The trial of the mage. Complete a Nums session to break the seal.",
+      "tip": "You can find free sessions in a Cartridge booster pack. Check the Gaming District.",
       "location": "https://nums.gg/",
       "manifest_path": "nums",
       "minigame_tag": "NUMS-Minigame",
       "namespace": "NUMS",
       "dojo": {
         "mainnet": {
+          "game_name": "Nums",
           "torii_url": "https://api.cartridge.gg/x/nums-mainnet/torii",
-          "denshokan_address": "0x473a834b65e8129652dec5788c5d9427fe1ea7e2e79fbe0493e38df816259d9"
-        },
-        "sepolia": {
-          "torii_url": "https://api.cartridge.gg/x/nums-bal/torii",
-          "denshokan_address": "0x6220bf9258fe51f5e6ffb0e3249fd5ddb9ab18b0d3969e6f0a9902851d80bba"
+          "minigame_address": "0x0473A834B65e8129652DEc5788c5D9427fE1EA7e2E79Fbe0493e38dF816259D9"
         }
       }
     },
     {
-      "level": 3,
-      "game": "The Rogue's Seal",
-      "description": "The trial of the rogue. Complete a Dope Wars session to break the seal.",
-      "location": "https://dopewars.game/",
-      "manifest_path": "dopewars",
-      "minigame_tag": "dopewars-game_token_system_v0",
-      "namespace": "dopewars",
-      "dojo": {
-        "mainnet": {
-          "torii_url": "https://api.cartridge.gg/x/dopewars-mainnet/torii",
-          "denshokan_address": "0x0000000000000000000000000000000000000000000000000000000000000000"
-        },
-        "sepolia": {
-          "torii_url": "https://api.cartridge.gg/x/provable-dw/torii",
-          "denshokan_address": "0x4d9fb995f34458b42882fe417716a4f55fcc24c58e460cfc2b1223e70659e7f"
-        }
-      }
-    },
-    {
-      "level": 5,
+      "level": 4,
       "game": "The Warrior's Seal",
       "description": "The trial of the warrior. Complete a Loot Survivor 2 session to break the seal.",
+      "tip": "You can find free sessions in a Cartridge booster pack. Check the Gaming District.",
       "location": "https://lootsurvivor.io/",
       "manifest_path": "death-mountain/contracts",
       "minigame_tag": "ls_0_0_9-game_token_systems",
       "namespace": "ls_0_0_9",
       "dojo": {
         "mainnet": {
+          "game_name": "Death Mountain",
           "torii_url": "https://api.cartridge.gg/x/pg-mainnet-10/torii",
-          "denshokan_address": "0x036017e69d21d6d8c13e266eabb73ef1f1d02722d86bdcabe5f168f8e549d3cd"
-        },
-        "sepolia": {
-          "torii_url": "https://api.cartridge.gg/x/pg-sepolia/torii",
-          "denshokan_address": "0x1c97b6812871ed11430178c508f5dc4e464d52669cbdad03dad8a284b8fb14e"
+          "minigame_address": "0x05e2dfBDC3c193de629e5beb116083b06bD944c1608C9c793351D5792Ba29863"
         }
       }
     }

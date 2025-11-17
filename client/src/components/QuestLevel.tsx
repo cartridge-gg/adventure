@@ -151,6 +151,26 @@ export function QuestLevel({ level, status, tokenId, onComplete, onMapRefresh }:
           <p className="text-temple-parchment/70 text-sm italic">{level.location}</p>
         </div>
 
+        {/* Tip Box (only if tip exists for this level) */}
+        {level.tip && (
+          <div className="bg-gradient-to-r from-temple-jade/20 to-temple-moss/20 border-2 border-temple-jade/40 rounded-lg p-4 mb-4 relative overflow-hidden texture-parchment">
+            {/* Decorative glow effect */}
+            <div className="absolute inset-0 bg-gradient-to-br from-temple-jade/10 to-transparent pointer-events-none"></div>
+
+            <div className="relative flex gap-3">
+              {/* Icon */}
+              <div className="text-2xl glow-mystical flex-shrink-0">💎</div>
+
+              {/* Tip content */}
+              <div className="flex-1">
+                <p className="text-temple-parchment/90 text-sm" style={{ textShadow: '1px 1px 2px rgba(0, 0, 0, 0.6)' }}>
+                  {level.tip}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Dev Mode: Show Codeword */}
         {isDevMode && (
           <div className="bg-temple-ember/20 border-2 border-temple-gold/50 rounded-lg p-4 mb-4">

@@ -2,9 +2,9 @@
 // Environment-based chain configuration - set VITE_CHAIN to 'dev', 'sepolia', or 'mainnet'
 
 import { constants } from "starknet";
-import manifestDev from "../../../contracts/manifest_dev.json";
-import manifestSepolia from "../../../contracts/manifest_sepolia.json";
-import manifestMainnet from "../../../contracts/manifest_mainnet.json";
+import manifestDev from "../../../contracts/manifest_dev.json" with { type: 'json' };
+import manifestSepolia from "../../../contracts/manifest_sepolia.json" with { type: 'json' };
+import manifestMainnet from "../../../contracts/manifest_mainnet.json" with { type: 'json' };
 
 // ============================================================================
 // ENVIRONMENT-BASED CHAIN SELECTION
@@ -26,6 +26,7 @@ export const SEPOLIA_URL = "https://api.cartridge.gg/x/starknet/sepolia";
 
 export const MAINNET_CHAIN_ID = constants.StarknetChainId.SN_MAIN;
 export const MAINNET_URL = "https://api.cartridge.gg/x/starknet/mainnet";
+export const MAINNET_DENSHOKAN_ADDRESS = "0x036017e69d21d6d8c13e266eabb73ef1f1d02722d86bdcabe5f168f8e549d3cd";
 
 // ============================================================================
 // MANIFEST SELECTION

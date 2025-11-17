@@ -116,8 +116,11 @@ else
 fi
 
 # Set NFT contract in actions
-TOTAL_LEVELS=6
-echo -e "${BLUE}Configuring NFT contract in actions...${NC}"
+# Compute total levels from spec files
+PUZZLE_COUNT=$(jq '.puzzles | length' "../spec/puzzles.json")
+CHALLENGE_COUNT=$(jq '.challenges | length' "../spec/challenges.json")
+TOTAL_LEVELS=$((PUZZLE_COUNT + CHALLENGE_COUNT))
+echo -e "${BLUE}Configuring NFT contract in actions (${TOTAL_LEVELS} total levels: ${PUZZLE_COUNT} puzzles + ${CHALLENGE_COUNT} challenges)...${NC}"
 sozo execute --profile dev --wait focg_adventure-actions set_nft_contract "$NFT_ADDRESS" "$TOTAL_LEVELS"
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ NFT contract configured with $TOTAL_LEVELS levels${NC}"
@@ -146,7 +149,6 @@ if [ ! -f "$CHALLENGE_FILE" ]; then
 fi
 
 echo -e "${BLUE}Configuring challenge levels...${NC}"
-CHALLENGE_COUNT=$(jq '.challenges | length' "$CHALLENGE_FILE")
 
 for i in $(seq 0 $((CHALLENGE_COUNT - 1))); do
     LEVEL=$(jq -r ".challenges[$i].level" "$CHALLENGE_FILE")
@@ -187,7 +189,6 @@ if [ ! -f "$PUZZLE_FILE" ]; then
 fi
 
 echo -e "${BLUE}Configuring puzzle levels...${NC}"
-PUZZLE_COUNT=$(jq '.puzzles | length' "$PUZZLE_FILE")
 
 for i in $(seq 0 $((PUZZLE_COUNT - 1))); do
     LEVEL=$(jq -r ".puzzles[$i].level" "$PUZZLE_FILE")
@@ -242,7 +243,7 @@ echo -e "  AdventureMap NFT: $NFT_ADDRESS"
 echo -e "  Actions Contract: $ACTIONS_ADDRESS"
 echo -e "\n${BLUE}Configuration:${NC}"
 echo -e "  ✓ Owner permissions granted to deployer"
-echo -e "  ✓ NFT contract configured in Actions with 6 levels"
+echo -e "  ✓ NFT contract configured in Actions with $TOTAL_LEVELS levels"
 echo -e "  ✓ Actions contract set as minter on NFT"
 echo -e "  ✓ Challenge levels 1, 3, 5 configured with MockGame contracts"
 echo -e "  ✓ Puzzle levels 2, 4, 6 configured with solution addresses"

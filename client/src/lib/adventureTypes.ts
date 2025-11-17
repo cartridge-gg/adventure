@@ -17,6 +17,7 @@ export interface BaseLevel {
   name: string;
   description: string;
   type: LevelType;
+  tip?: string; // Optional tip message to display for this level
 }
 
 /**
