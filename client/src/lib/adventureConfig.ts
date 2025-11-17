@@ -125,6 +125,7 @@ export const ADVENTURE_TEXT = {
       'Complete an ancient trial',
       'Return to claim your victory',
     ],
+    tip:'You can find free sessions in Cartridge booster packs. Check the Gaming District.',
   },
   questLevel: {
     locationHeader: 'Waypoint Location:',
@@ -139,7 +140,7 @@ export const ADVENTURE_TEXT = {
     title: 'Adventure Map',
     completedTitle: 'You Found the Temple!',
     shareButton: 'Share Your Discovery',
-    shareMessage: `⛩️ I've found the Lost Temple!\n\nBegin your own journey at temple.cartridge.gg\n\n@cartridge_gg @ohayo_dojo @EFDevcon`,
+    shareMessage: `⛩️ I finished the Lost Temple adventure!\n\nBegin your journey at adventure.cartridge.gg\n\n@cartridge_gg @ohayo_dojo @EFDevcon`,
   },
   support: {
     text: 'Need help? Reach out on Telegram',
