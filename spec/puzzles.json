@@ -4,21 +4,21 @@
       "level": 2,
       "name": "Crack the Code",
       "description": "An ancient shrine preserves a lost technology. Interpret clues to discover the hidden code.",
-      "location": "The hub for those who govern",
+      "location": "The hub where the node-masters gather",
       "codeword": "DEVCONNECT"
     },
     {
       "level": 4,
       "name": "Just My Type",
       "description": "A children's game contains a subtle secret. The strongest type points the way.",
-      "location": "The hub for those who communicate in secret",
+      "location": "The hub for those who govern with glee",
       "codeword": "STARKNET"
     },
     {
       "level": 6,
       "name": "The Tower of Battle",
-      "description": "Prove yourself by building a tower to the sky. Through victory shall you pass.",
-      "location": "The hub for those who live to play and play to live",
+      "description": "Prove yourself by building a tower to the sky. Through alone victory shall you pass.",
+      "location": "The hub for the magistri ludorum",
       "codeword": "CARTRIDGE"
     }
   ]
