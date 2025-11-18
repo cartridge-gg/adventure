@@ -10,6 +10,7 @@ default = "focg_adventure"
 rpc_url = "https://api.cartridge.gg/x/starknet/mainnet"
 account_address = "0x079b01c7fe90414b153f0457471c33e166ff5eee381e8dcd90f3214a56a3770b"
 keystore_path = "~/.starkli-wallets/deployer-mainnet.json"
+world_address = "0x21c812d1851c3d0ac07a8537d6e9ca300eae5762ad4c34fa42110bdfc501642"
 
 [writers]
 "focg_adventure" = ["focg_adventure-actions"]

@@ -1,8 +1,8 @@
 {
   "world": {
     "class_hash": "0x6ffd143494a0fdb39b68dd76f5e2766d43265ae40987985a4c3d1fb0d0dd821",
-    "address": "0x4ecfc2a34d0f790e57a241b341a7186e1f9c39cf49e487000796e49e0b7e9e0",
-    "seed": "focg_adventure",
+    "address": "0x21c812d1851c3d0ac07a8537d6e9ca300eae5762ad4c34fa42110bdfc501642",
+    "seed": "adventure-v1",
     "name": "FOCG Adventure",
     "entrypoints": [
       "uuid",
@@ -33,8 +33,8 @@
   },
   "contracts": [
     {
-      "address": "0x566649dc06366fd32df10aaeb9e4a0a3159e8d8408a1722387f51da9a41244f",
-      "class_hash": "0x43f583a0fa511de7540cb97dd089f72734ca811c4b51a2927cc063c6f92dd79",
+      "address": "0x62595f9d17d45c0aface59491e692ce07eabaf77f4ec99ba9962b556da04d0d",
+      "class_hash": "0x41db70f97ee17eb7cb2215e8b4714582a3832db18527faef145c8ee51a56704",
       "init_calldata": [],
       "tag": "focg_adventure-actions",
       "selector": "0x45c87c63d9eb923e47da69456442cdb7124f20fa646081b3cead2a1526ae89e",
@@ -92,17 +92,12 @@
           "key": false
         },
         {
-          "name": "minimum_score",
-          "type": "core::integer::u32",
-          "key": false
-        },
-        {
           "name": "solution_address",
           "type": "core::starknet::contract_address::ContractAddress",
           "key": false
         }
       ],
-      "class_hash": "0x150d056d9efe83df66154663aa57056c9230beaa2bb47d6607fcb4f9dc945f6",
+      "class_hash": "0xd4ae4d9e6313bbce86662bc0964fc75a779d503e462cfb076751c09f13d8f",
       "tag": "focg_adventure-LevelConfig",
       "selector": "0x52ce7428046504d09e27434b30d25af523aa92a17cdcb77da0f4a04d3c92484"
     },
@@ -172,17 +167,17 @@
   ],
   "external_contracts": [
     {
-      "class_hash": "0x34b63a479bb61577187e97baa68716b0696b79057e13b4395348c91c41bb5db",
+      "class_hash": "0x65d5ec374c373e22eeb2eac50f7cf37a2c5b434e6dfe9aa4b071ec2e17f4c7",
       "contract_name": "AdventureMap",
       "tag": "focg_adventure-adventure_map",
-      "address": "0x6d94822000498dea56a1a6442990295925ec2def82d72f7a6b6d47ab62a56a9",
+      "address": "0x1aec82a183d97504e8ee6c3cf1f7c3f7b9aad291b5f467df33441493884ac4b",
       "constructor_calldata": [
-        "0x13d9ee239f33fea4f8785b9e3870ade909e20a9599ae7cd62c1c292b73af1b7",
-        "6"
+        "0x079b01c7fe90414b153f0457471c33e166ff5eee381e8dcd90f3214a56a3770b",
+        "5"
       ],
       "encoded_constructor_calldata": [
-        "0x13d9ee239f33fea4f8785b9e3870ade909e20a9599ae7cd62c1c292b73af1b7",
-        "0x6"
+        "0x79b01c7fe90414b153f0457471c33e166ff5eee381e8dcd90f3214a56a3770b",
+        "0x5"
       ],
       "entrypoints": [
         "transfer_from",
@@ -195,55 +190,22 @@
         "set_total_levels"
       ],
       "block_number": null
-    },
-    {
-      "class_hash": "0x1fad2c3acebbb231f051d82c4485a0fcfdaf5c75b550f8b5036c358a83464c7",
-      "contract_name": "MockGame",
-      "tag": "focg_adventure-mock_1",
-      "address": "0x23f27c62568d0d357877cea35393779673b6b3cbf6a06a44bbe19953a56cf02",
-      "constructor_calldata": [],
-      "encoded_constructor_calldata": [],
-      "entrypoints": [
-        "set_score",
-        "set_game_over",
-        "complete_game"
-      ],
-      "block_number": null
-    },
-    {
-      "class_hash": "0x1fad2c3acebbb231f051d82c4485a0fcfdaf5c75b550f8b5036c358a83464c7",
-      "contract_name": "MockGame",
-      "tag": "focg_adventure-mock_3",
-      "address": "0x31020f5e27ab4298bda6d97900c825b6b9a8e84301a47b8a0b2bf2c80067f56",
-      "constructor_calldata": [],
-      "encoded_constructor_calldata": [],
-      "entrypoints": [
-        "set_score",
-        "set_game_over",
-        "complete_game"
-      ],
-      "block_number": null
-    },
-    {
-      "class_hash": "0x1fad2c3acebbb231f051d82c4485a0fcfdaf5c75b550f8b5036c358a83464c7",
-      "contract_name": "MockGame",
-      "tag": "focg_adventure-mock_5",
-      "address": "0x2a454702fef8ea14e8665fd1580ded69c57ea3ecc140fed0bbc932cbd907c7a",
-      "constructor_calldata": [],
-      "encoded_constructor_calldata": [],
-      "entrypoints": [
-        "set_score",
-        "set_game_over",
-        "complete_game"
-      ],
-      "block_number": null
     }
   ],
   "abis": [
     {
       "type": "constructor",
       "name": "constructor",
-      "inputs": []
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "core::starknet::contract_address::ContractAddress"
+        },
+        {
+          "name": "total_levels",
+          "type": "core::integer::u8"
+        }
+      ]
     },
     {
       "type": "struct",
@@ -2101,104 +2063,6 @@
       "state_mutability": "view"
     },
     {
-      "type": "interface",
-      "name": "focg_adventure::denshokan::interface::IMinigameTokenData",
-      "items": [
-        {
-          "type": "function",
-          "name": "score",
-          "inputs": [
-            {
-              "name": "token_id",
-              "type": "core::integer::u64"
-            }
-          ],
-          "outputs": [
-            {
-              "type": "core::integer::u32"
-            }
-          ],
-          "state_mutability": "view"
-        },
-        {
-          "type": "function",
-          "name": "game_over",
-          "inputs": [
-            {
-              "name": "token_id",
-              "type": "core::integer::u64"
-            }
-          ],
-          "outputs": [
-            {
-              "type": "core::bool"
-            }
-          ],
-          "state_mutability": "view"
-        }
-      ]
-    },
-    {
-      "type": "interface",
-      "name": "focg_adventure::denshokan::mock::IMockGameAdmin",
-      "items": [
-        {
-          "type": "function",
-          "name": "set_score",
-          "inputs": [
-            {
-              "name": "token_id",
-              "type": "core::integer::u64"
-            },
-            {
-              "name": "score",
-              "type": "core::integer::u32"
-            }
-          ],
-          "outputs": [],
-          "state_mutability": "external"
-        },
-        {
-          "type": "function",
-          "name": "set_game_over",
-          "inputs": [
-            {
-              "name": "token_id",
-              "type": "core::integer::u64"
-            },
-            {
-              "name": "is_over",
-              "type": "core::bool"
-            }
-          ],
-          "outputs": [],
-          "state_mutability": "external"
-        },
-        {
-          "type": "function",
-          "name": "complete_game",
-          "inputs": [
-            {
-              "name": "token_id",
-              "type": "core::integer::u64"
-            },
-            {
-              "name": "score",
-              "type": "core::integer::u32"
-            }
-          ],
-          "outputs": [],
-          "state_mutability": "external"
-        }
-      ]
-    },
-    {
-      "type": "event",
-      "name": "focg_adventure::denshokan::mock::MockGame::Event",
-      "kind": "enum",
-      "variants": []
-    },
-    {
       "type": "struct",
       "name": "focg_adventure::models::AdventureConfig",
       "members": [
@@ -2247,10 +2111,6 @@
           "type": "core::starknet::contract_address::ContractAddress"
         },
         {
-          "name": "minimum_score",
-          "type": "core::integer::u32"
-        },
-        {
           "name": "solution_address",
           "type": "core::starknet::contract_address::ContractAddress"
         }
@@ -2267,10 +2127,6 @@
         {
           "name": "game_contract",
           "type": "core::starknet::contract_address::ContractAddress"
-        },
-        {
-          "name": "minimum_score",
-          "type": "core::integer::u32"
         },
         {
           "name": "solution_address",
@@ -2394,26 +2250,6 @@
         },
         {
           "type": "function",
-          "name": "get_level_status",
-          "inputs": [
-            {
-              "name": "token_id",
-              "type": "core::integer::u256"
-            },
-            {
-              "name": "level_number",
-              "type": "core::integer::u8"
-            }
-          ],
-          "outputs": [
-            {
-              "type": "core::bool"
-            }
-          ],
-          "state_mutability": "view"
-        },
-        {
-          "type": "function",
           "name": "get_progress",
           "inputs": [
             {
@@ -2423,7 +2259,7 @@
           ],
           "outputs": [
             {
-              "type": "core::integer::u256"
+              "type": "core::integer::u64"
             }
           ],
           "state_mutability": "view"
@@ -2439,7 +2275,7 @@
           ],
           "outputs": [
             {
-              "type": "(core::felt252, core::starknet::contract_address::ContractAddress, core::integer::u32, core::starknet::contract_address::ContractAddress)"
+              "type": "(core::felt252, core::starknet::contract_address::ContractAddress, core::starknet::contract_address::ContractAddress)"
             }
           ],
           "state_mutability": "view"
@@ -2471,10 +2307,6 @@
             {
               "name": "game_contract",
               "type": "core::starknet::contract_address::ContractAddress"
-            },
-            {
-              "name": "minimum_score",
-              "type": "core::integer::u32"
             }
           ],
           "outputs": [],
@@ -2841,7 +2673,7 @@
           ],
           "outputs": [
             {
-              "type": "core::integer::u256"
+              "type": "core::integer::u64"
             }
           ],
           "state_mutability": "view"

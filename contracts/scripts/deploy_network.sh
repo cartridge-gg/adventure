@@ -139,20 +139,20 @@ for i in $(seq 0 $((CHALLENGE_COUNT - 1))); do
         echo -e "${YELLOW}Configuring challenge level $LEVEL ($GAME_NAME) with MockGame...${NC}"
         echo -e "${BLUE}  Mock Contract: $GAME_CONTRACT${NC}"
     else
-        # Get real Denshokan contract address from spec file for mainnet
-        GAME_CONTRACT=$(jq -r ".challenges[$i].dojo.$NETWORK.denshokan_address" "$CHALLENGE_FILE")
+        # Get real Minigame contract address from spec file for mainnet
+        GAME_CONTRACT=$(jq -r ".challenges[$i].dojo.$NETWORK.minigame_address" "$CHALLENGE_FILE")
 
         if [ -z "$GAME_CONTRACT" ] || [ "$GAME_CONTRACT" == "null" ]; then
-            echo -e "${YELLOW}Warning: No Denshokan address found for level $LEVEL in $NETWORK config${NC}"
+            echo -e "${YELLOW}Warning: No Minigame address found for level $LEVEL in $NETWORK config${NC}"
             continue
         fi
 
         echo -e "${YELLOW}Configuring challenge level $LEVEL ($GAME_NAME)...${NC}"
-        echo -e "${BLUE}  Denshokan Contract: $GAME_CONTRACT${NC}"
+        echo -e "${BLUE}  Minigame Contract: $GAME_CONTRACT${NC}"
     fi
 
     # set_challenge(level_number, game_contract)
-    # Note: game_contract is either MockGame (sepolia) or Denshokan NFT contract (mainnet)
+    # Note: game_contract is either MockGame (sepolia) or Minigame contract (mainnet)
     sozo execute --profile $NETWORK --wait focg_adventure-actions set_challenge \
         "$LEVEL" \
         "$GAME_CONTRACT"
