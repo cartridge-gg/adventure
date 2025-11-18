@@ -109,6 +109,7 @@ export function OnChainMapNFT({ tokenId, onRefetchReady }: OnChainMapNFTProps) {
     return (
       <div className="relative rounded overflow-hidden">
         <div
+          id="adventure-map-svg"
           className="w-full aspect-[4/5]"
           dangerouslySetInnerHTML={{ __html: svgContent }}
         />

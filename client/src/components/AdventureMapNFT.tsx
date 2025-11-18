@@ -83,6 +83,7 @@ export function AdventureMapNFT({ progress, onRefetchReady }: AdventureMapNFTPro
               <div className="text-5xl mb-3">⛩️</div>
               <h3 className="text-xl font-bold text-temple-gold mb-6 font-heading">{ADVENTURE_TEXT.map.completedTitle}</h3>
               <ShareButton />
+              <SaveToPNGButton tokenId={progress.tokenId} />
             </div>
           </div>
         )}
@@ -107,6 +108,99 @@ function ShareButton() {
       className="w-full md:w-4/5 md:mx-auto lg:w-4/5 lg:mx-auto mb-4 bg-gradient-to-r from-temple-ember to-temple-flame hover:from-temple-flame hover:to-temple-ember text-white font-ui font-semibold py-2 px-4 rounded-lg transition-all border-2 border-temple-bronze/50 hover:border-temple-gold shadow-lg flex items-center justify-center gap-2 uppercase tracking-wide"
     >
       <span>{ADVENTURE_TEXT.map.shareButton}</span>
+    </button>
+  );
+}
+
+/**
+ * Save to PNG Button Component
+ */
+function SaveToPNGButton({ tokenId }: { tokenId: string }) {
+  const handleSaveToPNG = async () => {
+    const svgContainer = document.getElementById('adventure-map-svg');
+    if (!svgContainer) {
+      console.error('SVG container not found');
+      return;
+    }
+
+    const svgElement = svgContainer.querySelector('svg');
+    if (!svgElement) {
+      console.error('SVG element not found');
+      return;
+    }
+
+    try {
+      // Get SVG dimensions
+      const svgRect = svgElement.getBoundingClientRect();
+      const width = svgRect.width || 800;
+      const height = svgRect.height || 1000;
+
+      // Create canvas
+      const canvas = document.createElement('canvas');
+      const scale = 2; // 2x for better quality
+      canvas.width = width * scale;
+      canvas.height = height * scale;
+      const ctx = canvas.getContext('2d');
+
+      if (!ctx) {
+        console.error('Could not get canvas context');
+        return;
+      }
+
+      // Scale for high DPI
+      ctx.scale(scale, scale);
+
+      // Serialize SVG to string
+      const svgString = new XMLSerializer().serializeToString(svgElement);
+
+      // Create blob and object URL
+      const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+
+      // Load SVG as image
+      const img = new Image();
+      img.onload = () => {
+        // Draw to canvas
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Convert to PNG and download
+        canvas.toBlob((pngBlob) => {
+          if (pngBlob) {
+            const pngUrl = URL.createObjectURL(pngBlob);
+            const link = document.createElement('a');
+            link.download = `adventure-map-${tokenId}.png`;
+            link.href = pngUrl;
+            link.click();
+
+            // Cleanup
+            URL.revokeObjectURL(pngUrl);
+          }
+        }, 'image/png');
+
+        // Cleanup
+        URL.revokeObjectURL(url);
+      };
+
+      img.onerror = () => {
+        console.error('Failed to load SVG as image');
+        URL.revokeObjectURL(url);
+      };
+
+      img.src = url;
+    } catch (error) {
+      console.error('Error saving PNG:', error);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleSaveToPNG}
+      className="w-full md:w-4/5 md:mx-auto lg:w-4/5 lg:mx-auto mb-4 bg-temple-shadow/80 hover:bg-temple-shadow text-temple-parchment font-ui font-medium py-3 px-4 transition-all border-b-2 border-temple-bronze/30 hover:border-temple-gold/50 flex items-center justify-center gap-3"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+      </svg>
+      <span>Download as PNG</span>
     </button>
   );
 }
