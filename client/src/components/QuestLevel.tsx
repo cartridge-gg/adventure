@@ -164,7 +164,7 @@ export function QuestLevel({ level, status, tokenId, onComplete, onMapRefresh }:
               {/* Tip content */}
               <div className="flex-1">
                 <p className="text-temple-parchment/90 text-sm" style={{ textShadow: '1px 1px 2px rgba(0, 0, 0, 0.6)' }}>
-                  {level.tip}
+                  Tip: {level.tip}
                 </p>
               </div>
             </div>

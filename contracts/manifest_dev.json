@@ -170,14 +170,14 @@
       "class_hash": "0x65d5ec374c373e22eeb2eac50f7cf37a2c5b434e6dfe9aa4b071ec2e17f4c7",
       "contract_name": "AdventureMap",
       "tag": "focg_adventure-adventure_map",
-      "address": "0x4b2a3814414c08dd32b498966507be0afc069ff0a40c17ad199d2f419746a37",
+      "address": "0x6425c100b5470e9b37bef35e1527c0c985dfbf2809386c3af900d3ed8d3d872",
       "constructor_calldata": [
         "0x13d9ee239f33fea4f8785b9e3870ade909e20a9599ae7cd62c1c292b73af1b7",
-        "6"
+        "5"
       ],
       "encoded_constructor_calldata": [
         "0x13d9ee239f33fea4f8785b9e3870ade909e20a9599ae7cd62c1c292b73af1b7",
-        "0x6"
+        "0x5"
       ],
       "entrypoints": [
         "transfer_from",
@@ -194,8 +194,8 @@
     {
       "class_hash": "0x3f007497d3e4d9f7b0d3aff67e23ced399840c03c61bbe9838466ee6b079d55",
       "contract_name": "MockGame",
-      "tag": "focg_adventure-mock_1",
-      "address": "0x596e341ba368d743250b57af6e0bede1e5fbec8115eced40687f0000ee7b0ac",
+      "tag": "focg_adventure-mock_2",
+      "address": "0x2ae6b47da96e99b443d2eec2736f656e20323a34d13b44ffaed370f108cb34c",
       "constructor_calldata": [],
       "encoded_constructor_calldata": [],
       "entrypoints": [
@@ -206,20 +206,8 @@
     {
       "class_hash": "0x3f007497d3e4d9f7b0d3aff67e23ced399840c03c61bbe9838466ee6b079d55",
       "contract_name": "MockGame",
-      "tag": "focg_adventure-mock_3",
-      "address": "0x3bbea207f6a6e2cfdb3260bebf2da6963c3c029394b216763d7a8a12638db6f",
-      "constructor_calldata": [],
-      "encoded_constructor_calldata": [],
-      "entrypoints": [
-        "set_game_over"
-      ],
-      "block_number": null
-    },
-    {
-      "class_hash": "0x3f007497d3e4d9f7b0d3aff67e23ced399840c03c61bbe9838466ee6b079d55",
-      "contract_name": "MockGame",
-      "tag": "focg_adventure-mock_5",
-      "address": "0x324a5aa8a6300c8aecc7c2c3fcded091a5c3a246f02d98cd87023ab63e1f0db",
+      "tag": "focg_adventure-mock_4",
+      "address": "0x687df27d4067e8bf7ca4b79fffedf0b309b1bfd064fcc97949fb0dc14f1a7b8",
       "constructor_calldata": [],
       "encoded_constructor_calldata": [],
       "entrypoints": [

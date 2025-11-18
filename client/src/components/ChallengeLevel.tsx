@@ -150,7 +150,7 @@ export function ChallengeLevel({ levelNumber, tokenId, status, onComplete, onMap
               {/* Tip content */}
               <div className="flex-1">
                 <p className="text-temple-parchment/90 text-sm" style={{ textShadow: '1px 1px 2px rgba(0, 0, 0, 0.6)' }}>
-                  {challenge.tip}
+                  Tip: {challenge.tip}
                 </p>
               </div>
             </div>

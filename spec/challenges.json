@@ -3,8 +3,8 @@
     {
       "level": 2,
       "game": "The Mage's Seal",
-      "description": "The trial of the mage. Complete a Nums session to break the seal.",
-      "tip": "You can find free sessions in a Cartridge booster pack. Check the Gaming District.",
+      "description": "The trial of the mage. Complete a Nums game to break the seal.",
+      "tip": "You can claim a free game of Nums after signing in with Controller.",
       "location": "https://nums.gg/",
       "manifest_path": "nums",
       "minigame_tag": "NUMS-Minigame",
@@ -12,7 +12,7 @@
       "dojo": {
         "mainnet": {
           "game_name": "Nums",
-          "torii_url": "https://api.cartridge.gg/x/nums-mainnet/torii",
+          "torii_url": "https://api.cartridge.gg/x/nums-main/torii",
           "minigame_address": "0x0473A834B65e8129652DEc5788c5D9427fE1EA7e2E79Fbe0493e38dF816259D9"
         }
       }
@@ -20,8 +20,8 @@
     {
       "level": 4,
       "game": "The Warrior's Seal",
-      "description": "The trial of the warrior. Complete a Loot Survivor 2 session to break the seal.",
-      "tip": "You can find free sessions in a Cartridge booster pack. Check the Gaming District.",
+      "description": "The trial of the warrior. Complete a Loot Survivor 2 game to break the seal.",
+      "tip": "You can get a free LS2 game from a Cartridge booster pack. Find one in the Gaming District.",
       "location": "https://lootsurvivor.io/",
       "manifest_path": "death-mountain/contracts",
       "minigame_tag": "ls_0_0_9-game_token_systems",

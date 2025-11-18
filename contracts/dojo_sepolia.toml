@@ -21,24 +21,18 @@ instance_name = "adventure_map"
 salt = "map-v3"
 constructor_data = [
     "0x05cb4ea8cc45dd51505a7e585b4a73d87d2f9448ed6a380155006229170e4819",  # owner address
-    "6"  # total_levels
+    "5"  # total_levels
 ]
 
 # MockGame contracts for local testing (one per challenge level)
 [[external_contracts]]
 contract_name = "MockGame"
-instance_name = "mock_1"
-salt = "mock1-v3"
+instance_name = "mock_2"
+salt = "mock2-v3"
 constructor_data = []
 
 [[external_contracts]]
 contract_name = "MockGame"
-instance_name = "mock_3"
-salt = "mock3-v3"
-constructor_data = []
-
-[[external_contracts]]
-contract_name = "MockGame"
-instance_name = "mock_5"
-salt = "mock5-v3"
+instance_name = "mock_4"
+salt = "mock4-v3"
 constructor_data = []
