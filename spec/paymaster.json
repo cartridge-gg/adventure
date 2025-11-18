@@ -1,0 +1,14 @@
+[
+  {
+    "contractAddress": "0x62595f9d17d45c0aface59491e692ce07eabaf77f4ec99ba9962b556da04d0d",
+    "entrypoint": "mint"
+  },
+  {
+    "contractAddress": "0x62595f9d17d45c0aface59491e692ce07eabaf77f4ec99ba9962b556da04d0d",
+    "entrypoint": "complete_challenge_level"
+  },
+  {
+    "contractAddress": "0x62595f9d17d45c0aface59491e692ce07eabaf77f4ec99ba9962b556da04d0d",
+    "entrypoint": "complete_puzzle_level"
+  }
+]
