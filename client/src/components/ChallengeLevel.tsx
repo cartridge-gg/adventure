@@ -22,7 +22,7 @@ export function ChallengeLevel({ levelNumber, tokenId, status, onComplete, onMap
   const [showSuccess, setShowSuccess] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { completeOnchainLevel } = useAdventureContract();
+  const { completeChallengeLevel } = useAdventureContract();
 
   const {
     sessions: gameSessions,
@@ -92,10 +92,10 @@ export function ChallengeLevel({ levelNumber, tokenId, status, onComplete, onMap
       // Use test session in dev mode, otherwise use first completed session
       const gameId = dojoConfig ? parseInt(completedSession!.token_id) : 1;
 
-      const result = await completeOnchainLevel(
+      const result = await completeChallengeLevel(
         tokenId,
         levelNumber,
-        { game_id: gameId }
+        gameId.toString(),
       );
 
       if (result.success) {
@@ -145,7 +145,7 @@ export function ChallengeLevel({ levelNumber, tokenId, status, onComplete, onMap
 
             <div className="relative flex gap-3">
               {/* Icon */}
-              <div className="text-2xl glow-mystical flex-shrink-0">💎</div>
+              <div className="glow-mystical flex-shrink-0">💎</div>
 
               {/* Tip content */}
               <div className="flex-1">

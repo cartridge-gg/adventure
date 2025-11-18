@@ -64,8 +64,6 @@ export function useGameSessions(challengeLevel: number) {
       setError(null);
 
       try {
-        console.log('[useGameSessions] Querying Torii for player tokens...');
-
         // Step 1: Query player's token IDs from Torii SQL endpoint
         const tokenIds = await queryPlayerGameTokenIds(
           address,
@@ -99,7 +97,6 @@ export function useGameSessions(challengeLevel: number) {
           });
         }
 
-        console.log(`[useGameSessions] Processed ${gameSessions.length} game sessions`);
         setSessions(gameSessions);
       } catch (err) {
         console.error('[useGameSessions] Error fetching sessions:', err);

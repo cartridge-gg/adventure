@@ -159,7 +159,7 @@ export function QuestLevel({ level, status, tokenId, onComplete, onMapRefresh }:
 
             <div className="relative flex gap-3">
               {/* Icon */}
-              <div className="text-2xl glow-mystical flex-shrink-0">💎</div>
+              <div className="glow-mystical flex-shrink-0">💎</div>
 
               {/* Tip content */}
               <div className="flex-1">

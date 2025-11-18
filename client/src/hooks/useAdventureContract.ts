@@ -124,12 +124,12 @@ export function useAdventureContract() {
   };
 
   /**
-   * Complete an onchain game level
+   * Complete an onchain challenge level
    */
-  const completeOnchainLevel = async (
+  const completeChallengeLevel = async (
     mapId: string,
     levelNumber: number,
-    proof: any
+    gameId: string
   ): Promise<{
     success: boolean;
     txHash?: string;
@@ -143,7 +143,7 @@ export function useAdventureContract() {
       console.log('[Contract] Completing onchain level:', {
         mapId,
         levelNumber,
-        proof,
+        gameId,
       });
 
       // Split map_id into u256 components
@@ -158,7 +158,7 @@ export function useAdventureContract() {
           calldata: CallData.compile({
             map_id: { low, high },
             level_number: levelNumber,
-            game_id: proof.game_id || 1, // game_id for verification
+            game_id: gameId || 1,
           }),
         },
         'Complete Challenge Level'
@@ -212,7 +212,7 @@ export function useAdventureContract() {
   return {
     mintAdventureMap,
     completePuzzleLevel,
-    completeOnchainLevel,
+    completeChallengeLevel,
     isLevelComplete,
   };
 }

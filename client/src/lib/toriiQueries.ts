@@ -38,9 +38,6 @@ export async function queryPlayerGameTokenIds(
   gameName: string
 ): Promise<string[]> {
   console.log('[Torii] Querying player tokens from:', toriiUrl);
-  console.log('[Torii] Player:', playerAddress);
-  console.log('[Torii] Denshokan:', denshokanAddress);
-  console.log('[Torii] Game name:', gameName);
 
   try {
     const paddedPlayer = addAddressPadding(playerAddress);
