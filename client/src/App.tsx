@@ -22,7 +22,13 @@ function AdventureApp() {
   const { progress: initialProgress, isLoading, hasNFT } = useAdventureProgress();
   const [progress, setProgress] = useState<AdventureProgress | null>(initialProgress);
   const [mapRefresh, setMapRefresh] = useState<(() => void) | null>(null);
-  const [currentPage, setCurrentPage] = useState<Page>('adventure');
+
+  // Initialize page from URL
+  const getPageFromPath = (): Page => {
+    return window.location.pathname === '/leaderboard' ? 'leaderboard' : 'adventure';
+  };
+
+  const [currentPage, setCurrentPage] = useState<Page>(getPageFromPath());
 
   // Sync local state with hook progress
   useEffect(() => {
@@ -30,6 +36,27 @@ function AdventureApp() {
       setProgress(initialProgress);
     }
   }, [initialProgress]);
+
+  // Handle browser back/forward buttons
+  useEffect(() => {
+    const handlePopState = () => {
+      setCurrentPage(getPageFromPath());
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  // Navigation functions that update both state and URL
+  const navigateToLeaderboard = useCallback(() => {
+    window.history.pushState({}, '', '/leaderboard');
+    setCurrentPage('leaderboard');
+  }, []);
+
+  const navigateToAdventure = useCallback(() => {
+    window.history.pushState({}, '', '/');
+    setCurrentPage('adventure');
+  }, []);
 
   // Receive refetch function from OnChainMapNFT
   const handleRefetchReady = useCallback((refetch: () => void) => {
@@ -84,7 +111,7 @@ function AdventureApp() {
           {/* Main Content */}
           <main>
             {currentPage === 'leaderboard' ? (
-              <LeaderboardPage onBack={() => setCurrentPage('adventure')} />
+              <LeaderboardPage onBack={navigateToAdventure} />
             ) : address ? (
               isLoading ? (
                 <div className="text-center py-20">
@@ -102,7 +129,7 @@ function AdventureApp() {
                   onLevelComplete={handleLevelComplete}
                   onMapRefresh={mapRefresh || undefined}
                   onRefetchReady={handleRefetchReady}
-                  onNavigateToLeaderboard={() => setCurrentPage('leaderboard')}
+                  onNavigateToLeaderboard={navigateToLeaderboard}
                 />
               ) : (
                 <div className="text-center py-20">
