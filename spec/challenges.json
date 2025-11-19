@@ -2,8 +2,8 @@
   "challenges": [
     {
       "level": 2,
-      "game": "The Mage's Seal",
-      "description": "The trial of the mage. Complete a Nums game to break the seal.",
+      "game": "Arithmancy",
+      "description": "The mage's trial. Complete a game of Nums to break the seal.",
       "tip": "You can claim a free game of Nums after signing in with Controller.",
       "location": "https://nums.gg/",
       "manifest_path": "nums",
@@ -19,8 +19,8 @@
     },
     {
       "level": 4,
-      "game": "The Warrior's Seal",
-      "description": "The trial of the warrior. Complete a Loot Survivor 2 game to break the seal.",
+      "game": "Death Mountain",
+      "description": "The warrior's trial. Complete a game of Loot Survivor 2 to break the seal.",
       "tip": "You can get a free LS2 game from a Cartridge booster pack. Find one in the Gaming District.",
       "location": "https://lootsurvivor.io/",
       "manifest_path": "death-mountain/contracts",
