@@ -9,7 +9,6 @@ import { useEffect } from 'react';
 import { OnChainMapNFT } from './OnChainMapNFT';
 import { useLeaderboard, LeaderboardEntry } from '../hooks/useLeaderboard';
 import { ADVENTURE_TEXT } from '../lib/adventureConfig';
-import { MAP_ADDRESS, CHAIN_ENV } from '../lib/config';
 
 interface LeaderboardPageProps {
   onBack: () => void;
