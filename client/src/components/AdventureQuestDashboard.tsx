@@ -6,9 +6,14 @@
 
 import { LevelCard } from './LevelCard';
 import { AdventureMapNFT } from './AdventureMapNFT';
+import { LeaderboardCard } from './LeaderboardCard';
 import { QuestDashboardProps, LevelStatus } from '../lib/adventureTypes';
 
-export function AdventureQuestDashboard({ progress, levels, onLevelComplete, onMapRefresh, onRefetchReady }: QuestDashboardProps) {
+interface ExtendedQuestDashboardProps extends QuestDashboardProps {
+  onNavigateToLeaderboard: () => void;
+}
+
+export function AdventureQuestDashboard({ progress, levels, onLevelComplete, onMapRefresh, onRefetchReady, onNavigateToLeaderboard }: ExtendedQuestDashboardProps) {
   // Determine status for each level
   const getLevelStatus = (levelNumber: number): LevelStatus => {
     if (progress.levelsCompleted.includes(levelNumber)) {
@@ -47,6 +52,9 @@ export function AdventureQuestDashboard({ progress, levels, onLevelComplete, onM
                 />
               );
             })}
+
+            {/* Leaderboard Card */}
+            <LeaderboardCard onNavigate={onNavigateToLeaderboard} />
           </div>
         </div>
       </div>

@@ -10,15 +10,19 @@ import { useAccount } from '@starknet-react/core';
 import { ConnectWallet } from './components/ConnectWallet';
 import { AdventureMintButton } from './components/AdventureMintButton';
 import { AdventureQuestDashboard } from './components/AdventureQuestDashboard';
+import { LeaderboardPage } from './components/LeaderboardPage';
 import { useAdventureProgress } from './hooks/useAdventureProgress';
 import { ADVENTURE_LEVELS, ADVENTURE_TEXT, TOTAL_LEVELS } from './lib/adventureConfig';
 import { AdventureProgress } from './lib/adventureTypes';
+
+type Page = 'adventure' | 'leaderboard';
 
 function AdventureApp() {
   const { address } = useAccount();
   const { progress: initialProgress, isLoading, hasNFT } = useAdventureProgress();
   const [progress, setProgress] = useState<AdventureProgress | null>(initialProgress);
   const [mapRefresh, setMapRefresh] = useState<(() => void) | null>(null);
+  const [currentPage, setCurrentPage] = useState<Page>('adventure');
 
   // Sync local state with hook progress
   useEffect(() => {
@@ -79,7 +83,9 @@ function AdventureApp() {
 
           {/* Main Content */}
           <main>
-            {address ? (
+            {currentPage === 'leaderboard' ? (
+              <LeaderboardPage onBack={() => setCurrentPage('adventure')} />
+            ) : address ? (
               isLoading ? (
                 <div className="text-center py-20">
                   <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-temple-gold"></div>
@@ -96,6 +102,7 @@ function AdventureApp() {
                   onLevelComplete={handleLevelComplete}
                   onMapRefresh={mapRefresh || undefined}
                   onRefetchReady={handleRefetchReady}
+                  onNavigateToLeaderboard={() => setCurrentPage('leaderboard')}
                 />
               ) : (
                 <div className="text-center py-20">

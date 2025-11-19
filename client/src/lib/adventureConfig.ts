@@ -144,6 +144,15 @@ export const ADVENTURE_TEXT = {
     shareButton: 'Share Your Discovery',
     shareMessage: `⛩️ I finished the Lost Temple adventure!\n\nBegin your journey at adventure.cartridge.gg\n\n@cartridge_gg @ohayo_dojo @EFDevcon`,
   },
+  leaderboard: {
+    title: 'Leaderboard',
+    viewButton: 'See Top Adventures',
+    backButton: 'Back to Your Adventure',
+    loading: 'Loading adventures...',
+    loadingProgress: 'Loaded {current} of {total} adventures...',
+    noAdventures: 'No adventures found yet. Be the first!',
+    sortByProgress: 'Sort by Progress',
+  },
   support: {
     text: 'Need help? Reach out on Telegram',
     url: 'https://t.me/kronosapiens',
