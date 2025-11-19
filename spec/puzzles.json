@@ -4,6 +4,7 @@
       "level": 1,
       "name": "Crack the Code",
       "description": "An ancient shrine preserves a lost technology. Interpret clues to find the hidden code.",
+      "tip": "This famous code is visible on the console.",
       "location": "The hub where the node-masters gather",
       "codeword": "DEVCONNECT"
     },
