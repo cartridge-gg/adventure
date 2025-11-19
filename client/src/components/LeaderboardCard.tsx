@@ -14,15 +14,6 @@ interface LeaderboardCardProps {
 export function LeaderboardCard({ onNavigate }: LeaderboardCardProps) {
   return (
     <div className="relative">
-      {/* Trophy Badge */}
-      <div className="absolute -top-3 -left-3 z-10">
-        <div className="bg-gradient-to-br from-temple-gold/80 to-temple-ember/80 w-8 h-8 rounded-full flex items-center justify-center shadow-xl border-2 border-temple-gold/60 relative texture-stone effect-raised backdrop-blur-sm">
-          <div className="absolute inset-0 rounded-full bg-temple-gold/30 animate-pulse"></div>
-          <div className="absolute inset-0 rounded-full effect-metallic"></div>
-          <span className="text-sm relative z-10" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8), 0 0 8px rgba(212, 175, 55, 0.6)' }}>🏆</span>
-        </div>
-      </div>
-
       {/* Card Content */}
       <button
         onClick={onNavigate}

@@ -94,7 +94,7 @@ export const ADVENTURE_TEXT = {
   mint: {
     title: 'Begin Your Journey',
     buttonText: 'Mint Your Adventure Map',
-    nftDescription: 'is a dynamic NFT that updates as you complete levels.',
+    nftDescription: 'is a unique NFT that updates as you complete levels.',
     whatAwaitsTitle: 'What Awaits',
     trials: {
       title: 'Ancient Trials',
@@ -119,10 +119,10 @@ export const ADVENTURE_TEXT = {
     playButton: 'Play Game',
     continueButton: 'Return to Trial',
     completeButton: 'Claim Victory',
-    breakSealButton: 'Break Seal',
-    verifying: 'The Guardian judges...',
+    breakSealButton: 'Complete Trial',
+    verifying: 'Breaking the seal...',
     success: 'The seal is broken!',
-    error: 'The guardian rejects your attempt. Try again.',
+    error: 'The seal resists. Try again.',
     trialHeader: 'The Trial:',
     trialInstructions: [
       'Complete an ancient trial',
@@ -134,7 +134,7 @@ export const ADVENTURE_TEXT = {
     codewordLabel: 'Discover the Hidden Code',
     codewordPlaceholder: 'Enter the code...',
     submitButton: 'Submit the Code',
-    verifying: 'The Guardian judges...',
+    verifying: 'Navigating the waypoint...',
     success: 'Waypoint navigated!',
     error: 'The word is false. Seek the truth.',
   },
