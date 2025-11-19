@@ -118,19 +118,6 @@ export function LeaderboardPage({ onBack }: LeaderboardPageProps) {
  * Individual Leaderboard Entry Card
  */
 function LeaderboardEntryCard({ entry, rank }: { entry: LeaderboardEntry; rank: number }) {
-  // Generate explorer URL based on environment
-  const getExplorerUrl = () => {
-    if (CHAIN_ENV === 'mainnet') {
-      return `https://starkscan.co/nft/${MAP_ADDRESS}/${entry.tokenId}`;
-    } else if (CHAIN_ENV === 'sepolia') {
-      return `https://sepolia.starkscan.co/nft/${MAP_ADDRESS}/${entry.tokenId}`;
-    } else {
-      return `http://localhost:5050/explorer/contract/${MAP_ADDRESS}`;
-    }
-  };
-
-  const explorerUrl = getExplorerUrl();
-
   // Rank medal/badge
   const getRankDisplay = () => {
     if (rank === 1) return '🥇';
@@ -140,12 +127,7 @@ function LeaderboardEntryCard({ entry, rank }: { entry: LeaderboardEntry; rank: 
   };
 
   return (
-    <a
-      href={explorerUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="block bg-temple-dusk/40 rounded-lg p-3 shadow-xl border-2 border-temple-bronze backdrop-blur-sm relative overflow-hidden texture-stone effect-embossed texture-grain hover:border-temple-gold transition-all"
-    >
+    <div className="bg-temple-dusk/40 rounded-lg p-3 shadow-xl border-2 border-temple-bronze backdrop-blur-sm relative overflow-hidden texture-stone effect-embossed texture-grain">
       {/* Rank Badge */}
       <div className="absolute -top-3 -right-3 z-10">
         <div className="bg-gradient-to-br from-temple-gold/90 to-temple-ember/90 w-14 h-14 rounded-full flex items-center justify-center shadow-xl border-2 border-temple-bronze effect-raised">
@@ -159,6 +141,6 @@ function LeaderboardEntryCard({ entry, rank }: { entry: LeaderboardEntry; rank: 
       <div className="relative">
         <OnChainMapNFT tokenId={entry.tokenId} />
       </div>
-    </a>
+    </div>
   );
 }
