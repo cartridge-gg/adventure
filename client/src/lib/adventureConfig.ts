@@ -116,9 +116,10 @@ export const ADVENTURE_TEXT = {
     waypointDiscovered: 'Waypoint Navigated',
   },
   gameLevel: {
-    playButton: 'Begin Trial',
+    playButton: 'Play Game',
     continueButton: 'Return to Trial',
     completeButton: 'Claim Victory',
+    breakSealButton: 'Break Seal',
     verifying: 'The Guardian judges...',
     success: 'The seal is broken!',
     error: 'The guardian rejects your attempt. Try again.',
