@@ -130,7 +130,7 @@ function LeaderboardEntryCard({ entry, rank }: { entry: LeaderboardEntry; rank: 
       {/* Rank Badge */}
       <div className="absolute -top-3 -right-3 z-10">
         <div className="bg-gradient-to-br from-temple-gold/90 to-temple-ember/90 w-14 h-14 rounded-full flex items-center justify-center shadow-xl border-2 border-temple-bronze effect-raised">
-          <span className="font-bold text-lg font-heading text-temple-void" style={{ textShadow: '0 0 4px rgba(212, 175, 55, 0.8)' }}>
+          <span className="font-bold text-lg font-heading text-temple-void leading-none flex items-center justify-center" style={{ textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)' }}>
             {getRankDisplay()}
           </span>
         </div>
