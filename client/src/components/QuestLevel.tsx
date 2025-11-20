@@ -5,7 +5,7 @@
  * Handles codeword submission with cryptographic verification.
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { QuestLevelProps } from '../lib/adventureTypes';
 import { ADVENTURE_TEXT, LEVEL_ICONS } from '../lib/adventureConfig';
 import { usePuzzleSigning } from '../hooks/usePuzzleSigning';
@@ -16,9 +16,15 @@ export function QuestLevel({ level, status, tokenId, onComplete, onMapRefresh }:
   const [isVerifying, setIsVerifying] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [failedAttempts, setFailedAttempts] = useState(0);
 
   const { generateSignature, playerAddress } = usePuzzleSigning();
   const { completePuzzleLevel } = useAdventureContract();
+
+  // Reset failed attempts when level changes
+  useEffect(() => {
+    setFailedAttempts(0);
+  }, [level.levelNumber]);
 
   // Show codewords in dev mode
   const isDevMode = import.meta.env.VITE_CHAIN === 'dev' || !import.meta.env.VITE_CHAIN;
@@ -88,6 +94,9 @@ export function QuestLevel({ level, status, tokenId, onComplete, onMapRefresh }:
       );
 
       if (result.success) {
+        // Reset failed attempts on success
+        setFailedAttempts(0);
+
         // Trigger map refresh to update the on-chain SVG
         if (onMapRefresh) {
           onMapRefresh();
@@ -98,6 +107,8 @@ export function QuestLevel({ level, status, tokenId, onComplete, onMapRefresh }:
           onComplete(level.levelNumber);
         }, 1500);
       } else {
+        // Increment failed attempts on error
+        setFailedAttempts((prev) => prev + 1);
         setError(result.error || ADVENTURE_TEXT.questLevel.error);
         setCodeword(''); // Clear input on error
       }
@@ -164,7 +175,27 @@ export function QuestLevel({ level, status, tokenId, onComplete, onMapRefresh }:
               {/* Tip content */}
               <div className="flex-1">
                 <p className="text-temple-parchment/90 text-sm" style={{ textShadow: '1px 1px 2px rgba(0, 0, 0, 0.6)' }}>
-                  Tip: {level.tip}
+                  <strong>Tip:</strong> {level.tip}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Second Tip Box (shown after 3 failed attempts) */}
+        {failedAttempts >= 3 && level.hint && (
+          <div className="bg-gradient-to-r from-temple-gold/20 to-temple-ember/20 border-2 border-temple-gold/50 rounded-lg p-4 mb-4 relative overflow-hidden texture-parchment animate-pulse">
+            {/* Decorative glow effect */}
+            <div className="absolute inset-0 bg-gradient-to-br from-temple-gold/10 to-transparent pointer-events-none"></div>
+
+            <div className="relative flex gap-3">
+              {/* Icon */}
+              <div className="glow-mystical flex-shrink-0">✨</div>
+
+              {/* Second Tip content */}
+              <div className="flex-1">
+                <p className="text-temple-parchment/90 text-sm" style={{ textShadow: '1px 1px 2px rgba(0, 0, 0, 0.6)' }}>
+                  <strong>Hint:</strong> {level.hint}
                 </p>
               </div>
             </div>

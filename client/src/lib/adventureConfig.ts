@@ -60,6 +60,7 @@ export const ADVENTURE_LEVELS: Level[] = allLevelNumbers.map((levelNum) => {
       puzzleDescription: puzzle.description,
       expectedCodeword: puzzle.codeword,
       tip: puzzle.tip, // Optional tip from spec file
+      hint: (puzzle as any).hint, // Optional second tip from spec file
     } as QuestLevel;
   }
 
@@ -89,7 +90,7 @@ export const TOTAL_LEVELS = ADVENTURE_LEVELS.length;
 export const ADVENTURE_TEXT = {
   header: {
     title: 'The Lost Temple ⛩️',
-    subtitle: 'Break seals and navigate waypoints to unlock ancient mysteries',
+    subtitle: 'An onchain-offchain adventure at Devconnect ARG',
   },
   mint: {
     title: 'Begin Your Journey',

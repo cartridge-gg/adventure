@@ -4,7 +4,8 @@
       "level": 1,
       "name": "Cracking the Code",
       "description": "An ancient shrine preserves a lost technology. Interpret clues to find the hidden code.",
-      "tip": "This famous 'free lives' code is visible on the game cartridge.",
+      "tip": "This famous code is visible on the game cartridge.",
+      "hint": "Up up down down left right left right B A start.",
       "location": "The hub where the node-masters gather",
       "codeword": "DEVCONNECT"
     },
@@ -13,6 +14,7 @@
       "name": "Just My Type",
       "description": "A children's game contains a subtle secret. The strongest type leads the way.",
       "tip": "Use the chart to sort the cards based on type interactions.",
+      "hint": "It's not water, or normal, or even electric.",
       "location": "The hub for those who govern with glee",
       "codeword": "STARKNET"
     },
@@ -21,6 +23,7 @@
       "name": "The Tower of Battle",
       "description": "Prove yourself by building a tower to the sky. Through victory alone shall you pass.",
       "tip": "The puzzle is temporarily unavailable. Ask for the codeword on Telegram.",
+      "hint": "This can happen to societies, as well as to buildings.",
       "location": "The lounge in the district of play",
       "codeword": "CARTRIDGE"
     }
