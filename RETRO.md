@@ -56,7 +56,7 @@ Initially we had been cautious about putting so many art assets onchain, but thi
 
 The full implementation of the Adventure Map can be found under [`contracts/src/token`](https://github.com/cartridge-gg/focg-adventure/tree/main/contracts/src/token).
 
-![Adventure Map](/client/public/map.png)
+<img src="/client/public/map.png" alt="Adventure Map" width="400">
 
 ### Dojo Game
 
@@ -185,11 +185,11 @@ Fortunately, inventory loss didn't critically degrade the game -- we could place
 People overall seemed to really enjoy the adventure.
 When we spoke to players, they were excited and having fun.
 
-![SNES Puzzle](/assets/snes-puzzle.jpeg)
+<img src="/assets/snes-puzzle.jpeg" alt="SNES Puzzle" width="500">
 
-![Type Puzzle](/assets/type-puzzle.jpeg)
+<img src="/assets/type-puzzle.jpeg" alt="Type Puzzle" width="500">
 
-![Jenga Puzzle](/assets/jenga-puzzle.jpeg)
+<img src="/assets/jenga-puzzle.jpeg" alt="Jenga Puzzle" width="500">
 
 ## Results
 
@@ -199,7 +199,7 @@ In the days leading up to the activation, our hope was that we would have 100 pe
 Over the course of Devconnect, we had 118 adventure maps minted.
 Of those 118, 12 were minted either as tests by Cartridge teammates, or outside of the game window, leaving 106 valid maps:
 
-![Cumulative Mints](/assets/cumulative-mints.png)
+<img src="/assets/cumulative-mints.png" alt="Cumulative Mints" width="600">
 
 ### Minting Behaviors
 
@@ -235,7 +235,7 @@ By fielding user questions, we were able to better understand where people were 
 Of the inquiries, 4 people asked for help with the SNES puzzle, which suggests that it was indeed a difficult puzzle.
 Notably, 75% of all completions made use of this support channel, suggesting that direct support was a critical success factor.
 
-![Telegram Help](/assets/tg-help.jpg)
+<img src="/assets/tg-help.jpg" alt="Telegram Help" width="500">
 
 Overall, participation fell a bit short of our goals in terms of number of mints and completions, but was largely in line with other first-time treasure hunt activations.
 By integrating lessons learned, we should be able to perform much better at future events.
