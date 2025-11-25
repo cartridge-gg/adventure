@@ -20,7 +20,8 @@ They said they were not, and so I proposed to the Cartridge team that we run our
 We began by [sharing a proposal](https://forum.devcon.org/t/focg-treasure-hunt/8099) for a "FOCG Treasure Hunt" in the Devconnect discourse on Oct 1, with the following pitch:
 
 ```
-A multi-stage treasure hunt for DevConnect participants, mixing virtual games with real-world puzzles, culminating in an IRL event for participants who complete the adventure. The goal is to excite and inspire participants with a fun, accessible, and novel experience, as well as increase exposure to onchain games more broadly.
+A multi-stage treasure hunt for DevConnect participants, mixing virtual games with real-world puzzles, culminating in an IRL event for participants who complete the adventure.
+The goal is to excite and inspire participants with a fun, accessible, and novel experience, as well as increase exposure to onchain games more broadly.
 ```
 
 After amplifying it through our ecosystem and demonstrating interest and traction, we got the attention of Ligi, one of the EF organizers, who would become our main point of contact.
@@ -46,6 +47,7 @@ Being able to reference the Ronin's Pact implementation de-risked the initiative
 The Ronin's Pact NFT had made use of dynamic onchain art, but without any per-user customization.
 Something that we were excited to explore with this project was having the map path be pseudorandomized per-user, making each map NFT unique.
 By representing user state in this way, the player "crafts" a personalized collectible over the course of their gameplay, enhancing and anchoring the emotional experience.
+
 This approach was inspired by the "1 of 1 of X" concept popularized by digital artist and Art Blocks founder [Erick "Snowfro" Calderon](https://x.com/ArtOnBlockchain), through which participants acquire a unique element of a thematically-linked series.
 For the procedural map generation, we implemented a [simple graphing library](https://github.com/cartridge-gg/focg-adventure/blob/main/contracts/src/token/geo.cairo) with trigonometric functions for placing waypoints and a Fisher-Yates shuffle for randomizing the ordering of the levels.
 
@@ -56,7 +58,7 @@ Initially we had been cautious about putting so many art assets onchain, but thi
 
 The full implementation of the Adventure Map can be found under [`contracts/src/token`](https://github.com/cartridge-gg/focg-adventure/tree/main/contracts/src/token).
 
-<img src="/client/public/map.png" alt="Adventure Map" width="400">
+<img src="./client/public/map.png" alt="Adventure Map" width="400">
 
 ### Dojo Game
 
@@ -128,6 +130,8 @@ We ultimately went with three puzzles:
 This puzzle involved an original Super Nintendo set up with two controllers and a classic Konami game, as well as a few back-issues of Nintendo Power magazine.
 The participants were supposed to assess the scene and intuit that the answer was KONAMI, the classic "code" of video game lore.
 
+Initially, we had hoped to locate an old CRT television and make the SNES game fully playable, but this prove to be infeasible given our other constraints and obligations.
+
 #### Just my Type
 
 This puzzle involved a stack of original Pokemon cards placed next to a chart of Pokemon type interactions.
@@ -185,11 +189,11 @@ Fortunately, inventory loss didn't critically degrade the game -- we could place
 People overall seemed to really enjoy the adventure.
 When we spoke to players, they were excited and having fun.
 
-<img src="/assets/snes-puzzle.jpeg" alt="SNES Puzzle" width="500">
+<img src="./snes-puzzle.jpeg" alt="SNES Puzzle" width="500">
 
-<img src="/assets/type-puzzle.jpeg" alt="Type Puzzle" width="500">
+<img src="./type-puzzle.jpeg" alt="Type Puzzle" width="500">
 
-<img src="/assets/jenga-puzzle.jpeg" alt="Jenga Puzzle" width="500">
+<img src="./jenga-puzzle.jpeg" alt="Jenga Puzzle" width="500">
 
 ## Results
 
@@ -199,12 +203,13 @@ In the days leading up to the activation, our hope was that we would have 100 pe
 Over the course of Devconnect, we had 118 adventure maps minted.
 Of those 118, 12 were minted either as tests by Cartridge teammates, or outside of the game window, leaving 106 valid maps:
 
-<img src="/assets/cumulative-mints.png" alt="Cumulative Mints" width="600">
+<img src="./cumulative-mints.png" alt="Cumulative Mints" width="600">
 
 ### Minting Behaviors
 
 Most mints occur in the latter part of the day, possibly due to participants being more available for exploration after their morning meetings, or else that most participants typically did not arrive to the venue until the afternoon.
 The greatest spike in mints occurred on Wednesday, as this was the day we most actively promoted the event on X -- although some proportion of those mints were by people not physically in Buenos Aires, and thus not able to complete the adventure.
+
 Interestingly, the day-over-day decrease in mints was fairly stable, with each day seeing an average of ~62% of the mints of the day before.
 
 ### Completion Behaviors
@@ -230,12 +235,13 @@ A second and more likely hypothesis is that the first puzzle (the SNES puzzle) w
 
 ### Support Behaviors
 
-Over the course of the week, we had 10 players reach out over Telegram for help, including 3 of the 4 people who would complete the adventure.
+Over the course of the week, we had 10 players reach out over Telegram for help.
 By fielding user questions, we were able to better understand where people were getting stuck and how to better communicate the goals through the client UI.
 Of the inquiries, 4 people asked for help with the SNES puzzle, which suggests that it was indeed a difficult puzzle.
+
 Notably, 75% of all completions made use of this support channel, suggesting that direct support was a critical success factor.
 
-<img src="/assets/tg-help.jpg" alt="Telegram Help" width="500">
+<img src="./tg-help.jpg" alt="Telegram Help" width="500">
 
 Overall, participation fell a bit short of our goals in terms of number of mints and completions, but was largely in line with other first-time treasure hunt activations.
 By integrating lessons learned, we should be able to perform much better at future events.
@@ -253,9 +259,7 @@ In addition, the ground operations were fairly straightforward -- the flyers and
 
 The most significant cost was the implementation of the activation itself, which took about two weeks of developer time.
 Most of this was spent prototyping and implementing the Adventure Map and client, as well as replay protection and the Denshokan integrations.
-Fortunately, much of this work can be reused for future activations.
-
-Assuming future adventures, this fixed cost could be amortized over multiple events, driving marginal costs down to only a few dollars per player.
+Fortunately, much of this work can be reused for future activations, driving marginal costs down to only a few dollars per player.
 
 ### The Bad
 
@@ -298,5 +302,6 @@ In the initial proposal, we had floated an in-person event exclusive to players 
 ## Conclusion
 
 Overall, the Lost Temple Adventure was a success, and will hopefully become the first of many activations.
-While there were definitely opportunities to improve, the core hypothesis -- that there was demand for a gaming-focused onchain/offchain adventure game at Ethereum conferences, and that Cartridge has the tools and expertise to execute on such a game -- was unambiguously validated.
+While there were definitely opportunities to improve, the core hypothesis -- that there is demand for a gaming-focused onchain/offchain adventure game at Ethereum conferences, and that Cartridge has the tools and expertise to execute on such a game -- was unambiguously validated.
+
 By continuing to run adventures for the Ethereum community, we can establish Cartridge as a key part of the ecosystem, pushing the boundaries of interaction, engagement, and experience.
