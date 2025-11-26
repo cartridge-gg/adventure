@@ -257,9 +257,9 @@ Financially, the activation was fairly high-leverage.
 The fixed costs included ~$4 in onchain gas fees and about ~$450 in puzzle props, resulting in an average cost of ~$5 per participant.
 In addition, the ground operations were fairly straightforward -- the flyers and puzzles required only periodic maintenance once deployed.
 
-The most significant cost was the implementation of the activation itself, which took about two weeks of developer time.
-Most of this was spent prototyping and implementing the Adventure Map and client, as well as replay protection and the Denshokan integrations.
-Fortunately, much of this work can be reused for future activations, driving marginal costs down to only a few dollars per player.
+The most significant cost was the implementation of the activation itself, which took about two weeks of development and design time.
+Most of this was spent prototyping and implementing the Adventure Map and client, as well as replay protection and the Denshokan integration.
+Fortunately, much of this work can be reused for future activations, driving long-term marginal costs down to only a few dollars per player.
 
 ### The Bad
 
@@ -271,6 +271,7 @@ In particular, operations around the in-person puzzles left something to be desi
 More advance planning with the hub organizers and more defensive placement of puzzle props would have helped us to more effectively position and secure the game.
 In particular, secure overnight storage of props at the community hubs would have made it less likely that the props would have gone missing.
 Further, more clearly labeling the props and including contact information would have made it less likely that they would be inadvertently cleaned up by event staff.
+
 On a more logistical note, ensuring that puzzles were clearly visible from about ~30 feet would have made it less likely that a participant would have correctly identified the general location, only to churn after not being able to locate the specific props.
 
 #### Puzzle Design
@@ -281,11 +282,11 @@ While I personally liked the "vibe-orientation" of the puzzle, it was clearly a 
 
 #### Session Provision
 
-We could also do a better job of ensuring participants have access to the onchain games.
 The adventure did not provide game sessions to players, who had to find other ways of getting access to them.
 In the case of Nums, the game itself provided a free session to new players, which made it relatively easy to complete.
-In the case of Loot Survivor 2, however, free sessions could only be obtained by finding one of the Booster Packs (a separate Cartridge activation) distributed around the venue, or else buying a session through the game UI.
-This proved to be a significant obstacle to adventure completion, and I ended up sending 3 participants game sessions out of my personal supply.
+In the case of Loot Survivor 2, however, free sessions could only be obtained by finding one of the Booster Packs (a separate Cartridge activation) distributed around the venue, or buying a session through the game UI.
+This proved to be an obstacle to adventure completion, and I ended up sending 3 participants game sessions out of my personal supply.
+
 Future iterations should integrate session claiming directly into the adventure client to remove this friction point.
 
 #### Marketing and Comms
@@ -301,7 +302,7 @@ In the initial proposal, we had floated an in-person event exclusive to players 
 
 ## Conclusion
 
-Overall, the Lost Temple Adventure was a success, and will hopefully become the first of many activations.
-While there were definitely opportunities to improve, the core hypothesis -- that there is demand for a gaming-focused onchain/offchain adventure game at Ethereum conferences, and that Cartridge has the tools and expertise to execute on such a game -- was unambiguously validated.
+Overall, the Lost Temple Adventure was a success, and will hopefully become the first of many such initiatives.
+While there were definitely opportunities to improve, the core hypothesis -- that there is demand for a gaming-focused onchain/offchain activation at Ethereum conferences, and that Cartridge has the tools and expertise to execute on such an activation -- was clearly validated.
 
 By continuing to run adventures for the Ethereum community, we can establish Cartridge as a key part of the ecosystem, pushing the boundaries of interaction, engagement, and experience.
