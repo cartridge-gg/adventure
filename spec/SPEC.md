@@ -1,4 +1,4 @@
-# FOCG Adventure — Feature Specification
+# Adventure — Feature Specification
 
 > **Status:** DRAFT
 
@@ -14,7 +14,7 @@
 
 ## 1) Overview
 
-The FOCG Adventure is a multi-level gaming experience combining browser-based fully onchain games with real-world quests at community hub spaces throughout DevConnect. Participants progress through the adventure using the Cartridge Controller for seamless authentication, with their journey represented as a dynamically updating onchain NFT adventure map.
+The Adventure is a multi-level gaming experience combining browser-based fully onchain games with real-world quests at community hub spaces throughout DevConnect. Participants progress through the adventure using the Cartridge Controller for seamless authentication, with their journey represented as a dynamically updating onchain NFT adventure map.
 
 **Core Experience:**
 * N levels in any mix of onchain game challenges and community hub-based quests
@@ -434,7 +434,7 @@ Each level card displays:
 
 * **"Share Progress"** button available after each level completion
 * Precomposed message template:
-  * "Just completed Level X of the FOCG Adventure at #DevConnect! [level_emoji] [nft_image_url] Play along at [adventure_url]"
+  * "Just completed Level X of the Adventure at #DevConnect! [level_emoji] [nft_image_url] Play along at [adventure_url]"
 * Opens user's X client compose window (no verification required)
 * Optional: unique share images per level
 

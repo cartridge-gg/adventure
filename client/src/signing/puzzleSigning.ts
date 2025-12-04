@@ -1,5 +1,5 @@
 /**
- * Puzzle Signing Utilities for FOCG Adventure (Starknet)
+ * Puzzle Signing Utilities for Adventure (Starknet)
  *
  * Adapted from THC (Treasure Hunt Creator) framework for Starknet.
  * Implements cryptographic replay protection for puzzle codeword verification.
@@ -103,4 +103,3 @@ export function signatureFromSolution(
 export function formatSignatureForContract(signature: { r: string; s: string }): string[] {
   return [signature.r, signature.s];
 }
-

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Script to deploy FOCG Adventure contracts locally
-# Starts Katana and migrates the focg_adventure world
+# Script to deploy Adventure contracts locally
+# Starts Katana and migrates the adventure world
 # All services shut down on script exit
 
 set -euo pipefail
@@ -37,7 +37,7 @@ trap cleanup SIGINT SIGTERM EXIT
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 CONTRACTS_DIR="$( cd "$SCRIPT_DIR/.." && pwd )"
 
-echo -e "${GREEN}=== FOCG Adventure Local Deployment ===${NC}"
+echo -e "${GREEN}=== Adventure Local Deployment ===${NC}"
 echo -e "${BLUE}Contracts dir: $CONTRACTS_DIR${NC}\n"
 
 # Check required tools
@@ -87,7 +87,7 @@ WORLD_ADDRESS=$(grep -o '"address": "0x[^"]*"' "$CONTRACTS_DIR/manifest_dev.json
 echo -e "${GREEN}World deployed at: $WORLD_ADDRESS${NC}"
 
 # Get the AdventureMap NFT contract address
-NFT_ADDRESS=$(jq -r '.external_contracts[] | select(.tag == "focg_adventure-adventure_map") | .address' "$CONTRACTS_DIR/manifest_dev.json")
+NFT_ADDRESS=$(jq -r '.external_contracts[] | select(.tag == "adventure-adventure_map") | .address' "$CONTRACTS_DIR/manifest_dev.json")
 if [ -z "$NFT_ADDRESS" ] || [ "$NFT_ADDRESS" == "null" ]; then
     echo -e "${RED}Error: AdventureMap NFT not found in manifest${NC}"
     exit 1
@@ -95,7 +95,7 @@ fi
 echo -e "${GREEN}AdventureMap NFT deployed at: $NFT_ADDRESS${NC}"
 
 # Get the actions contract address
-ACTIONS_ADDRESS=$(jq -r '.contracts[] | select(.tag == "focg_adventure-actions") | .address' "$CONTRACTS_DIR/manifest_dev.json")
+ACTIONS_ADDRESS=$(jq -r '.contracts[] | select(.tag == "adventure-actions") | .address' "$CONTRACTS_DIR/manifest_dev.json")
 if [ -z "$ACTIONS_ADDRESS" ] || [ "$ACTIONS_ADDRESS" == "null" ]; then
     echo -e "${RED}Error: Actions contract not found in manifest${NC}"
     exit 1
@@ -108,7 +108,7 @@ echo -e "\n${YELLOW}Step 4: Configuring contracts...${NC}"
 # Grant owner permissions to the deployer account
 DEPLOYER_ACCOUNT=$(grep "account_address" "$CONTRACTS_DIR/dojo_dev.toml" | cut -d'"' -f2)
 echo -e "${BLUE}Granting owner permissions to deployer account...${NC}"
-sozo auth grant --profile dev owner focg_adventure,"$DEPLOYER_ACCOUNT" --wait
+sozo auth grant --profile dev owner adventure,"$DEPLOYER_ACCOUNT" --wait
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Owner permissions granted${NC}"
 else
@@ -121,7 +121,7 @@ PUZZLE_COUNT=$(jq '.puzzles | length' "../spec/puzzles.json")
 CHALLENGE_COUNT=$(jq '.challenges | length' "../spec/challenges.json")
 TOTAL_LEVELS=$((PUZZLE_COUNT + CHALLENGE_COUNT))
 echo -e "${BLUE}Configuring NFT contract in actions (${TOTAL_LEVELS} total levels: ${PUZZLE_COUNT} puzzles + ${CHALLENGE_COUNT} challenges)...${NC}"
-sozo execute --profile dev --wait focg_adventure-actions set_nft_contract "$NFT_ADDRESS" "$TOTAL_LEVELS"
+sozo execute --profile dev --wait adventure-actions set_nft_contract "$NFT_ADDRESS" "$TOTAL_LEVELS"
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ NFT contract configured with $TOTAL_LEVELS levels${NC}"
 else
@@ -153,7 +153,7 @@ echo -e "${BLUE}Configuring challenge levels...${NC}"
 for i in $(seq 0 $((CHALLENGE_COUNT - 1))); do
     LEVEL=$(jq -r ".challenges[$i].level" "$CHALLENGE_FILE")
     GAME_NAME=$(jq -r ".challenges[$i].game" "$CHALLENGE_FILE")
-    GAME_CONTRACT=$(jq -r '.external_contracts[] | select(.tag == "focg_adventure-mock_'$LEVEL'") | .address' "$CONTRACTS_DIR/manifest_dev.json")
+    GAME_CONTRACT=$(jq -r '.external_contracts[] | select(.tag == "adventure-mock_'$LEVEL'") | .address' "$CONTRACTS_DIR/manifest_dev.json")
 
     # Skip if no mock contract exists for this level
     if [ -z "$GAME_CONTRACT" ] || [ "$GAME_CONTRACT" == "null" ]; then
@@ -163,7 +163,7 @@ for i in $(seq 0 $((CHALLENGE_COUNT - 1))); do
 
     echo -e "${YELLOW}Configuring challenge level $LEVEL ($GAME_NAME)...${NC}"
     # set_challenge(level_number, game_contract)
-    sozo execute --profile dev --wait focg_adventure-actions set_challenge \
+    sozo execute --profile dev --wait adventure-actions set_challenge \
         "$LEVEL" \
         "$GAME_CONTRACT"
 
@@ -213,7 +213,7 @@ for i in $(seq 0 $((PUZZLE_COUNT - 1))); do
     echo -e "${BLUE}  Codeword: $CODEWORD (solution_address: $SOLUTION_ADDRESS)${NC}"
 
     # set_puzzle(level_number, solution_address)
-    sozo execute --profile dev --wait focg_adventure-actions set_puzzle \
+    sozo execute --profile dev --wait adventure-actions set_puzzle \
         "$LEVEL" \
         "$SOLUTION_ADDRESS"
 
@@ -226,7 +226,7 @@ done
 
 # Step 5: Mint initial NFT
 echo -e "\n${YELLOW}Step 5: Minting initial NFT...${NC}"
-sozo execute --profile dev --wait focg_adventure-actions mint sstr:deployer
+sozo execute --profile dev --wait adventure-actions mint sstr:deployer
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Initial NFT minted${NC}"
 else
@@ -250,8 +250,8 @@ echo -e "  ✓ Puzzle levels configured with solution addresses"
 echo -e "  ✓ MockGame contracts pre-configured with test game (game_id=1)"
 echo -e "  ✓ Initial NFT minted from deployer account"
 echo -e "\n${BLUE}Testing:${NC}"
-echo -e "  To test challenge completion: sozo execute focg_adventure-actions complete_challenge_level <map_id> <level> 1"
-echo -e "  To test puzzle completion:    sozo execute focg_adventure-actions complete_puzzle_level <map_id> <level> <signature>"
+echo -e "  To test challenge completion: sozo execute adventure-actions complete_challenge_level <map_id> <level> 1"
+echo -e "  To test puzzle completion:    sozo execute adventure-actions complete_puzzle_level <map_id> <level> <signature>"
 echo -e "\n${BLUE}Logs:${NC}"
 echo -e "  Katana: /tmp/katana.log"
 echo -e "\n${YELLOW}Press Ctrl+C to stop all services${NC}\n"

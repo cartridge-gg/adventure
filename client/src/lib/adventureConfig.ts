@@ -1,5 +1,5 @@
 /**
- * FOCG Adventure Configuration
+ * Adventure Configuration
  *
  * Dynamically loads level configuration from spec files.
  * Levels are automatically generated from spec/puzzles.json and spec/challenges.json.

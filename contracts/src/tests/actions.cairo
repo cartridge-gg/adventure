@@ -1,4 +1,4 @@
-// Integration tests for FOCG Adventure actions contract
+// Integration tests for Adventure actions contract
 // Tests admin functions, level completion, and full lifecycle
 
 use starknet::ContractAddress;
@@ -16,10 +16,10 @@ use snforge_std::{
 };
 use openzeppelin::token::erc721::interface::{IERC721Dispatcher, IERC721DispatcherTrait};
 
-use focg_adventure::systems::actions::{IAdventureActionsDispatcher, IAdventureActionsDispatcherTrait};
-use focg_adventure::models::{AdventureConfig, PlayerToken, LevelConfig};
-use focg_adventure::token::map::{IAdventureMapDispatcher, IAdventureMapDispatcherTrait};
-use focg_adventure::denshokan::mock::{IMockGameAdminDispatcher, IMockGameAdminDispatcherTrait};
+use adventure::systems::actions::{IAdventureActionsDispatcher, IAdventureActionsDispatcherTrait};
+use adventure::models::{AdventureConfig, PlayerToken, LevelConfig};
+use adventure::token::map::{IAdventureMapDispatcher, IAdventureMapDispatcherTrait};
+use adventure::denshokan::mock::{IMockGameAdminDispatcher, IMockGameAdminDispatcherTrait};
 
 // ============================================================================
 // Test Helpers
@@ -46,7 +46,7 @@ fn other() -> ContractAddress {
 // Dojo world configuration
 fn namespace_def() -> NamespaceDef {
     NamespaceDef {
-        namespace: "focg_adventure",
+        namespace: "adventure",
         resources: [
             TestResource::Model("AdventureConfig"),
             TestResource::Model("PlayerToken"),
@@ -60,8 +60,8 @@ fn namespace_def() -> NamespaceDef {
 
 fn contract_defs() -> Span<ContractDef> {
     [
-        ContractDefTrait::new(@"focg_adventure", @"actions")
-            .with_writer_of([dojo::utils::bytearray_hash(@"focg_adventure")].span())
+        ContractDefTrait::new(@"adventure", @"actions")
+            .with_writer_of([dojo::utils::bytearray_hash(@"adventure")].span())
     ].span()
 }
 

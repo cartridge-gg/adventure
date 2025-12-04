@@ -1,4 +1,4 @@
-# FOCG Adventure - Quick Start Guide
+# Adventure - Quick Start Guide
 
 ## 🚀 Get Started in 30 Seconds
 

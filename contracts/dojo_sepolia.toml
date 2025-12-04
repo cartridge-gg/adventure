@@ -1,10 +1,10 @@
 [world]
-name = "FOCG Adventure"
+name = "Adventure"
 description = "A multi-level adventure quest system with challenges and puzzles for Devconnect"
 seed = "adventure-v3"
 
 [namespace]
-default = "focg_adventure"
+default = "adventure"
 
 [env]
 rpc_url = "https://api.cartridge.gg/x/starknet/sepolia"
@@ -13,7 +13,7 @@ keystore_path = "~/.starkli-wallets/deployer-sepolia.json"
 world_address = "0x32d42ba3ea398ab214201871f845ee2072229697a14036ea474f11279772080"
 
 [writers]
-"focg_adventure" = ["focg_adventure-actions"]
+"adventure" = ["adventure-actions"]
 
 [[external_contracts]]
 contract_name = "AdventureMap"

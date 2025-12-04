@@ -1,6 +1,6 @@
 [package]
 cairo-version = "2.12.2"
-name = "focg_adventure"
+name = "adventure"
 version = "0.1.0"
 edition = "2024_07"
 
@@ -21,8 +21,8 @@ openzeppelin = "1.0.0"
 [[target.starknet-contract]]
 build-external-contracts = [
     "dojo::world::world_contract::world",
-    "focg_adventure::token::map::AdventureMap",
-    "focg_adventure::denshokan::mock::MockGame"
+    "adventure::token::map::AdventureMap",
+    "adventure::denshokan::mock::MockGame"
 ]
 
 [tool.scarb]

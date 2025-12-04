@@ -2,7 +2,7 @@
 // Adventure Map NFT Contract
 // ============================================================================
 //
-// Standard ERC721 NFT contract for FOCG Adventure.
+// Standard ERC721 NFT contract for Adventure.
 // Stores player progress via bitmap (supports up to 256 levels).
 // Dynamic SVG metadata updates as levels are completed.
 
@@ -66,8 +66,8 @@ pub mod AdventureMap {
         Map, StorageMapReadAccess, StorageMapWriteAccess,
         StoragePointerReadAccess, StoragePointerWriteAccess
     };
-    use focg_adventure::token::svg;
-    use focg_adventure::token::geo;
+    use adventure::token::svg;
+    use adventure::token::geo;
 
     component!(path: ERC721Component, storage: erc721, event: ERC721Event);
     component!(path: SRC5Component, storage: src5, event: SRC5Event);
@@ -109,7 +109,7 @@ pub mod AdventureMap {
 
     #[constructor]
     fn constructor(ref self: ContractState, owner: ContractAddress, total_levels: u8) {
-        self.erc721.initializer("FOCG Adventure Map", "FOCG", "");
+        self.erc721.initializer("Adventure Map", "MAP", "");
         self.owner.write(owner);
         self.minter.write(owner);
         self.token_count.write(0);

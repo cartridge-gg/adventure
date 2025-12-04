@@ -1,7 +1,7 @@
 /**
- * FOCG Adventure App
+ * Adventure App
  *
- * Main application component for the FOCG Adventure.
+ * Main application component for the Adventure.
  * Manages authentication, NFT minting, and quest progression.
  */
 

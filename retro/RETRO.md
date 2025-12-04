@@ -49,14 +49,14 @@ Something that we were excited to explore with this project was having the map p
 By representing user state in this way, the player "crafts" a personalized collectible over the course of their gameplay, enhancing and anchoring the emotional experience.
 
 This approach was inspired by the "1 of 1 of X" concept popularized by digital artist and Art Blocks founder [Erick "Snowfro" Calderon](https://x.com/ArtOnBlockchain), through which participants acquire a unique element of a thematically-linked series.
-For the procedural map generation, we implemented a [simple graphing library](https://github.com/cartridge-gg/focg-adventure/blob/main/contracts/src/token/geo.cairo) with trigonometric functions for placing waypoints and a Fisher-Yates shuffle for randomizing the ordering of the levels.
+For the procedural map generation, we implemented a [simple graphing library](https://github.com/cartridge-gg/adventure/blob/main/contracts/src/token/geo.cairo) with trigonometric functions for placing waypoints and a Fisher-Yates shuffle for randomizing the ordering of the levels.
 
 We also wanted to push the envelope further with regards to art assets.
 The Ronin's Pact ERC-721 put a total of [17kb of SVG assets](https://github.com/cartridge-gg/ronins-pact/blob/main/contracts/src/token/svg.cairo) onchain.
-For the Adventure Map, we scaled up by 3x, deploying a total of [45kb of SVG assets](https://github.com/cartridge-gg/focg-adventure/blob/main/contracts/src/token/art.cairo).
+For the Adventure Map, we scaled up by 3x, deploying a total of [45kb of SVG assets](https://github.com/cartridge-gg/adventure/blob/main/contracts/src/token/art.cairo).
 Initially we had been cautious about putting so many art assets onchain, but this turned out to be easy on Starknet, costing on the order of 10 STRK (~$1.50) for the entire deployment.
 
-The full implementation of the Adventure Map can be found under [`contracts/src/token`](https://github.com/cartridge-gg/focg-adventure/tree/main/contracts/src/token).
+The full implementation of the Adventure Map can be found under [`contracts/src/token`](https://github.com/cartridge-gg/adventure/tree/main/contracts/src/token).
 
 <img src="./client/public/map.png" alt="Adventure Map" width="400">
 
@@ -109,7 +109,7 @@ As with the Ronin's Pact, we chose not to use a Torii indexer, which enabled a f
 The overall design was based on the Ronin's Pact client, with a progress-tracking NFT being rendered next to a sequence of level components.
 Aesthetically, we went with an "80s dark fantasy" style, which Claude implemented to the best of their ability, leveraging dark colors and textures to create a mysterious and retro feel.
 
-The adventure was initially pitched as the "FOCG Adventure" but later renamed to "The Lost Temple" as "FOCG Adventure" did not exactly roll off the tongue.
+The adventure was initially pitched as the "Adventure" but later renamed to "The Lost Temple" as "Adventure" did not exactly roll off the tongue.
 We intentionally went light on lore, offering a general fantasy ambience ("lost temple", "finding waypoints", "breaking seals") in lieu of a high-effort narrative.
 
 On a call with Alberto from SDP in the week leading up to the event, he suggested we put a prominent support link in the UI, directing people to message me directly on Telegram.

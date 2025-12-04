@@ -6,8 +6,8 @@
 // Uses geo.cairo for all mathematical/geometric calculations.
 // Uses art.cairo for all SVG asset data.
 
-use focg_adventure::token::geo;
-use focg_adventure::token::art;
+use adventure::token::geo;
+use adventure::token::art;
 
 // ============================================================================
 // COLOR CONSTANTS

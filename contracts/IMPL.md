@@ -1,4 +1,4 @@
-# FOCG Adventure - Contract Implementation Plan
+# Adventure - Contract Implementation Plan
 
 ## ⚠️ CONFIRMED DESIGN DECISIONS (2024-11-05)
 
@@ -10,7 +10,7 @@
 
 ## Overview
 
-This document outlines the contract architecture for the FOCG Adventure system, supporting an arbitrary number of levels mixing onchain challenge games and IRL puzzle quests with cryptographic replay protection.
+This document outlines the contract architecture for the Adventure system, supporting an arbitrary number of levels mixing onchain challenge games and IRL puzzle quests with cryptographic replay protection.
 
 ## Architecture Summary
 
@@ -445,7 +445,7 @@ function signatureFromSolution(codeword: string, playerAddress: string): Signatu
 
   // Sign the player's address
   const messageHash = typedDataHash({
-    domain: { name: "FOCG Adventure", version: "1" },
+    domain: { name: "Adventure", version: "1" },
     types: { Message: [{ name: "player", type: "ContractAddress" }] },
     primaryType: "Message",
     message: { player: playerAddress }
@@ -545,7 +545,7 @@ pub fn generate_adventure_map_svg(progress: u256, username: felt252, total_level
 
     // Title
     svg.append(@"<text x=\"200\" y=\"40\" text-anchor=\"middle\" font-size=\"24\" fill=\"#78350f\">");
-    svg.append(@"FOCG Adventure");
+    svg.append(@"Adventure");
     svg.append(@"</text>");
 
     // Username
@@ -674,7 +674,7 @@ Create `scripts/configure_adventure.sh` following the deploy_katana.sh pattern:
 #!/bin/bash
 set -euo pipefail
 
-# Configuration script for FOCG Adventure levels
+# Configuration script for Adventure levels
 # Reads from spec/challenges.json and spec/puzzles.json
 # Uses sozo to configure level settings via the actions contract
 
@@ -688,11 +688,11 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-echo -e "${GREEN}=== Configuring FOCG Adventure Levels ===${NC}"
+echo -e "${GREEN}=== Configuring Adventure Levels ===${NC}"
 
 # Get contract addresses from manifest
-NFT_ADDRESS=$(jq -r '.external_contracts[] | select(.tag == "focg_adventure-adventure_map") | .address' "$CONTRACTS_DIR/manifest_dev.json")
-ACTIONS_ADDRESS=$(jq -r '.contracts[] | select(.tag == "focg_adventure-actions") | .address' "$CONTRACTS_DIR/manifest_dev.json")
+NFT_ADDRESS=$(jq -r '.external_contracts[] | select(.tag == "adventure-adventure_map") | .address' "$CONTRACTS_DIR/manifest_dev.json")
+ACTIONS_ADDRESS=$(jq -r '.contracts[] | select(.tag == "adventure-actions") | .address' "$CONTRACTS_DIR/manifest_dev.json")
 
 echo -e "${BLUE}NFT Contract: $NFT_ADDRESS${NC}"
 echo -e "${BLUE}Actions Contract: $ACTIONS_ADDRESS${NC}"
@@ -700,7 +700,7 @@ echo -e "${BLUE}Actions Contract: $ACTIONS_ADDRESS${NC}"
 # Step 1: Set NFT contract in actions
 echo -e "\n${YELLOW}Step 1: Configuring NFT contract...${NC}"
 TOTAL_LEVELS=6
-sozo execute --profile dev --wait focg_adventure-actions set_nft_contract "$NFT_ADDRESS" "$TOTAL_LEVELS"
+sozo execute --profile dev --wait adventure-actions set_nft_contract "$NFT_ADDRESS" "$TOTAL_LEVELS"
 echo -e "${GREEN}✓ NFT contract configured with $TOTAL_LEVELS total levels${NC}"
 
 # Step 2: Grant minter role to actions contract
@@ -715,26 +715,26 @@ CHALLENGES_JSON="$SPEC_DIR/challenges.json"
 if [ -f "$CHALLENGES_JSON" ]; then
     # Get challenges from JSON using jq
     CHALLENGES=$(jq -c '.challenges[]' "$CHALLENGES_JSON")
-    
+
     while IFS= read -r challenge; do
         LEVEL=$(echo "$challenge" | jq -r '.level')
         NAME=$(echo "$challenge" | jq -r '.name')
         VERIFIER_TYPE=$(echo "$challenge" | jq -r '.verifier_type')
-        
+
         # TODO: Deploy actual verifier contracts
         # For now, use placeholder address or deploy MinimumScoreVerifier
         VERIFIER_ADDRESS="0x0"  # Replace with actual deployed verifier
-        
+
         echo -e "${YELLOW}Configuring Level $LEVEL: $NAME (${VERIFIER_TYPE})${NC}"
-        
+
         # Execute set_level_config: level_number, level_type, verifier, solution_address, active
-        sozo execute --profile dev --wait focg_adventure-actions set_level_config \
+        sozo execute --profile dev --wait adventure-actions set_level_config \
             "$LEVEL" \
             "'challenge'" \
             "$VERIFIER_ADDRESS" \
             "0x0" \
             "1"
-        
+
         echo -e "${GREEN}✓ Level $LEVEL configured${NC}"
     done <<< "$CHALLENGES"
 else
@@ -748,27 +748,27 @@ PUZZLES_JSON="$SPEC_DIR/puzzles.json"
 if [ -f "$PUZZLES_JSON" ]; then
     # Get puzzles from JSON using jq
     PUZZLES=$(jq -c '.puzzles[]' "$PUZZLES_JSON")
-    
+
     while IFS= read -r puzzle; do
         LEVEL=$(echo "$puzzle" | jq -r '.level')
         NAME=$(echo "$puzzle" | jq -r '.name')
         CODEWORD=$(echo "$puzzle" | jq -r '.codeword')
-        
+
         echo -e "${YELLOW}Configuring Level $LEVEL: $NAME${NC}"
-        
+
         # Derive solution address from codeword
         # TODO: Implement derive_solution_address.sh script
         # For now, use placeholder
         SOLUTION_ADDRESS="0x0"  # Replace with actual derived address
-        
+
         # Execute set_level_config: level_number, level_type, verifier, solution_address, active
-        sozo execute --profile dev --wait focg_adventure-actions set_level_config \
+        sozo execute --profile dev --wait adventure-actions set_level_config \
             "$LEVEL" \
             "'puzzle'" \
             "0x0" \
             "$SOLUTION_ADDRESS" \
             "1"
-        
+
         echo -e "${GREEN}✓ Level $LEVEL configured (codeword: $CODEWORD)${NC}"
     done <<< "$PUZZLES"
 else
@@ -959,7 +959,7 @@ pub solution_addresses: Array<ContractAddress>,  // Store multiple valid address
 
 The existing contracts are based on Ronin's Pact. Here's what needs to change:
 
-| Ronin's Pact | FOCG Adventure | Changes |
+| Ronin's Pact | Adventure | Changes |
 |--------------|----------------|---------|
 | 3 fixed trials (Waza/Chi/Shin) | N arbitrary levels | Replace fixed trial models with LevelConfig |
 | Hardcoded trial types | Dynamic level types | Add `level_type` field |
@@ -1048,7 +1048,7 @@ function generateGameProof(gameId: string, gameData: any): Span<felt252>;
 
 ## Summary
 
-This implementation plan provides a flexible, scalable architecture for the FOCG Adventure system that supports:
+This implementation plan provides a flexible, scalable architecture for the Adventure system that supports:
 
 1. **Arbitrary N levels** in any mix of challenge/puzzle types
 2. **Efficient progress tracking** via bitmap storage

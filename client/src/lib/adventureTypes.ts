@@ -1,5 +1,5 @@
 /**
- * Type definitions for FOCG Adventure
+ * Type definitions for Adventure
  */
 
 // ============================================================================

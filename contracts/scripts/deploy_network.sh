@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script to deploy FOCG Adventure contracts to Sepolia or Mainnet
+# Script to deploy Adventure contracts to Sepolia or Mainnet
 # Usage: ./deploy_network.sh <sepolia|mainnet>
 
 set -euo pipefail
@@ -30,7 +30,7 @@ fi
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 CONTRACTS_DIR="$( cd "$SCRIPT_DIR/.." && pwd )"
 
-echo -e "${GREEN}=== FOCG Adventure Deployment to $NETWORK ===${NC}"
+echo -e "${GREEN}=== Adventure Deployment to $NETWORK ===${NC}"
 echo -e "${BLUE}Contracts dir: $CONTRACTS_DIR${NC}\n"
 
 # Check required tools
@@ -64,14 +64,14 @@ fi
 WORLD_ADDRESS=$(grep -o '"address": "0x[^"]*"' "$MANIFEST_FILE" | head -1 | cut -d'"' -f4)
 echo -e "${GREEN}World deployed at: $WORLD_ADDRESS${NC}"
 
-NFT_ADDRESS=$(jq -r '.external_contracts[] | select(.tag == "focg_adventure-adventure_map") | .address' "$MANIFEST_FILE")
+NFT_ADDRESS=$(jq -r '.external_contracts[] | select(.tag == "adventure-adventure_map") | .address' "$MANIFEST_FILE")
 if [ -z "$NFT_ADDRESS" ] || [ "$NFT_ADDRESS" == "null" ]; then
     echo -e "${RED}Error: AdventureMap NFT not found in manifest${NC}"
     exit 1
 fi
 echo -e "${GREEN}AdventureMap NFT deployed at: $NFT_ADDRESS${NC}"
 
-ACTIONS_ADDRESS=$(jq -r '.contracts[] | select(.tag == "focg_adventure-actions") | .address' "$MANIFEST_FILE")
+ACTIONS_ADDRESS=$(jq -r '.contracts[] | select(.tag == "adventure-actions") | .address' "$MANIFEST_FILE")
 if [ -z "$ACTIONS_ADDRESS" ] || [ "$ACTIONS_ADDRESS" == "null" ]; then
     echo -e "${RED}Error: Actions contract not found in manifest${NC}"
     exit 1
@@ -84,7 +84,7 @@ echo -e "\n${YELLOW}Step 3: Configuring contracts...${NC}"
 # Grant owner permissions
 DEPLOYER_ACCOUNT=$(grep "account_address" "dojo_$NETWORK.toml" | cut -d'"' -f2)
 echo -e "${BLUE}Granting owner permissions...${NC}"
-sozo auth grant --profile $NETWORK owner focg_adventure,"$DEPLOYER_ACCOUNT" --wait
+sozo auth grant --profile $NETWORK owner adventure,"$DEPLOYER_ACCOUNT" --wait
 
 # Configure NFT contract in actions
 # Compute total levels from spec files
@@ -93,7 +93,7 @@ CHALLENGE_COUNT=$(jq '.challenges | length' "../spec/challenges.json")
 TOTAL_LEVELS=$((PUZZLE_COUNT + CHALLENGE_COUNT))
 
 echo -e "${BLUE}Configuring NFT contract (${TOTAL_LEVELS} total levels: ${PUZZLE_COUNT} puzzles + ${CHALLENGE_COUNT} challenges)...${NC}"
-sozo execute --profile $NETWORK --wait focg_adventure-actions set_nft_contract "$NFT_ADDRESS" "$TOTAL_LEVELS"
+sozo execute --profile $NETWORK --wait adventure-actions set_nft_contract "$NFT_ADDRESS" "$TOTAL_LEVELS"
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ NFT contract configured${NC}"
 else
@@ -129,7 +129,7 @@ for i in $(seq 0 $((CHALLENGE_COUNT - 1))); do
     # Use mock contracts for Sepolia, real Denshokan contracts for Mainnet
     if [ "$NETWORK" == "sepolia" ]; then
         # Look up mock contract from manifest
-        GAME_CONTRACT=$(jq -r '.external_contracts[] | select(.tag == "focg_adventure-mock_'$LEVEL'") | .address' "$MANIFEST_FILE")
+        GAME_CONTRACT=$(jq -r '.external_contracts[] | select(.tag == "adventure-mock_'$LEVEL'") | .address' "$MANIFEST_FILE")
 
         if [ -z "$GAME_CONTRACT" ] || [ "$GAME_CONTRACT" == "null" ]; then
             echo -e "${YELLOW}Warning: No MockGame contract found for level $LEVEL${NC}"
@@ -153,7 +153,7 @@ for i in $(seq 0 $((CHALLENGE_COUNT - 1))); do
 
     # set_challenge(level_number, game_contract)
     # Note: game_contract is either MockGame (sepolia) or Minigame contract (mainnet)
-    sozo execute --profile $NETWORK --wait focg_adventure-actions set_challenge \
+    sozo execute --profile $NETWORK --wait adventure-actions set_challenge \
         "$LEVEL" \
         "$GAME_CONTRACT"
 
@@ -193,7 +193,7 @@ for i in $(seq 0 $((PUZZLE_COUNT - 1))); do
     # Check if node is available for codeword2address
     if ! command -v node &> /dev/null; then
         echo -e "${YELLOW}Warning: node not found, skipping puzzle level $LEVEL configuration${NC}"
-        echo -e "${BLUE}  You can configure this later using: sozo execute focg_adventure-actions set_puzzle $LEVEL <solution_address>${NC}"
+        echo -e "${BLUE}  You can configure this later using: sozo execute adventure-actions set_puzzle $LEVEL <solution_address>${NC}"
         continue
     fi
 
@@ -209,7 +209,7 @@ for i in $(seq 0 $((PUZZLE_COUNT - 1))); do
     echo -e "${BLUE}  Codeword: $CODEWORD (solution_address: $SOLUTION_ADDRESS)${NC}"
 
     # set_puzzle(level_number, solution_address)
-    sozo execute --profile $NETWORK --wait focg_adventure-actions set_puzzle \
+    sozo execute --profile $NETWORK --wait adventure-actions set_puzzle \
         "$LEVEL" \
         "$SOLUTION_ADDRESS"
 
@@ -222,7 +222,7 @@ done
 
 # Step 5: Mint initial NFT
 echo -e "\n${YELLOW}Step 5: Minting initial NFT...${NC}"
-sozo execute --profile $NETWORK --wait focg_adventure-actions mint sstr:deployer
+sozo execute --profile $NETWORK --wait adventure-actions mint sstr:deployer
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Initial NFT minted${NC}"
 else
@@ -253,7 +253,7 @@ echo -e "  ✓ Initial NFT minted to deployer account"
 
 echo -e "\n${YELLOW}Next steps:${NC}"
 if [ "$NETWORK" == "sepolia" ]; then
-    echo -e "  1. Test challenge completion with: sozo execute focg_adventure-actions complete_challenge_level <map_id> <level> 1"
+    echo -e "  1. Test challenge completion with: sozo execute adventure-actions complete_challenge_level <map_id> <level> 1"
     echo -e "  2. MockGame contracts can be controlled with: sozo execute <mock_address> set_game_over <token_id> <0|1>"
     echo -e "  3. Game names and descriptions match mainnet for realistic testing"
 else

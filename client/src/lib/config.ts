@@ -80,20 +80,20 @@ export const DEFAULT_RPC_URL = getRpcUrlForEnv(CHAIN_ENV);
 export const WORLD_ADDRESS = manifest.world.address;
 
 // Find the Adventure contract (Dojo game logic)
-const adventureContract = manifest.contracts?.find((c: any) => c.tag === "focg_adventure-actions");
+const adventureContract = manifest.contracts?.find((c: any) => c.tag === "adventure-actions");
 export const ADVENTURE_ADDRESS = adventureContract?.address || '0x0';
 
 // Find ABIs from the separate abis array
 // In newer Dojo versions, ABIs are in manifest.abis with .items containing the actual ABI entries
-const adventureAbiEntry = manifest.abis?.find((a: any) => a.name === "focg_adventure::systems::actions::IAdventureActions");
+const adventureAbiEntry = manifest.abis?.find((a: any) => a.name === "adventure::systems::actions::IAdventureActions");
 export const ADVENTURE_ABI = adventureAbiEntry?.items;
 
 // Find the Map NFT contract (state storage)
-const mapContract = manifest.external_contracts?.find((c: any) => c.tag === "focg_adventure-adventure_map");
+const mapContract = manifest.external_contracts?.find((c: any) => c.tag === "adventure-adventure_map");
 export const MAP_ADDRESS = mapContract?.address || '0x0';
 
 // Find the Map NFT ABI from the separate abis array
-const mapAbiEntry = manifest.abis?.find((a: any) => a.name === "focg_adventure::token::map::IAdventureMap");
+const mapAbiEntry = manifest.abis?.find((a: any) => a.name === "adventure::token::map::IAdventureMap");
 export const MAP_ABI = mapAbiEntry?.items;
 
 // ============================================================================

@@ -11,7 +11,7 @@ import { Abi } from 'starknet';
 import { MAP_ADDRESS } from '../lib/config';
 
 // Import the ABI for the AdventureMap contract
-import adventureMapAbi from '../abi/focg_adventure_AdventureMap.contract_class.json';
+import adventureMapAbi from '../abi/adventure_AdventureMap.contract_class.json';
 
 interface OnChainMapNFTProps {
   tokenId: string;

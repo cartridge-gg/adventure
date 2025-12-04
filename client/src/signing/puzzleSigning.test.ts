@@ -194,7 +194,7 @@ function testSpecExamples() {
 // Run all tests
 function runAllTests() {
   console.log("\n╔════════════════════════════════════════════════╗");
-  console.log("║   FOCG Adventure Puzzle Signing Tests        ║");
+  console.log("║   Adventure Puzzle Signing Tests        ║");
   console.log("╚════════════════════════════════════════════════╝");
 
   try {

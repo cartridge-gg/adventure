@@ -1,12 +1,12 @@
-# FOCG Adventure Game References
+# Adventure Game References
 
-This directory contains git submodules for the external games and reference materials used in the FOCG Adventure platform. These repositories provide the smart contract manifests and documentation needed to integrate various onchain games as challenge levels.
+This directory contains git submodules for the external games and reference materials used in the Adventure platform. These repositories provide the smart contract manifests and documentation needed to integrate various onchain games as challenge levels.
 
 ## Submodules Overview
 
 ### Active Challenge Games
 
-These games are actively integrated into FOCG Adventure as playable challenge levels:
+These games are actively integrated into Adventure as playable challenge levels:
 
 #### **nums/** - Number Challenge Game
 - **Purpose**: Level 1 challenge "The Mage's Seal"
@@ -78,14 +78,14 @@ Sepolia
 - **Purpose**: Reference implementation for game integration architecture
 - **Description**: Demonstration game showing best practices for Denshokan standard integration
 - **Technology**: Built with Dojo Engine on Starknet
-- **Integration**: Used as codebase template; baseline for FOCG Adventure implementation
+- **Integration**: Used as codebase template; baseline for Adventure implementation
 - **Repository**: https://github.com/cartridge-gg/ronins-pact
 
 ### Reference Materials
 
 #### **DIPs/** - Devcon Improvement Proposals
 - **Purpose**: Specification and documentation for DIP-69
-- **Description**: Contains the formal proposal for FOCG Adventure submitted to Devcon(nect)
+- **Description**: Contains the formal proposal for Adventure submitted to Devcon(nect)
 - **Key Document**: DIP-69 - "Gamified quest platform combining onchain games, cryptographic puzzles, and dynamic NFTs"
 - **Repository**: https://github.com/efdevcon/DIPs
 - **Status**: Implementation of DIP-69 for DevConnect Argentina
@@ -108,11 +108,11 @@ All active challenge games implement the **Denshokan standard**, which provides:
 - Dynamic onchain metadata reflecting live game state
 
 ### Challenge Verification Flow
-1. Player opens external game from FOCG Adventure interface
+1. Player opens external game from Adventure interface
 2. Player completes a game session (receives game token NFT)
 3. Frontend queries Torii indexer to find player's game tokens
 4. Actions contract calls `game_over()` on Denshokan contract
-5. If game is complete, FOCG Adventure level is unlocked
+5. If game is complete, Adventure level is unlocked
 6. Dynamic NFT map updates with completed waypoint
 
 ### Configuration
@@ -215,12 +215,12 @@ All active challenge games share:
 - [Dojo Engine Documentation](https://dojoengine.org)
 - [Starknet Documentation](https://starknet.io)
 - [Denshokan Standard Specification](../contracts/DENSHOKAN.md)
-- [FOCG Adventure README](../README.md)
+- [Adventure README](../README.md)
 - [DIP-69 Proposal](https://github.com/efdevcon/DIPs/blob/master/DIPs/DIP-69.md)
 
 ## Maintenance
 
-This directory is part of the FOCG Adventure monorepo. Submodules should be updated periodically to track upstream changes, but care should be taken to verify manifest addresses remain compatible with deployed FOCG Adventure contracts.
+This directory is part of the Adventure monorepo. Submodules should be updated periodically to track upstream changes, but care should be taken to verify manifest addresses remain compatible with deployed Adventure contracts.
 
 **Last Updated**: November 2025
 **Maintainer**: kronovet@cartridge.gg

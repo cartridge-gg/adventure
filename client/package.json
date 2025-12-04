@@ -7,7 +7,7 @@
     "dev": "VITE_CHAIN=dev vite",
     "dev:sepolia": "VITE_CHAIN=sepolia vite",
     "dev:mainnet": "VITE_CHAIN=mainnet vite",
-    "prep:abi": "mkdir -p src/abi && cp ../contracts/target/dev/focg_adventure_AdventureMap.contract_class.json src/abi/",
+    "prep:abi": "mkdir -p src/abi && cp ../contracts/target/dev/adventure_AdventureMap.contract_class.json src/abi/",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",

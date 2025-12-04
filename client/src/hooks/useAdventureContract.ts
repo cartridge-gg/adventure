@@ -1,7 +1,7 @@
 /**
  * Hook for Adventure contract interactions
  *
- * Provides functions to interact with the focg_adventure contracts
+ * Provides functions to interact with the adventure contracts
  */
 
 import { useAccount, useContract } from '@starknet-react/core';

@@ -1,10 +1,10 @@
 [world]
-name = "FOCG Adventure"
+name = "Adventure"
 description = "A multi-level adventure quest system with challenges and puzzles for Devconnect"
 seed = "adventure-v1"
 
 [namespace]
-default = "focg_adventure"
+default = "adventure"
 
 [env]
 rpc_url = "https://api.cartridge.gg/x/starknet/mainnet"
@@ -13,7 +13,7 @@ keystore_path = "~/.starkli-wallets/deployer-mainnet.json"
 world_address = "0x21c812d1851c3d0ac07a8537d6e9ca300eae5762ad4c34fa42110bdfc501642"
 
 [writers]
-"focg_adventure" = ["focg_adventure-actions"]
+"adventure" = ["adventure-actions"]
 
 [[external_contracts]]
 contract_name = "AdventureMap"

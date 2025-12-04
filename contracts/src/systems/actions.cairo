@@ -1,8 +1,8 @@
 // ============================================================================
-// FOCG Adventure Actions Contract (Dojo)
+// Adventure Actions Contract (Dojo)
 // ============================================================================
 //
-// Main game logic contract for FOCG Adventure.
+// Main game logic contract for Adventure.
 // Handles minting, level verification (both challenge and puzzle types),
 // and sequential progression enforcement.
 
@@ -51,9 +51,9 @@ pub mod actions {
     use dojo::event::EventStorage;
 
     use super::IAdventureActions;
-    use focg_adventure::models::{AdventureConfig, PlayerToken, LevelConfig};
-    use focg_adventure::token::map::{IAdventureMapDispatcher, IAdventureMapDispatcherTrait};
-    use focg_adventure::denshokan::interface::{IMinigameTokenDataDispatcher, IMinigameTokenDataDispatcherTrait};
+    use adventure::models::{AdventureConfig, PlayerToken, LevelConfig};
+    use adventure::token::map::{IAdventureMapDispatcher, IAdventureMapDispatcherTrait};
+    use adventure::denshokan::interface::{IMinigameTokenDataDispatcher, IMinigameTokenDataDispatcherTrait};
 
     const CONFIG_KEY: u32 = 0;
 
@@ -271,7 +271,7 @@ pub mod actions {
     #[generate_trait]
     impl InternalImpl of InternalTrait {
         fn world_default(self: @ContractState) -> WorldStorage {
-            self.world(@"focg_adventure")
+            self.world(@"adventure")
         }
 
         // Compute the bitmap mask for a given level number

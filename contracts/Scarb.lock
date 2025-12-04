@@ -27,7 +27,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "focg_adventure"
+name = "adventure"
 version = "0.1.0"
 dependencies = [
  "dojo",

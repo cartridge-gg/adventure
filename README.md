@@ -1,4 +1,4 @@
-# FOCG Adventure
+# Adventure
 
 **A gamified quest platform combining onchain games, cryptographic puzzles, and dynamic NFTs on Starknet.**
 
@@ -6,7 +6,7 @@ Implementation of [DIP-69](https://github.com/efdevcon/DIPs/blob/master/DIPs/DIP
 
 ## Overview
 
-FOCG Adventure creates an evolving treasure map NFT that tracks player progress through a multi-level adventure. Players complete sequential challenges by:
+Adventure creates an evolving treasure map NFT that tracks player progress through a multi-level adventure. Players complete sequential challenges by:
 
 - **Challenge Levels**: Playing external Dojo games (NUMS, DopeWars, Loot Survivor)
 - **Quest Levels**: Discovering codewords at physical or digital puzzle locations
@@ -124,7 +124,7 @@ On-chain SVG rendering with progress-based updates:
 ## Repository Structure
 
 ```
-focg-adventure/
+adventure/
 ├── contracts/              # Cairo smart contracts
 │   ├── src/
 │   │   ├── systems/

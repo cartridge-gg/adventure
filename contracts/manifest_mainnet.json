@@ -3,7 +3,7 @@
     "class_hash": "0x6ffd143494a0fdb39b68dd76f5e2766d43265ae40987985a4c3d1fb0d0dd821",
     "address": "0x21c812d1851c3d0ac07a8537d6e9ca300eae5762ad4c34fa42110bdfc501642",
     "seed": "adventure-v1",
-    "name": "FOCG Adventure",
+    "name": "Adventure",
     "entrypoints": [
       "uuid",
       "set_metadata",
@@ -36,7 +36,7 @@
       "address": "0x62595f9d17d45c0aface59491e692ce07eabaf77f4ec99ba9962b556da04d0d",
       "class_hash": "0x41db70f97ee17eb7cb2215e8b4714582a3832db18527faef145c8ee51a56704",
       "init_calldata": [],
-      "tag": "focg_adventure-actions",
+      "tag": "adventure-actions",
       "selector": "0x45c87c63d9eb923e47da69456442cdb7124f20fa646081b3cead2a1526ae89e",
       "systems": [
         "mint",
@@ -71,7 +71,7 @@
         }
       ],
       "class_hash": "0x5653f2a9fe5a76ae24740a7fd4dda3c49f08304afc3b0076fd20b8cd888ee03",
-      "tag": "focg_adventure-AdventureConfig",
+      "tag": "adventure-AdventureConfig",
       "selector": "0x1d847b3b3b63e9145c14e1615db0236e3cefe93afe70f3368589a7413893669"
     },
     {
@@ -98,7 +98,7 @@
         }
       ],
       "class_hash": "0xd4ae4d9e6313bbce86662bc0964fc75a779d503e462cfb076751c09f13d8f",
-      "tag": "focg_adventure-LevelConfig",
+      "tag": "adventure-LevelConfig",
       "selector": "0x52ce7428046504d09e27434b30d25af523aa92a17cdcb77da0f4a04d3c92484"
     },
     {
@@ -115,7 +115,7 @@
         }
       ],
       "class_hash": "0x4e793d951fe987748aa2c4abb85eece840fc918a7157822767ac6d44cf96654",
-      "tag": "focg_adventure-PlayerToken",
+      "tag": "adventure-PlayerToken",
       "selector": "0x4542ed66ff5926086bfa4645b1ce6b41ac4fce12ec121867711694d1148f9da"
     }
   ],
@@ -144,7 +144,7 @@
         }
       ],
       "class_hash": "0x14c6805f2c9b3194896a225ff4dd5795b2e225c20588a9cc7fb3207d8b05508",
-      "tag": "focg_adventure-LevelCompleted",
+      "tag": "adventure-LevelCompleted",
       "selector": "0x23bb0424cc97cea6b4fe2021ea0f63583ca6805b9169c908a20f0eb2e402277"
     },
     {
@@ -161,7 +161,7 @@
         }
       ],
       "class_hash": "0x58cd8d7d016f73ad72b9168e0230dc14ae1125edb546f662108071fcd146127",
-      "tag": "focg_adventure-MapMinted",
+      "tag": "adventure-MapMinted",
       "selector": "0x708642fb3605c1363b97751559e1498cd52f36d8fcfca5e93818879a4763698"
     }
   ],
@@ -169,7 +169,7 @@
     {
       "class_hash": "0x65d5ec374c373e22eeb2eac50f7cf37a2c5b434e6dfe9aa4b071ec2e17f4c7",
       "contract_name": "AdventureMap",
-      "tag": "focg_adventure-adventure_map",
+      "tag": "adventure-adventure_map",
       "address": "0x1aec82a183d97504e8ee6c3cf1f7c3f7b9aad291b5f467df33441493884ac4b",
       "constructor_calldata": [
         "0x079b01c7fe90414b153f0457471c33e166ff5eee381e8dcd90f3214a56a3770b",
@@ -2037,7 +2037,7 @@
       "inputs": [
         {
           "name": "event",
-          "type": "focg_adventure::systems::actions::actions::MapMinted"
+          "type": "adventure::systems::actions::actions::MapMinted"
         }
       ],
       "outputs": [],
@@ -2056,7 +2056,7 @@
       "inputs": [
         {
           "name": "value",
-          "type": "focg_adventure::systems::actions::actions::MapMintedValue"
+          "type": "adventure::systems::actions::actions::MapMintedValue"
         }
       ],
       "outputs": [],
@@ -2064,7 +2064,7 @@
     },
     {
       "type": "struct",
-      "name": "focg_adventure::models::AdventureConfig",
+      "name": "adventure::models::AdventureConfig",
       "members": [
         {
           "name": "game_id",
@@ -2082,7 +2082,7 @@
     },
     {
       "type": "struct",
-      "name": "focg_adventure::models::AdventureConfigValue",
+      "name": "adventure::models::AdventureConfigValue",
       "members": [
         {
           "name": "nft_contract",
@@ -2096,7 +2096,7 @@
     },
     {
       "type": "struct",
-      "name": "focg_adventure::models::LevelConfig",
+      "name": "adventure::models::LevelConfig",
       "members": [
         {
           "name": "level_number",
@@ -2118,7 +2118,7 @@
     },
     {
       "type": "struct",
-      "name": "focg_adventure::models::LevelConfigValue",
+      "name": "adventure::models::LevelConfigValue",
       "members": [
         {
           "name": "level_type",
@@ -2136,7 +2136,7 @@
     },
     {
       "type": "struct",
-      "name": "focg_adventure::models::PlayerToken",
+      "name": "adventure::models::PlayerToken",
       "members": [
         {
           "name": "player",
@@ -2150,7 +2150,7 @@
     },
     {
       "type": "struct",
-      "name": "focg_adventure::models::PlayerTokenValue",
+      "name": "adventure::models::PlayerTokenValue",
       "members": [
         {
           "name": "token_id",
@@ -2160,25 +2160,25 @@
     },
     {
       "type": "event",
-      "name": "focg_adventure::models::m_AdventureConfig::Event",
+      "name": "adventure::models::m_AdventureConfig::Event",
       "kind": "enum",
       "variants": []
     },
     {
       "type": "event",
-      "name": "focg_adventure::models::m_LevelConfig::Event",
+      "name": "adventure::models::m_LevelConfig::Event",
       "kind": "enum",
       "variants": []
     },
     {
       "type": "event",
-      "name": "focg_adventure::models::m_PlayerToken::Event",
+      "name": "adventure::models::m_PlayerToken::Event",
       "kind": "enum",
       "variants": []
     },
     {
       "type": "interface",
-      "name": "focg_adventure::systems::actions::IAdventureActions",
+      "name": "adventure::systems::actions::IAdventureActions",
       "items": [
         {
           "type": "function",
@@ -2332,7 +2332,7 @@
     },
     {
       "type": "event",
-      "name": "focg_adventure::systems::actions::actions::Event",
+      "name": "adventure::systems::actions::actions::Event",
       "kind": "enum",
       "variants": [
         {
@@ -2349,7 +2349,7 @@
     },
     {
       "type": "struct",
-      "name": "focg_adventure::systems::actions::actions::LevelCompleted",
+      "name": "adventure::systems::actions::actions::LevelCompleted",
       "members": [
         {
           "name": "token_id",
@@ -2371,7 +2371,7 @@
     },
     {
       "type": "struct",
-      "name": "focg_adventure::systems::actions::actions::LevelCompletedValue",
+      "name": "adventure::systems::actions::actions::LevelCompletedValue",
       "members": [
         {
           "name": "player",
@@ -2389,7 +2389,7 @@
     },
     {
       "type": "struct",
-      "name": "focg_adventure::systems::actions::actions::MapMinted",
+      "name": "adventure::systems::actions::actions::MapMinted",
       "members": [
         {
           "name": "player",
@@ -2403,7 +2403,7 @@
     },
     {
       "type": "struct",
-      "name": "focg_adventure::systems::actions::actions::MapMintedValue",
+      "name": "adventure::systems::actions::actions::MapMintedValue",
       "members": [
         {
           "name": "token_id",
@@ -2413,19 +2413,19 @@
     },
     {
       "type": "event",
-      "name": "focg_adventure::systems::actions::actions::e_LevelCompleted::Event",
+      "name": "adventure::systems::actions::actions::e_LevelCompleted::Event",
       "kind": "enum",
       "variants": []
     },
     {
       "type": "event",
-      "name": "focg_adventure::systems::actions::actions::e_MapMinted::Event",
+      "name": "adventure::systems::actions::actions::e_MapMinted::Event",
       "kind": "enum",
       "variants": []
     },
     {
       "type": "event",
-      "name": "focg_adventure::token::map::AdventureMap::Event",
+      "name": "adventure::token::map::AdventureMap::Event",
       "kind": "enum",
       "variants": [
         {
@@ -2442,7 +2442,7 @@
     },
     {
       "type": "interface",
-      "name": "focg_adventure::token::map::IAdventureMap",
+      "name": "adventure::token::map::IAdventureMap",
       "items": [
         {
           "type": "function",

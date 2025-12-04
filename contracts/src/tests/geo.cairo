@@ -4,7 +4,7 @@
 //
 // Comprehensive tests for geo.cairo functions
 
-use focg_adventure::token::geo;
+use adventure::token::geo;
 
 // ============================================================================
 // TRIGONOMETRY TESTS

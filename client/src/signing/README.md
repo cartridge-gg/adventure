@@ -1,4 +1,4 @@
-# FOCG Adventure Puzzle Signing Utilities
+# Adventure Puzzle Signing Utilities
 
 TypeScript utilities for cryptographic replay protection in puzzle completion.
 
@@ -242,4 +242,4 @@ Tests cover:
 - [Treasure Hunt Creator (THC)](https://github.com/social-dist0rtion-protocol/thc)
 - [THC Blog Post](https://www.dist0rtion.com/2020/01/30/Planetscape-a-dystopian-escape-game-for-36C3/)
 - [Starknet Signature Standards](https://docs.starknet.io/)
-- [FOCG Adventure Spec](../spec/SPEC.md)
+- [Adventure Spec](../spec/SPEC.md)

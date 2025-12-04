@@ -1,8 +1,8 @@
-# FOCG Adventure - Frontend Implementation
+# Adventure - Frontend Implementation
 
 ## Overview
 
-A complete frontend implementation for the FOCG Adventure with reusable components, comprehensive mocking system, and full user flow support. The implementation follows the specification and provides a working client that can iterate without a backend.
+A complete frontend implementation for the Adventure with reusable components, comprehensive mocking system, and full user flow support. The implementation follows the specification and provides a working client that can iterate without a backend.
 
 ## 🎯 What's Included
 
@@ -372,7 +372,7 @@ All mock contract calls are logged to console:
 
 ## 🎉 Success!
 
-You now have a fully working FOCG Adventure frontend that you can:
+You now have a fully working Adventure frontend that you can:
 - Click through the entire adventure
 - Test all user flows
 - Iterate on design and UX
