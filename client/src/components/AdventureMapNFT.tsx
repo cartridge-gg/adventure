@@ -22,9 +22,9 @@ export function AdventureMapNFT({ progress, onRefetchReady }: AdventureMapNFTPro
   // Generate explorer URL based on environment
   const getExplorerUrl = () => {
     if (CHAIN_ENV === 'mainnet') {
-      return `https://starkscan.co/contract/${MAP_ADDRESS}`;
+      return `https://voyager.online/contract/${MAP_ADDRESS}`;
     } else if (CHAIN_ENV === 'sepolia') {
-      return `https://sepolia.starkscan.co/contract/${MAP_ADDRESS}`;
+      return `https://sepolia.voyager.online/contract/${MAP_ADDRESS}`;
     } else {
       // Dev/Katana - link to local explorer
       return `http://localhost:5050/explorer/contract/${MAP_ADDRESS}`;
